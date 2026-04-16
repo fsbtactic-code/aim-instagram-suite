@@ -1,5 +1,23 @@
 # 🔧 Установка AIM Instagram Suite — детальные инструкции
 
+## ⚡ Установить глобальные скиллы (одна команда)
+
+После клонирования репо — скопируй скиллы в глобальную папку Claude Code:
+
+**Windows PowerShell:**
+```powershell
+Copy-Item "C:\путь\к\aim-instagram-suite\.claude\commands\aim-*.md" "$HOME\.claude\commands\" -Force
+```
+
+**macOS / Linux:**
+```bash
+cp /путь/к/aim-instagram-suite/.claude/commands/aim-*.md ~/.claude/commands/
+```
+
+После этого **перезапусти Claude Code** → набери `/` → появятся все `aim-*` скиллы глобально из любого проекта.
+
+---
+
 Выбери свою платформу:
 
 - [Claude Desktop](#-claude-desktop)
