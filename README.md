@@ -185,6 +185,159 @@ cp -r .gemini/commands/aim ~/.gemini/commands/
 * **Zero APIs**: Вся работа (FFmpeg транскодинг, склейка кадров, Puppeteer рендер, скачивание `yt-dlp`) выполняется строго локально.
 * Единственный внешний процесс — Python Whisper (если установлен локально) или OCR/Vision анализ, который запускается самим Claude. Мы не сохраняем ваши данные.
 
+---
+
+## 🔬 Как это работает изнутри — библиотеки и пайплайны
+
+### Архитектура ядра (`src/core/`)
+
+| Модуль | Файл | Библиотека / Бинарник | Что делает |
+|---|---|---|---|
+| **FFmpeg wrapper** | `core/ffmpeg.ts` | `ffmpeg-static` (npm) | Извлекает аудио в WAV, детектирует смены сцен, вырезает хук, возвращает таймкоды |
+| **Whisper wrapper** | `core/whisper.ts` | `nodejs-whisper` (npm) | Транскрибирует аудио локально, возвращает сегменты с таймкодами |
+| **yt-dlp wrapper** | `core/ytdlp.ts` | `yt-dlp` (бинарник, скачивается `postinstall`) | Скачивает видео по URL (Instagram/TikTok/YouTube/VK/Twitter) |
+| **Image Grid** | `core/imageGrid.ts` | `sharp` (npm) | Склеивает кадры в одну сетку 3×3 (768px JPEG 70%) для экономии токенов Vision |
+| **HTML Renderer** | `core/htmlRenderer.ts` | `puppeteer` (npm) | Открывает headless Chrome, рендерит HTML → скриншот PNG 1080px |
+| **Design System** | `core/designSystem.ts` | встроенный TypeScript | 8 тем: CSS переменные, Google Fonts URL, цвета, типографика |
+| **Slide Layouts** | `core/slideLayouts.ts` | встроенный TypeScript | 10 HTML-шаблонов лейаутов (grid, quote, checklist и др.) |
+| **Viral Structures** | `core/viralStructures.ts` | встроенный TypeScript | База из 12 структур каруселей с шаблонами слайдов |
+| **Media Processor** | `core/mediaProcessor.ts` | координирует все модули | Главный пайплайн: URL/файл → скачать → Whisper → FFmpeg Scene → Grid → base64 |
+
+---
+
+### Пайплайны по инструментам
+
+#### 🎬 Видео-инструменты (`aim_evaluate_video`, `aim_analyze_viral_reels`, `aim_analyze_hook`, `aim_extract_pacing`, `aim_score_virality`)
+
+```
+Входные данные (videoPath или URL)
+        │
+        ▼
+[ytdlp.ts] ── если URL → yt-dlp скачивает MP4 во временную папку os.tmpdir()
+        │
+        ▼
+[ffmpeg.ts] extractAudio() ── ffmpeg-static → WAV 16kHz моно (требование Whisper)
+        │
+        ▼
+[whisper.ts] transcribe() ── nodejs-whisper → транскрипт с таймкодами по сегментам
+        │
+        ▼
+[ffmpeg.ts] extractSceneFrames() ── FFmpeg filter select='gt(scene,0.3)' → JPEG кадры
+        │
+        ▼
+[imageGrid.ts] buildGrid() ── sharp склеивает кадры в сетку 3×3, 768px, JPEG 70%
+        │
+        ▼
+Результат → JSON { transcript, gridBase64, timecodes } → передаётся Claude Vision
+```
+
+**Экономия токенов**: вместо N отдельных картинок — ровно 1 сетка. Транскрипт идёт первым (text-first), чтобы Vision-запрос был контекстным.
+
+**Для `aim_analyze_hook`**: видео обрезается до первых 5 секунд (`ffmpeg -t 5`) перед пайплайном.
+
+**Для `aim_extract_pacing`**: используется упрощённый пайплайн без сохранения кадров — только `detectSceneTimecodes()` с `ffmpeg showinfo` → анализ интервалов между склейками → поиск `slowSpots` (интервалы > порога).
+
+---
+
+#### 🎨 Carousel Render (`aim_render_premium_carousel`)
+
+```
+slidesData (JSON массив слайдов)
+        │
+        ▼
+[slideLayouts.ts] → выбирает HTML-шаблон по полю layout каждого слайда
+        │
+        ▼
+[designSystem.ts] → применяет тему (CSS переменные + Google Fonts URL)
+        │         → если brandColorOverlay — переопределяет цвета темы
+        ▼
+[htmlRenderer.ts] renderCarousel() → для каждого слайда:
+        │   1. Формирует полный HTML-документ (тема + лейаут + CTA-баннер)
+        │   2. Puppeteer: page.setContent(html)
+        │   3. page.screenshot({ type: 'png', clip: { 1080×1080 или 1080×1350 } })
+        │   4. Сохраняет PNG в outputDir/slide_01.png ... slide_N.png
+        ▼
+Результат → список путей к PNG файлам
+```
+
+**Шрифты**: загружаются через Google Fonts / Bunny Fonts CDN непосредственно при рендере в Puppeteer. Поддерживается 18+ кириллических шрифтов (Inter, Montserrat, Raleway, Oswald и др.).
+
+**CTA-баннер** (`globalCta`): добавляется как абсолютно позиционированный HTML-блок поверх каждого слайда через CSS `position: absolute; bottom: 0`.
+
+---
+
+#### 🔍 Анализ каруселей конкурентов (`aim_analyze_carousel`, `aim_localize_carousel`, `aim_score_carousel_virality`)
+
+```
+URL карусели (Instagram / VK)
+        │
+        ▼
+[ytdlp.ts] yt-dlp --write-all-thumbnails → скачивает все слайды как изображения
+        │
+        ▼
+[imageGrid.ts] buildGrid() ── sharp склеивает все слайды в вертикальную ленту-коллаж
+        │
+        ▼
+Результат → JSON { collage: { base64 } } → Claude Vision анализирует все слайды сразу
+```
+
+---
+
+#### 📝 Генерация структуры (`aim_draft_carousel_structure`)
+
+```
+topic + toneOfVoice + slideCount
+        │
+        ▼
+[draftCarouselStructure.ts] ── чистый TypeScript, без внешних библиотек
+        │   Формирует prompt с инструкцией для Claude:
+        │   - выбрать структуру воронки (AIDA)
+        │   - назначить роль каждому слайду
+        │   - предложить лейаут и эмодзи
+        ▼
+JSON-массив слайдов → готов для aim_render_premium_carousel
+```
+
+---
+
+#### 🎨 Бренд-цвета (`aim_auto_brand_colors`)
+
+```
+baseTheme + primaryColor + secondaryColor
+        │
+        ▼
+[autoBrandColors.ts] ── встроенный TypeScript
+        │   1. Вычисляет относительную яркость (WCAG 2.1 формула)
+        │   2. Проверяет контрастность: ratio = (L1+0.05)/(L2+0.05) >= 4.5 (AA)
+        │   3. Если не проходит — корректирует textColor автоматически
+        ▼
+Возвращает CSS-строку: --color-primary: #E91E63; --color-secondary: #FF9800; ...
+→ Передаётся в aim_render_premium_carousel через brandColorOverlay
+```
+
+---
+
+### npm-зависимости (production)
+
+| Пакет | Версия | Для чего |
+|---|---|---|
+| `@modelcontextprotocol/sdk` | ^1.10.2 | MCP Server (StdioTransport, Tool handlers) |
+| `ffmpeg-static` | ^5.2.0 | Bundled FFmpeg бинарник (кросс-платформенный) |
+| `nodejs-whisper` | ^0.2.2 | Локальная транскрибация через OpenAI Whisper |
+| `puppeteer` | ^24.41.0 | Headless Chrome для рендера HTML → PNG |
+| `sharp` | ^0.33.5 | Склейка изображений в сетку (Image Grid, коллажи) |
+| `zod` | ^3.23.8 | Валидация входных параметров всех инструментов |
+
+### Внешние бинарники (скачиваются автоматически при `npm install`)
+
+| Бинарник | Скрипт | Назначение |
+|---|---|---|
+| `yt-dlp` (`.exe` на Windows) | `scripts/postinstall.js` | Скачивание видео по URL с 1000+ платформ |
+| Chromium | `puppeteer` postinstall | Headless браузер для рендера каруселей |
+| Whisper модель | `nodejs-whisper` | Локальная speech-to-text модель (tiny/base) |
+
+---
+
 ## Разработчик
 Создано с любовью для автоматизации Инстаграм-рутины.
 [fsbtactic-code](https://github.com/fsbtactic-code)
