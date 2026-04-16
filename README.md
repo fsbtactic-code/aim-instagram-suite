@@ -23,7 +23,11 @@
 
 Вставь этот промпт в **Claude Desktop**, **Cursor** или **Antigravity**:
 
-> Склонируй репозиторий `https://github.com/fsbtactic-code/aim-instagram-suite.git` на рабочий стол в папку `aim-instagram-suite`. Перейди в папку и выполни `node scripts/setup.js` — скрипт автоматически проверит и установит все зависимости (CMake, yt-dlp, FFmpeg, npm-пакеты). Если скрипт завершился успешно, зарегистрируй MCP сервер — команда `npx`, аргументы `["tsx", "АБСОЛЮТНЫЙ_ПУТЬ/aim-instagram-suite/src/index.ts"]`. Полностью перезапусти приложение и подтверди что доступны 13 инструментов `aim_`.
+> Склонируй репозиторий `https://github.com/fsbtactic-code/aim-instagram-suite.git` на рабочий стол в папку `aim-instagram-suite`.
+>
+> **Если Windows:** перед запуском убедись что установлены Visual Studio Build Tools с C++ — запусти в PowerShell (от Администратора): `winget install Microsoft.VisualStudio.2022.BuildTools --override "--quiet --add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.Component.VC.CMake.Project --includeRecommended" --accept-package-agreements --accept-source-agreements` — затем **закрой и открой PowerShell заново**.
+>
+> Перейди в папку `aim-instagram-suite` и выполни `node scripts/setup.js` — скрипт автоматически установит все зависимости (CMake, yt-dlp, npm-пакеты). Если всё прошло успешно, зарегистрируй MCP сервер — команда `npx`, аргументы `["tsx", "АБСОЛЮТНЫЙ_ПУТЬ/aim-instagram-suite/src/index.ts"]`. Полностью перезапусти приложение и подтверди что доступны 14 инструментов `aim_`.
 
 Подробные инструкции для каждой платформы → **[INSTALL.md](INSTALL.md)**:
 - [Claude Desktop](INSTALL.md#-claude-desktop)
