@@ -4,12 +4,14 @@
   "description": "MCP Server for viral video analysis, hook scoring, script generation and premium carousel rendering",
   "main": "src/index.ts",
   "scripts": {
+    "setup": "node scripts/setup.js",
     "start": "tsx src/index.ts",
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "postinstall": "node scripts/postinstall.js",
     "typecheck": "tsc --noEmit"
   },
+
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.10.2",
     "ffmpeg-static": "^5.2.0",

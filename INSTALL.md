@@ -2,19 +2,27 @@
 
 ## ⚡ Установить глобальные скиллы (одна команда)
 
-После клонирования репо — скопируй скиллы в глобальную папку Claude Code:
+После клонирования репо — запусти полный setup и скопируй скиллы:
 
 **Windows PowerShell:**
 ```powershell
-Copy-Item "C:\путь\к\aim-instagram-suite\.claude\commands\aim-*.md" "$HOME\.claude\commands\" -Force
+git clone https://github.com/fsbtactic-code/aim-instagram-suite.git
+cd aim-instagram-suite
+node scripts/setup.js
+Copy-Item ".claude\commands\aim-*.md" "$HOME\.claude\commands\" -Force
 ```
 
 **macOS / Linux:**
 ```bash
-cp /путь/к/aim-instagram-suite/.claude/commands/aim-*.md ~/.claude/commands/
+git clone https://github.com/fsbtactic-code/aim-instagram-suite.git
+cd aim-instagram-suite
+node scripts/setup.js
+cp .claude/commands/aim-*.md ~/.claude/commands/
 ```
 
-После этого **перезапусти Claude Code** → набери `/` → появятся все `aim-*` скиллы глобально из любого проекта.
+`setup.js` автоматически установит: **CMake**, **Build Tools**, **yt-dlp**, все **npm-пакеты**.
+
+После этого **перезапусти Claude Code** → набери `/` → появятся все `aim-*` скиллы глобально.
 
 ---
 

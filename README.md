@@ -23,7 +23,7 @@
 
 Вставь этот промпт в **Claude Desktop**, **Cursor** или **Antigravity**:
 
-> Склонируй репозиторий `https://github.com/fsbtactic-code/aim-instagram-suite.git` на рабочий стол в папку `aim-instagram-suite`. Перейди в папку, выполни `npm install`. Затем зарегистрируй MCP сервер — команда `npx`, аргументы `["tsx", "АБСОЛЮТНЫЙ_ПУТЬ/aim-instagram-suite/src/index.ts"]`. Полностью перезапусти приложение и подтверди что доступны 13 инструментов `aim_`.
+> Склонируй репозиторий `https://github.com/fsbtactic-code/aim-instagram-suite.git` на рабочий стол в папку `aim-instagram-suite`. Перейди в папку и выполни `node scripts/setup.js` — скрипт автоматически проверит и установит все зависимости (CMake, yt-dlp, FFmpeg, npm-пакеты). Если скрипт завершился успешно, зарегистрируй MCP сервер — команда `npx`, аргументы `["tsx", "АБСОЛЮТНЫЙ_ПУТЬ/aim-instagram-suite/src/index.ts"]`. Полностью перезапусти приложение и подтверди что доступны 13 инструментов `aim_`.
 
 Подробные инструкции для каждой платформы → **[INSTALL.md](INSTALL.md)**:
 - [Claude Desktop](INSTALL.md#-claude-desktop)
