@@ -36,10 +36,12 @@ const BASE_LAYOUT = `
     height: var(--slide-height);
     display: flex;
     flex-direction: column;
+    justify-content: center;
     position: relative;
     overflow: hidden;
   }
 
+  /* По умолчанию: прозрачная карточка, растягивается и центрирует контент */
   .glass-card {
     position: relative;
     z-index: 2;
@@ -51,6 +53,13 @@ const BASE_LAYOUT = `
     min-height: 0;
     background: transparent;
     padding: 0;
+  }
+
+  /* Для тем с видимой карточкой: auto-высота, центрирование через margin */
+  .glass-card--fitted {
+    flex: none;
+    height: auto;
+    margin: auto 0;
   }
 `;
 
@@ -94,6 +103,10 @@ const glassmorphismCSS = `
     border-radius: 32px;
     padding: 56px 52px;
     box-shadow: 0 8px 60px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.1);
+    /* Fitted: карточка по контенту, центрируется в слайде */
+    flex: none;
+    height: auto;
+    margin: auto 0;
   }
 
   .slide-number {
@@ -185,6 +198,9 @@ const neoBrutalismCSS = `
     border-radius: 0;
     padding: 52px 48px;
     box-shadow: 12px 12px 0 #000;
+    flex: none;
+    height: auto;
+    margin: auto 0;
   }
 
   .slide-number {
@@ -380,6 +396,9 @@ const cyberpunkCSS = `
     border-radius: 4px;
     padding: 52px 48px;
     box-shadow: 0 0 40px rgba(0,255,136,0.05), inset 0 0 40px rgba(0,0,0,0.2);
+    flex: none;
+    height: auto;
+    margin: auto 0;
   }
 
   .slide-number {
@@ -622,6 +641,9 @@ const y2kAcidCSS = `
     border-radius: 28px;
     padding: 52px 48px;
     box-shadow: 0 0 0 3px rgba(255,255,255,0.1), 0 20px 80px rgba(0,0,0,0.15);
+    flex: none;
+    height: auto;
+    margin: auto 0;
   }
 
   .slide-number {
@@ -709,6 +731,9 @@ const edtechCSS = `
     border-radius: 24px;
     padding: 48px 44px;
     box-shadow: 0 4px 30px rgba(37,99,235,0.06);
+    flex: none;
+    height: auto;
+    margin: auto 0;
   }
 
   .slide-number {
