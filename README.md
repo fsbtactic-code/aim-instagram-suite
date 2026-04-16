@@ -24,10 +24,10 @@
 Установка этого проекта происходит полностью автоматически.
 Просто скопируйте этот промпт и вставьте его в **Claude Code** (или Cursor/Windsurf):
 
-> Склонируй репозиторий: `https://github.com/fsbtactic-code/aim-instagram-suite.git` 
-> Установи все зависимости через `npm run setup` и скомпилируй проект через `npm run build`. 
-> Найди мой файл `claude_desktop_config.json` и добавь этот проект в блок `mcpServers` под именем "aim-instagram-suite". Используй команду `node` и укажи абсолютный путь к скомпилированному файлу `dist/index.js`.
-> После перезагрузи Claude Desktop.
+> Склонируй репозиторий `https://github.com/fsbtactic-code/aim-instagram-suite.git` в новую папку "AIM-Suite" в моих Документах (или на рабочем столе).
+> Перейди в эту папку, установи все зависимости через `npm run setup` и скомпилируй проект через `npm run build`. 
+> Найди конфиг `claude_desktop_config.json`, добавь в `mcpServers` сервер "aim-instagram-suite": команда `node`, аргумент — абсолютный путь к `dist/index.js` в папке, куда мы только что склонировали.
+> Перезагрузи Claude Desktop.
 
 После выполнения промпта все инструменты `aim_` (рендеринг каруселей, анализ видео и т.д.) будут готовы к работе!
 
