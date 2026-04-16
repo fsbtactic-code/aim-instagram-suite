@@ -1,0 +1,27 @@
+description = "🎨 ШАГ 2: Отрендерить карусель в PNG файлы (1080x1080 или 1080x1350)"
+
+prompt = """
+Используй инструмент aim_render_premium_carousel для рендера карусели в PNG.
+
+Входные данные: {{args}}
+
+Обязательные параметры:
+- slidesData — JSON слайдов (из /aim:draft_carousel или вставленный напрямую)
+- theme — тема дизайна (число 1-8):
+    1 = ✨ Glassmorphism — матовое стекло, фиолетовый
+    2 = 💥 Neo-Brutalism — кислотный, чёрные тени
+    3 = 🤍 Minimalist Elegance — журнальный, бежевый
+    4 = 💚 Dark Cyberpunk — неон, сетка кода
+    5 = 🍎 Apple Premium — чёрный/белый градиент
+    6 = 🌈 Y2K / Acid — ретро-футуризм, хром
+    7 = 🔵 EdTech / Trust — синий, корпоративный
+    8 = 🎯 Custom Brand — кастомный (нужен brandColorOverlay)
+- outputDir — папка для сохранения PNG
+
+Опционально:
+- format — square (1080x1080) или portrait (1080x1350), по умолчанию square
+- globalCta — текст CTA-баннера на каждый слайд (например: "Напиши СТАРТ в директ")
+- brandColorOverlay — CSS из /aim:brand_colors
+
+Если JSON слайдов нет — предложи сначала создать их через /aim:draft_carousel.
+"""

@@ -1,0 +1,18 @@
+description = "📐 Библиотека из 12 доказанных вирусных структур каруселей"
+
+prompt = """
+Используй инструмент aim_viral_structure для работы с библиотекой структур.
+
+Входные данные: {{args}}
+
+Если аргументы не указаны — покажи все 12 доступных структур с описанием.
+
+Доступные structureId:
+  open-loop · listicle · before-after · myth-busting · step-by-step
+  case-study · hot-take · checklist-audit · a-vs-b · day-in-life · faq · story-arc
+
+Если пользователь указал тему (topic) — адаптируй шаблон под неё.
+Если указал structureId — покажи детальный шаблон со слайдами.
+
+После показа предложи создать карусель командой /aim:draft_carousel.
+"""
