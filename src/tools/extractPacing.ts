@@ -60,11 +60,11 @@ export async function extractPacing(input: ExtractPacingInput): Promise<string> 
     },
 
     visualContext: {
-      gridImage: {
+      gridImages: media.gridImages.map((base64, index) => ({
         mimeType: 'image/jpeg',
-        base64: media.gridBase64,
-        description: 'Репрезентативные кадры видео для контекста',
-      },
+        base64,
+        description: `Сетка контекста (часть ${index + 1})`,
+      })),
     },
 
     analysisRequest: `

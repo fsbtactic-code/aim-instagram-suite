@@ -33,15 +33,15 @@ export async function evaluateVideo(input: EvaluateVideoInput): Promise<string> 
       segmentCount: media.transcript.segments.length,
       fullText: media.transcriptText,
     },
-    // GRID: одна картинка вместо множества
+    // GRIDS: массив из нескольких сеток
     visualAnalysis: {
       sceneCount: media.sceneTimecodes.length,
       timecodes: media.sceneTimecodes,
-      gridImage: {
+      gridImages: media.gridImages.map((base64, index) => ({
         mimeType: 'image/jpeg',
-        base64: media.gridBase64,
-        description: `Сетка из ${media.sceneTimecodes.length} ключевых кадров видео`,
-      },
+        base64,
+        description: `Сетка кадров (ч.${index + 1} из ${media.gridImages.length})`,
+      })),
     },
     // Задача для LLM
     analysisRequest: `
@@ -52,8 +52,8 @@ export async function evaluateVideo(input: EvaluateVideoInput): Promise<string> 
 ## ТРАНСКРИПТ (текст видео):
 ${media.transcriptText}
 
-## ВИЗУАЛЬНЫЙ КОНТЕКСТ (сетка ключевых кадров):
-[Смотри прикреплённую сетку кадров с таймкодами]
+## ВИЗУАЛЬНЫЙ КОНТЕКСТ (сетки ключевых кадров):
+[Смотри прикреплённый набор картинок-сеток с таймкодами (слева-направо, сверху-вниз)]
 
 ---
 

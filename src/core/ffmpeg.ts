@@ -50,7 +50,7 @@ export async function extractSceneFrames(
   videoPath: string,
   outDir: string,
   threshold = 0.3,
-  maxFrames = 16,
+  maxFrames = 90,
 ): Promise<{ framePaths: string[]; timecodes: string[] }> {
   if (!fs.existsSync(outDir)) {
     fs.mkdirSync(outDir, { recursive: true });

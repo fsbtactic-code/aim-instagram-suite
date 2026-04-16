@@ -58,11 +58,11 @@ export async function scoreVirality(input: ScoreViralityInput): Promise<string> 
     visualAnalysis: {
       sceneCount: media.sceneTimecodes.length,
       timecodes: media.sceneTimecodes,
-      gridImage: {
+      gridImages: media.gridImages.map((base64, index) => ({
         mimeType: 'image/jpeg',
-        base64: media.gridBase64,
-        description: 'Сетка ключевых кадров для визуального анализа',
-      },
+        base64,
+        description: `Сетка из ключевых кадров (часть ${index + 1})`,
+      })),
     },
 
     scoringWeights: Object.fromEntries(

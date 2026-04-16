@@ -54,11 +54,11 @@ export async function analyzeHook(input: AnalyzeHookInput): Promise<string> {
     visualHook: {
       sceneCount: media.sceneTimecodes.length,
       timecodes: media.sceneTimecodes,
-      gridImage: {
+      gridImages: media.gridImages.map((base64, index) => ({
         mimeType: 'image/jpeg',
-        base64: media.gridBase64,
-        description: 'Ключевые кадры первых 5 секунд видео',
-      },
+        base64,
+        description: `Сетка кадров хука (часть ${index + 1})`,
+      })),
     },
 
     analysisRequest: `

@@ -630,45 +630,49 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const content: Array<{ type: string; text?: string; data?: string; mimeType?: string }> = [];
     const textOnly = { ...parsedResult };
 
-    // Извлекаем base64 изображения (из видео-инструментов и Carousel-анализатора)
-    let imageBase64: string | null = null;
-    let imageMime = 'image/jpeg';
+    // Извлекаем массивы base64 изображений (из видео-инструментов)
+    let imagesToPush: Array<{ base64: string; mimeType: string }> = [];
 
-    if (parsedResult.visualAnalysis?.gridImage?.base64) {
-      imageBase64 = parsedResult.visualAnalysis.gridImage.base64;
-      imageMime = parsedResult.visualAnalysis.gridImage.mimeType ?? 'image/jpeg';
-      textOnly.visualAnalysis = { ...parsedResult.visualAnalysis, gridImage: '[base64 image attached]' };
-    } else if (parsedResult.visualHook?.gridImage?.base64) {
-      imageBase64 = parsedResult.visualHook.gridImage.base64;
-      imageMime = parsedResult.visualHook.gridImage.mimeType ?? 'image/jpeg';
-      textOnly.visualHook = { ...parsedResult.visualHook, gridImage: '[base64 image attached]' };
-    } else if (parsedResult.visualContext?.gridImage?.base64) {
-      imageBase64 = parsedResult.visualContext.gridImage.base64;
-      imageMime = parsedResult.visualContext.gridImage.mimeType ?? 'image/jpeg';
-      textOnly.visualContext = { ...parsedResult.visualContext, gridImage: '[base64 image attached]' };
+    // Читаем массив gridImages (evaluateVideo, analyzeHook, etc)
+    const extractGridImages = (obj: any): boolean => {
+      if (obj?.gridImages && Array.isArray(obj.gridImages)) {
+        obj.gridImages.forEach((img: any) => {
+          if (img.base64) {
+            imagesToPush.push({ base64: img.base64, mimeType: img.mimeType ?? 'image/jpeg' });
+            img.base64 = '[base64 image attached]';
+          }
+        });
+        return true;
+      }
+      return false;
+    };
+
+    if (parsedResult.visualAnalysis?.gridImages) {
+      extractGridImages(parsedResult.visualAnalysis);
+    } else if (parsedResult.visualAnalysis?.visualContext?.gridImages) { // analyzeViralReels
+      extractGridImages(parsedResult.visualAnalysis.visualContext);
+    } else if (parsedResult.visualHook?.gridImages) {
+      extractGridImages(parsedResult.visualHook);
+    } else if (parsedResult.visualContext?.gridImages) {
+      extractGridImages(parsedResult.visualContext);
     } else if (parsedResult.collage?.base64) {
       // aim_analyze_carousel / aim_localize_carousel
-      imageBase64 = parsedResult.collage.base64;
-      imageMime = parsedResult.collage.mimeType ?? 'image/jpeg';
+      imagesToPush.push({ base64: parsedResult.collage.base64, mimeType: parsedResult.collage.mimeType ?? 'image/jpeg' });
       textOnly.collage = { ...parsedResult.collage, base64: '[base64 image attached]' };
     } else if (parsedResult.originalCollage?.base64) {
-      imageBase64 = parsedResult.originalCollage.base64;
-      imageMime = parsedResult.originalCollage.mimeType ?? 'image/jpeg';
+      imagesToPush.push({ base64: parsedResult.originalCollage.base64, mimeType: parsedResult.originalCollage.mimeType ?? 'image/jpeg' });
       textOnly.originalCollage = { ...parsedResult.originalCollage, base64: '[base64 image attached]' };
-    } else if (parsedResult.visualAnalysis?.gridImage?.base64 === undefined && parsedResult.scoringWeights) {
-      // aim_score_virality — картинка во вложенной структуре
-      const vi = parsedResult.visualAnalysis;
-      if (vi?.gridImage?.base64) {
-        imageBase64 = vi.gridImage.base64;
-        imageMime = vi.gridImage.mimeType ?? 'image/jpeg';
-        textOnly.visualAnalysis = { ...vi, gridImage: '[base64 image attached]' };
-      }
+    } else if (parsedResult.scoringWeights && parsedResult.visualAnalysis?.gridImages) {
+      // aim_score_virality (одноуровневая вложенность, уже поймается первым if, но на всякий)
+      extractGridImages(parsedResult.visualAnalysis);
     }
 
     content.push({ type: 'text', text: JSON.stringify(textOnly, null, 2) });
 
-    if (imageBase64) {
-      content.push({ type: 'image', data: imageBase64, mimeType: imageMime });
+    if (imagesToPush.length > 0) {
+      imagesToPush.forEach(img => {
+        content.push({ type: 'image', data: img.base64, mimeType: img.mimeType });
+      });
     }
 
     return { content };

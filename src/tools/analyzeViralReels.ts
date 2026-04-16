@@ -44,11 +44,13 @@ export async function analyzeViralReels(input: AnalyzeViralReelsInput): Promise<
     // GRID
     visualAnalysis: {
       sceneCount: media.sceneTimecodes.length,
-      timecodes: media.sceneTimecodes,
-      gridImage: {
-        mimeType: 'image/jpeg',
-        base64: media.gridBase64,
-        description: `Сетка ${media.sceneTimecodes.length} ключевых кадров из ${platform}`,
+      visualContext: {
+        timecodes: media.sceneTimecodes,
+        gridImages: media.gridImages.map((base64, index) => ({
+          mimeType: 'image/jpeg',
+          base64,
+          description: `Сетка ключевых кадров видео (часть ${index + 1})`,
+        })),
       },
     },
 

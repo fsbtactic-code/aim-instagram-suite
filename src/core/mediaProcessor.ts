@@ -23,8 +23,8 @@ export interface ProcessedMedia {
   transcript: TranscriptResult;
   /** Форматированный текст транскрипта для LLM */
   transcriptText: string;
-  /** Base64 JPEG сетки кадров (один запрос к Vision) */
-  gridBase64: string;
+  /** Массив Base64 JPEG сеток кадров (до 10 сеток по 9 кадров) */
+  gridImages: string[];
   /** Таймкоды смены сцен */
   sceneTimecodes: string[];
   /** Путь к видеофайлу (локальный, может быть скачанным) */
@@ -92,11 +92,19 @@ export async function processVideo(
   const { framePaths, timecodes } = await extractSceneFrames(processPath, framesDir);
   console.error(`[AIM] Найдено ${framePaths.length} ключевых кадров`);
 
-  // === Шаг 3: Image Gridding — склейка в одну сетку ===
-  console.error('[AIM] Создаём сетку кадров (Image Grid)...');
-  const gridBuffer = await buildGrid(framePaths, timecodes);
-  const gridBase64 = gridToBase64(gridBuffer);
-  console.error(`[AIM] Сетка создана: ${Math.round(gridBase64.length / 1024)}KB base64`);
+  // === Шаг 3: Image Gridding — склейка в несколько сеток (до 10 штук по 9 кадров) ===
+  console.error('[AIM] Создаём сетки кадров (Image Grids)...');
+  const gridImages: string[] = [];
+  const chunkSize = 9; // Сетка 3x3
+
+  for (let i = 0; i < framePaths.length; i += chunkSize) {
+    const chunkPaths = framePaths.slice(i, i + chunkSize);
+    const chunkTimes = timecodes.slice(i, i + chunkSize);
+    const gridBuffer = await buildGrid(chunkPaths, chunkTimes, { cols: 3 });
+    gridImages.push(gridToBase64(gridBuffer));
+  }
+  
+  console.error(`[AIM] Создано сеток: ${gridImages.length} шт.`);
 
   // Cleanup временных кадров (но не видео — оно нужно вызывающему)
   cleanup(framesDir);
@@ -105,7 +113,7 @@ export async function processVideo(
   return {
     transcript,
     transcriptText,
-    gridBase64,
+    gridImages,
     sceneTimecodes: timecodes,
     localVideoPath,
     wasDownloaded,
@@ -165,16 +173,16 @@ export async function extractPacingData(
 
   // Минимальная сетка для контекста (только 4 кадра)
   const framesDir = path.join(tmpBase, 'frames');
-  const { framePaths, timecodes: frameTimes } = await extractSceneFrames(localVideoPath, framesDir, 0.4, 4);
-  const gridBuffer = await buildGrid(framePaths, frameTimes, { cols: 2 });
-  const gridBase64 = gridToBase64(gridBuffer);
+  const { framePaths, timecodes: frameTimes } = await extractSceneFrames(localVideoPath, framesDir, 0.4, 6);
+  const gridBuffer = await buildGrid(framePaths, frameTimes, { cols: 3 });
+  const gridImages = [gridToBase64(gridBuffer)];
   cleanup(framesDir);
 
   return {
     media: {
       transcript,
       transcriptText,
-      gridBase64,
+      gridImages,
       sceneTimecodes: timecodes.map(t => t.ptsTime),
       localVideoPath,
       wasDownloaded,
