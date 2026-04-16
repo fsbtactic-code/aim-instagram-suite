@@ -1,7 +1,9 @@
 /**
- * AIM Instagram Suite — Core: Slide Layouts
+ * AIM Instagram Suite — Core: Slide Layouts v3
  * 10 уникальных лейаутов слайдов для каруселей.
- * Каждый лейаут — отдельный HTML-шаблон с CSS-классами.
+ * 
+ * v3: Правильная типографическая шкала.
+ *     Все размеры подогнаны под 1080px ширину без autoFit zoom.
  */
 
 export type SlideLayout =
@@ -53,7 +55,6 @@ export function buildCtaBanner(ctaText?: string, defaultCta?: string): string {
   if (!text) return '';
   return `
     <div class="cta-banner" aria-label="Призыв к действию">
-      <span class="cta-arrow">👆</span>
       <span class="cta-text">${escHtml(text)}</span>
     </div>`;
 }
@@ -69,22 +70,25 @@ export function renderStandard(slide: ExtendedSlideData): string {
       ${subtitle ? `<p class="slide-subtitle">${escHtml(subtitle)}</p><div class="divider"></div>` : ''}
       ${body ? `<div class="highlight-box"><p class="slide-body">${nl2br(body)}</p></div>` : ''}
       ${tag ? `<span class="tag">${escHtml(tag)}</span>` : ''}
+
       ${buildCtaBanner(ctaText)}
     </div>`;
 }
 
 // ── ЛЕЙАУТ 2: Hero Number (большая цифра) ────────────────────────────────────
 export function renderHeroNumber(slide: ExtendedSlideData): string {
-  const { title, subtitle, heroNumber, heroUnit, ctaText } = slide;
+  const { title, subtitle, body, heroNumber, heroUnit, emoji, ctaText } = slide;
   return `
     <div class="glass-card layout-hero-number">
       <span class="slide-number">${pad(slide.slideNumber)}</span>
+      ${emoji ? `<span class="emoji-icon" role="img">${escHtml(emoji)}</span>` : ''}
       <div class="hero-stat">
-        <span class="hero-num">${escHtml(heroNumber ?? '?')}</span>
+        <span class="hero-num">${escHtml(heroNumber ?? title ?? '?')}</span>
         ${heroUnit ? `<span class="hero-unit">${escHtml(heroUnit)}</span>` : ''}
       </div>
-      <h1 class="slide-title hero-title">${escHtml(title)}</h1>
       ${subtitle ? `<p class="slide-subtitle">${escHtml(subtitle)}</p>` : ''}
+      ${body ? `<p class="slide-body" style="text-align:center;">${nl2br(body)}</p>` : ''}
+
       ${buildCtaBanner(ctaText)}
     </div>`;
 }
@@ -103,15 +107,30 @@ export function renderGrid2x2(slide: ExtendedSlideData): string {
       ${slide.emoji ? `<span class="emoji-icon" role="img">${escHtml(slide.emoji)}</span>` : ''}
       <h1 class="slide-title">${escHtml(title)}</h1>
       <div class="grid2x2">${cells}</div>
+
       ${buildCtaBanner(ctaText)}
     </div>`;
 }
 
 // ── ЛЕЙАУТ 4: Good / Bad (split: ✅ Хорошо / ❌ Плохо) ──────────────────────
 export function renderGoodBad(slide: ExtendedSlideData): string {
-  const { title, leftBlocks = [], rightBlocks = [], ctaText } = slide;
-  const leftCells = leftBlocks.map(b => `<li class="gb-item gb-good">✅ ${escHtml(b.value)}</li>`).join('');
-  const rightCells = rightBlocks.map(b => `<li class="gb-item gb-bad">❌ ${escHtml(b.value)}</li>`).join('');
+  const { title, blocks = [], leftBlocks, rightBlocks, ctaText } = slide;
+  // Support both: blocks array (2 items) or leftBlocks/rightBlocks
+  let goodItems: string[] = [];
+  let badItems: string[] = [];
+  
+  if (leftBlocks && leftBlocks.length > 0) {
+    goodItems = leftBlocks.map(b => escHtml(b.value));
+    badItems = (rightBlocks || []).map(b => escHtml(b.value));
+  } else if (blocks.length >= 2) {
+    // blocks[0] = good content, blocks[1] = bad content
+    goodItems = [nl2br(blocks[0]?.value || '')];
+    badItems = [nl2br(blocks[1]?.value || '')];
+  }
+  
+  const goodCells = goodItems.map(t => `<li class="gb-item gb-good"><span class="gb-icon">✓</span><span class="gb-text">${t}</span></li>`).join('');
+  const badCells = badItems.map(t => `<li class="gb-item gb-bad"><span class="gb-icon">✗</span><span class="gb-text">${t}</span></li>`).join('');
+  
   return `
     <div class="glass-card layout-good-bad">
       <span class="slide-number">${pad(slide.slideNumber)}</span>
@@ -120,23 +139,33 @@ export function renderGoodBad(slide: ExtendedSlideData): string {
       <div class="gb-split">
         <div class="gb-col">
           <div class="gb-header good-header">✅ Правильно</div>
-          <ul class="gb-list">${leftCells}</ul>
+          <ul class="gb-list">${goodCells}</ul>
         </div>
         <div class="gb-divider"></div>
         <div class="gb-col">
           <div class="gb-header bad-header">❌ Ошибка</div>
-          <ul class="gb-list">${rightCells}</ul>
+          <ul class="gb-list">${badCells}</ul>
         </div>
       </div>
+
       ${buildCtaBanner(ctaText)}
     </div>`;
 }
 
 // ── ЛЕЙАУТ 5: Before / After (верхний / нижний split) ───────────────────────
 export function renderBeforeAfter(slide: ExtendedSlideData): string {
-  const { title, leftBlocks = [], rightBlocks = [], ctaText } = slide;
-  const beforeText = leftBlocks.map(b => escHtml(b.value)).join(' · ');
-  const afterText  = rightBlocks.map(b => escHtml(b.value)).join(' · ');
+  const { title, blocks = [], leftBlocks, rightBlocks, ctaText } = slide;
+  let beforeText = '';
+  let afterText = '';
+  
+  if (leftBlocks && leftBlocks.length > 0) {
+    beforeText = leftBlocks.map(b => escHtml(b.value)).join('<br>');
+    afterText = (rightBlocks || []).map(b => escHtml(b.value)).join('<br>');
+  } else if (blocks.length >= 2) {
+    beforeText = nl2br(blocks[0]?.value || '');
+    afterText = nl2br(blocks[1]?.value || '');
+  }
+  
   return `
     <div class="glass-card layout-before-after">
       <span class="slide-number">${pad(slide.slideNumber)}</span>
@@ -147,12 +176,13 @@ export function renderBeforeAfter(slide: ExtendedSlideData): string {
           <div class="ba-label">ДО</div>
           <p class="ba-text">${beforeText || '—'}</p>
         </div>
-        <div class="ba-arrow">➜</div>
+        <div class="ba-arrow">↓</div>
         <div class="ba-section ba-after">
           <div class="ba-label">ПОСЛЕ</div>
           <p class="ba-text">${afterText || '—'}</p>
         </div>
       </div>
+
       ${buildCtaBanner(ctaText)}
     </div>`;
 }
@@ -172,19 +202,21 @@ export function renderSteps3(slide: ExtendedSlideData): string {
       ${slide.emoji ? `<span class="emoji-icon" role="img">${escHtml(slide.emoji)}</span>` : ''}
       <h1 class="slide-title">${escHtml(title)}</h1>
       <div class="steps-row">${steps}</div>
+
       ${buildCtaBanner(ctaText)}
     </div>`;
 }
 
 // ── ЛЕЙАУТ 7: Quote (полноэкранная цитата) ───────────────────────────────────
 export function renderQuote(slide: ExtendedSlideData): string {
-  const { quoteText, quoteAuthor, ctaText } = slide;
+  const { quoteText, quoteAuthor, subtitle, ctaText } = slide;
   return `
     <div class="glass-card layout-quote">
       <span class="slide-number">${pad(slide.slideNumber)}</span>
       <div class="quote-mark">"</div>
       <blockquote class="quote-text">${nl2br(quoteText ?? slide.title)}</blockquote>
-      ${quoteAuthor ? `<div class="quote-author">— ${escHtml(quoteAuthor)}</div>` : ''}
+      ${quoteAuthor || subtitle ? `<div class="quote-author">— ${escHtml(quoteAuthor || subtitle || '')}</div>` : ''}
+
       ${buildCtaBanner(ctaText)}
     </div>`;
 }
@@ -194,7 +226,7 @@ export function renderChecklist(slide: ExtendedSlideData): string {
   const { title, subtitle, blocks = [], ctaText } = slide;
   const items = blocks.map(b => `
     <div class="check-item ${b.accent ? 'check-item--accent' : ''}">
-      <span class="check-mark">${b.accent ? '🔥' : '☐'}</span>
+      <span class="check-mark">${b.accent ? '🔥' : '☑'}</span>
       <span class="check-text">${nl2br(b.value)}</span>
     </div>`).join('');
   return `
@@ -204,6 +236,7 @@ export function renderChecklist(slide: ExtendedSlideData): string {
       <h1 class="slide-title">${escHtml(title)}</h1>
       ${subtitle ? `<p class="slide-subtitle">${escHtml(subtitle)}</p>` : ''}
       <div class="checklist">${items}</div>
+
       ${buildCtaBanner(ctaText)}
     </div>`;
 }
@@ -211,7 +244,6 @@ export function renderChecklist(slide: ExtendedSlideData): string {
 // ── ЛЕЙАУТ 9: Comparison Table (A vs B таблица) ──────────────────────────────
 export function renderComparison(slide: ExtendedSlideData): string {
   const { title, subtitle, leftBlocks = [], rightBlocks = [], blocks = [], ctaText } = slide;
-  // blocks[0].label = заголовок A, blocks[1].label = заголовок B
   const headerA = blocks[0]?.label ?? 'Вариант A';
   const headerB = blocks[1]?.label ?? 'Вариант B';
   const maxRows = Math.max(leftBlocks.length, rightBlocks.length);
@@ -233,6 +265,7 @@ export function renderComparison(slide: ExtendedSlideData): string {
         </div>
         ${rows}
       </div>
+
       ${buildCtaBanner(ctaText)}
     </div>`;
 }
@@ -275,55 +308,41 @@ export function renderSlideLayout(slide: ExtendedSlideData): string {
 /** CSS для всех лейаутов — подключается поверх темы */
 export const LAYOUTS_CSS = `
 /* ══════════════════════════════════════════════════════
-   AIM LAYOUT SYSTEM — 10 лейаутов для слайдов карусели
+   AIM LAYOUT SYSTEM v3 — Правильные размеры для 1080px
    ══════════════════════════════════════════════════════ */
 
-/* CTA Banner — персистентный на каждом слайде */
+/* Spacer removed — content centers via justify-content: center on .glass-card */
+
+/* CTA Banner — тонкий watermark внизу */
 .cta-banner {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 15px;
-  padding: 20px 40px;
-  background: transparent;
-  font-size: 26px;
-  font-weight: 500;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 400;
   color: inherit;
-  opacity: 0.35;
+  opacity: 0.3;
   letter-spacing: 0.03em;
-  z-index: 10;
-  border-bottom-left-radius: inherit;
-  border-bottom-right-radius: inherit;
+  margin-top: auto;
+  white-space: nowrap;
 }
 .cta-banner--large {
-  font-size: 40px;
-  padding: 40px 60px;
-  opacity: 0.8;
-  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
-  border-radius: 40px;
-  position: relative;
-  margin-top: 60px;
-  bottom: auto;
-  left: auto;
-  right: auto;
-  border: 1px solid rgba(255,255,255,0.3);
+  font-size: 28px;
+  font-weight: 600;
+  padding: 24px 36px;
+  opacity: 0.75;
+  background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+  border-radius: 20px;
+  margin-top: 28px;
+  border: 1px solid rgba(255,255,255,0.15);
+  white-space: normal;
+  text-align: center;
 }
-.cta-arrow { font-size: 50px; }
-.cta-text { flex: 1; text-align: center; white-space: nowrap; }
-
-/* Отступ для glass-card чтобы CTA не перекрывал контент */
-.glass-card { padding-bottom: 140px; }
-.layout-cta-final .glass-card,
-.glass-card.layout-cta-final { padding-bottom: 60px; }
+.cta-text { text-align: center; }
 
 /* ── LAYOUT: Hero Number ─────────────────────────────── */
 .layout-hero-number {
-  display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
@@ -332,305 +351,301 @@ export const LAYOUTS_CSS = `
   display: flex;
   align-items: baseline;
   justify-content: center;
-  gap: 20px;
-  margin: 40px 0 30px;
+  gap: 12px;
+  margin: 20px 0;
 }
 .hero-num {
-  font-size: 300px;
+  font-size: 160px;
   font-weight: 900;
   line-height: 1;
-  background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%);
+  background: linear-gradient(135deg, currentColor 0%, rgba(255,255,255,0.6) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  letter-spacing: -4px;
+  letter-spacing: -3px;
 }
 .hero-unit {
-  font-size: 90px;
+  font-size: 48px;
   font-weight: 700;
-  opacity: 0.7;
-  color: inherit;
-  -webkit-text-fill-color: currentColor;
+  opacity: 0.6;
 }
-.hero-title { font-size: 70px !important; text-align: center; }
 
 /* ── LAYOUT: Grid 2×2 ───────────────────────────────── */
-.layout-grid2x2 .slide-title { font-size: 70px; margin-bottom: 50px; }
 .grid2x2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 30px;
+  gap: 16px;
   width: 100%;
   flex: 1;
+  margin-top: 16px;
 }
 .grid-cell {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 40px;
-  padding: 40px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 24px 20px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 8px;
+  justify-content: center;
 }
 .grid-cell--accent {
-  background: rgba(255,255,255,0.15);
-  border-color: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.2);
 }
 .grid-label {
-  font-size: 28px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  opacity: 0.6;
+  letter-spacing: 0.08em;
+  opacity: 0.5;
 }
 .grid-value {
-  font-size: 43px;
+  font-size: 24px;
   font-weight: 600;
-  line-height: 1.4;
-  flex: 1; min-width: 0; word-wrap: break-word;
+  line-height: 1.35;
+  word-wrap: break-word;
 }
 
 /* ── LAYOUT: Good / Bad ─────────────────────────────── */
-.layout-good-bad .slide-title { font-size: 70px; margin-bottom: 40px; }
 .gb-split {
   display: flex;
   gap: 0;
   width: 100%;
   flex: 1;
   align-items: stretch;
+  margin-top: 16px;
 }
-.gb-col { flex: 1; display: flex; flex-direction: column; gap: 20px; padding: 30px; }
+.gb-col { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 16px; }
 .gb-divider {
-  width: 2px;
-  background: rgba(255,255,255,0.15);
+  width: 1px;
+  background: rgba(255,255,255,0.12);
   align-self: stretch;
-  margin: 20px 0;
+  margin: 12px 0;
 }
 .gb-header {
-  font-size: 33px;
+  font-size: 18px;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 20px 30px;
-  border-radius: 20px;
-  margin-bottom: 4px;
+  letter-spacing: 0.06em;
+  padding: 12px 16px;
+  border-radius: 12px;
+  text-align: center;
 }
-.good-header { background: rgba(34,197,94,0.2); color: #86efac; border: 1px solid rgba(34,197,94,0.3); }
-.bad-header  { background: rgba(239,68,68,0.2); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
-.gb-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 20px; }
+.good-header { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.25); }
+.bad-header  { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.25); }
+.gb-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
 .gb-item {
-  font-size: 38px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 22px;
   line-height: 1.4;
-  padding: 20px 25px;
-  border-radius: 20px;
-  flex: 1; min-width: 0; word-wrap: break-word;
+  padding: 14px 16px;
+  border-radius: 12px;
+  word-wrap: break-word;
 }
-.gb-good { background: rgba(34,197,94,0.1); color: rgba(255,255,255,0.9); }
-.gb-bad  { background: rgba(239,68,68,0.1);  color: rgba(255,255,255,0.75); }
+.gb-icon { font-size: 20px; font-weight: 900; flex-shrink: 0; margin-top: 2px; }
+.gb-text { flex: 1; min-width: 0; }
+.gb-good { background: rgba(34,197,94,0.08); }
+.gb-good .gb-icon { color: #4ade80; }
+.gb-bad  { background: rgba(239,68,68,0.08); }
+.gb-bad .gb-icon { color: #f87171; }
 
 /* ── LAYOUT: Before / After ─────────────────────────── */
-.layout-before-after .slide-title { font-size: 65px; }
 .ba-container {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 12px;
   width: 100%;
   flex: 1;
   justify-content: center;
-  align-items: stretch;
+  margin-top: 16px;
 }
 .ba-arrow {
   text-align: center;
-  font-size: 70px;
-  opacity: 0.5;
-  transform: rotate(90deg);
+  font-size: 32px;
+  opacity: 0.4;
 }
 .ba-section {
   flex: 1;
-  border-radius: 40px;
-  padding: 40px 50px;
+  border-radius: 20px;
+  padding: 24px 28px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
 }
-.ba-before { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.25); }
-.ba-after  { background: rgba(34,197,94,0.12);  border: 1px solid rgba(34,197,94,0.3); }
+.ba-before { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); }
+.ba-after  { background: rgba(34,197,94,0.08);  border: 1px solid rgba(34,197,94,0.2); }
 .ba-label {
-  font-size: 28px;
+  font-size: 15px;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   opacity: 0.7;
 }
-.ba-before .ba-label { color: #fca5a5; }
-.ba-after  .ba-label { color: #86efac; }
-.ba-text { font-size: 43px; font-weight: 600; line-height: 1.5; flex: 1; min-width: 0; word-wrap: break-word; }
+.ba-before .ba-label { color: #f87171; }
+.ba-after  .ba-label { color: #4ade80; }
+.ba-text { font-size: 24px; font-weight: 500; line-height: 1.5; word-wrap: break-word; }
 
 /* ── LAYOUT: Steps-3 ────────────────────────────────── */
-.layout-steps3 .slide-title { font-size: 65px; margin-bottom: 40px; }
 .steps-row {
   display: flex;
-  gap: 30px;
+  gap: 16px;
   width: 100%;
   flex: 1;
   align-items: stretch;
+  margin-top: 16px;
 }
 .step-card {
   flex: 1;
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 30px;
-  padding: 30px 25px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 24px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 15px;
+  gap: 10px;
   min-width: 0;
 }
 .step-num {
-  width: 100px;
-  height: 100px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.15);
-  border: 2px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.1);
+  border: 2px solid rgba(255,255,255,0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 50px;
+  font-size: 24px;
   font-weight: 900;
   flex-shrink: 0;
 }
 .step-label {
-  font-size: 30px;
+  font-size: 16px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  opacity: 0.65;
+  letter-spacing: 0.06em;
+  opacity: 0.6;
 }
-.step-body { font-size: 38px; line-height: 1.4; flex: 1; min-width: 0; word-wrap: break-word; }
+.step-body { font-size: 20px; line-height: 1.4; word-wrap: break-word; min-width: 0; }
 
 /* ── LAYOUT: Quote ──────────────────────────────────── */
 .layout-quote {
-  display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
 }
 .quote-mark {
-  font-size: 300px;
-  line-height: 0.6;
-  opacity: 0.15;
+  font-size: 140px;
+  line-height: 0.7;
+  opacity: 0.12;
   font-family: Georgia, serif;
-  margin-bottom: 40px;
-  margin-top: 60px;
+  margin-bottom: 12px;
 }
 .quote-text {
-  font-size: 80px;
-  font-weight: 700;
+  font-size: 44px;
+  font-weight: 600;
   line-height: 1.4;
   font-style: italic;
-  max-width: 90%;
+  max-width: 95%;
   flex: 1;
   display: flex;
   align-items: center;
 }
 .quote-author {
-  font-size: 40px;
-  opacity: 0.6;
-  margin-top: 40px;
+  font-size: 22px;
+  opacity: 0.5;
+  margin-top: 20px;
   font-style: normal;
 }
 
 /* ── LAYOUT: Checklist ──────────────────────────────── */
-.layout-checklist .slide-title { font-size: 70px; }
 .checklist {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 10px;
   width: 100%;
   flex: 1;
-  overflow: hidden;
   justify-content: center;
+  margin-top: 12px;
 }
 .check-item {
   display: flex;
-  align-items: flex-start;
-  gap: 25px;
-  padding: 20px 30px;
-  background: rgba(255,255,255,0.06);
-  border-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.08);
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.06);
 }
 .check-item--accent {
-  background: rgba(255,255,255,0.12);
-  border-color: rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.18);
 }
-.check-mark { font-size: 45px; flex-shrink: 0; margin-top: 2px; }
-.check-text { font-size: 40px; line-height: 1.4; flex: 1; min-width: 0; word-wrap: break-word; }
+.check-mark { font-size: 24px; flex-shrink: 0; }
+.check-text { font-size: 24px; line-height: 1.35; flex: 1; min-width: 0; word-wrap: break-word; }
 
 /* ── LAYOUT: Comparison Table ───────────────────────── */
-.layout-comparison .slide-title { font-size: 65px; margin-bottom: 35px; }
 .cmp-list {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 10px;
   width: 100%;
   flex: 1;
+  margin-top: 12px;
 }
 .cmp-header-row {
   display: flex;
-  gap: 15px;
+  gap: 10px;
   width: 100%;
 }
 .cmp-row {
   display: flex;
-  gap: 15px;
+  gap: 10px;
   width: 100%;
 }
 .cmp-head {
   flex: 1;
-  font-size: 33px;
+  font-size: 18px;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 25px 35px;
+  letter-spacing: 0.06em;
+  padding: 14px 20px;
   text-align: center;
-  border-radius: 20px;
+  border-radius: 14px;
 }
 .cmp-card {
   flex: 1;
-  font-size: 38px;
-  padding: 25px 35px;
+  font-size: 22px;
+  padding: 16px 20px;
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 20px;
+  border-radius: 14px;
   word-wrap: break-word;
   min-width: 0;
 }
-.cmp-ha { background: rgba(99,102,241,0.25); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); }
-.cmp-hb { background: rgba(245,158,11,0.2); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
-.cmp-a { background: rgba(99,102,241,0.06); border: 1px solid rgba(99,102,241,0.15); }
-.cmp-b { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.15); }
+.cmp-ha { background: rgba(99,102,241,0.2); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); }
+.cmp-hb { background: rgba(245,158,11,0.15); color: #fcd34d; border: 1px solid rgba(245,158,11,0.25); }
+.cmp-a { background: rgba(99,102,241,0.05); border: 1px solid rgba(99,102,241,0.12); }
+.cmp-b { background: rgba(245,158,11,0.05); border: 1px solid rgba(245,158,11,0.12); }
 
 /* ── LAYOUT: CTA Final ──────────────────────────────── */
 .layout-cta-final {
-  display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding-bottom: 60px !important;
 }
 .cta-main-title {
-  font-size: 90px !important;
+  font-size: 56px !important;
   text-align: center;
-  max-width: 90%;
+  max-width: 95%;
 }
-.emoji-large { font-size: 160px !important; margin-bottom: 30px; }
+.emoji-large { font-size: 72px !important; margin-bottom: 16px; }
 `;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

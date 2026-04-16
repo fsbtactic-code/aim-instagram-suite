@@ -1,7 +1,9 @@
 /**
- * AIM Instagram Suite — Core: HTML Renderer
+ * AIM Instagram Suite — Core: HTML Renderer v3
  * Puppeteer-рендер HTML-слайдов в PNG.
- * v2: поддержка 10 лейаутов + CTA-баннер на каждом слайде.
+ * 
+ * v3: Убран autoFit zoom. Минимальный safety-net для дебага.
+ *     Типографика правильная изначально — без рантайм-хаков.
  */
 
 import * as path from 'path';
@@ -145,58 +147,13 @@ function buildSlideHTML(
   width: number,
   height: number,
 ): string {
-  const autoFitScript = `
+  // Минимальный safety-net: только лог-дебаг, НИКАКОГО zoom/scale
+  const debugScript = `
   <script>
-    (function autoFit() {
-      const container = document.querySelector('.glass-card') || document.querySelector('.slide') || document.body;
-      const getContainerOverflow = () => {
-         // Для .slide (поскольку он height: 100%)
-         if (container.classList.contains('slide')) {
-           return (container.scrollHeight > container.clientHeight + 5) || (container.scrollWidth > container.clientWidth + 5);
-         }
-         // Для .glass-card (может и не иметь фикс высоты, поэтому смотрим на родительский .slide)
-         const parentSlide = container.closest('.slide');
-         if (parentSlide) {
-           return (parentSlide.scrollHeight > parentSlide.clientHeight + 5) || (parentSlide.scrollWidth > parentSlide.clientWidth + 5);
-         }
-         return (document.body.scrollHeight > window.innerHeight + 5) || (document.body.scrollWidth > window.innerWidth + 5);
-      };
-
-      // 1. Фикс для заголовков (высота + ширина)
-      const title = document.querySelector('.slide-title, h1, .cta-main-title');
-      if (title) {
-        let size = parseInt(window.getComputedStyle(title).fontSize) || 80;
-        let p = title.parentElement;
-        while((title.clientHeight > window.innerHeight * 0.45 || 
-               title.scrollWidth > (title.clientWidth || (p && p.clientWidth) || window.innerWidth * 0.85)) && size > 40) {
-          size -= 2;
-          title.style.setProperty('font-size', size + 'px', 'important');
-          title.style.setProperty('line-height', '1.1', 'important');
-        }
-      }
-      
-      // 2. Фикс для текстов
-      const bodies = document.querySelectorAll('.slide-body, p, .check-text, .cmp-cell, .step-body, .card-text');
-      bodies.forEach(b => {
-        let size = parseInt(window.getComputedStyle(b).fontSize) || 30;
-        let pw = b.parentElement ? b.parentElement.clientWidth : window.innerWidth;
-        while((b.scrollWidth > (b.clientWidth || pw)) && size > 24) {
-          size -= 1;
-          b.style.setProperty('font-size', size + 'px', 'important');
-        }
-      });
-      
-      // 3. Финальный глобальный скейлинг всей карточки
-      if (container) {
-         let scale = 1.0;
-         while(getContainerOverflow() && scale > 0.5) {
-            scale -= 0.05;
-            container.style.zoom = scale;
-         }
-         // Debug log for Claude if it still overflows
-         if (getContainerOverflow()) {
-            console.log('[AIM-DEBUG] Layout Overflow on Slide ' + ${slide.slideNumber} + ': scrollHeight=' + container.scrollHeight + ', clientHeight=' + container.clientHeight + ' | scrollWidth=' + container.scrollWidth + ', clientWidth=' + container.clientWidth);
-         }
+    (function debugCheck() {
+      var gc = document.querySelector('.glass-card');
+      if (gc && gc.scrollHeight > gc.clientHeight + 4) {
+        console.log('[AIM-DEBUG] VertOverflow Slide ${slide.slideNumber}: scrollH=' + gc.scrollHeight + ' clientH=' + gc.clientHeight);
       }
     })();
   </script>`;
@@ -206,13 +163,13 @@ function buildSlideHTML(
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { width: ${width}px; height: ${height}px; overflow: hidden; }
     h1, h2, h3, .slide-title, .cta-main-title {
-      text-wrap: balance; /* Магическое свойство для красивых переносов заголовков */
+      text-wrap: balance;
       overflow-wrap: break-word;
       word-wrap: break-word;
       word-break: break-word;
     }
-    p, .slide-body, .check-text {
-      text-wrap: pretty; /* Избавляет от висячих 'вдов' в последней строке текста */
+    p, .slide-body, .check-text, .ba-text, .grid-value, .step-body, .gb-text, .cmp-card {
+      text-wrap: pretty;
       overflow-wrap: break-word;
     }
     :root { --slide-width: ${width}px; --slide-height: ${height}px; }
@@ -233,7 +190,7 @@ function buildSlideHTML(
   </style>
 </head>
 <body>${slide.customHtml}
-${autoFitScript}
+${debugScript}
 </body>
 </html>`;
   }
@@ -268,7 +225,7 @@ ${autoFitScript}
     <div class="blob blob-2"    aria-hidden="true"></div>
     ${innerHTML}
   </div>
-  ${autoFitScript}
+  ${debugScript}
 </body>
 </html>`;
 }
