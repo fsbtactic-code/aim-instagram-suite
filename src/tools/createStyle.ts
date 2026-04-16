@@ -222,11 +222,11 @@ function getTextColor(base: string) {
 }
 
 function getShadow(mood: string, primary: string): string {
-  if (mood === 'luxury') return \`0 8px 32px rgba(0,0,0,0.6)\`;
-  if (mood === 'energetic') return \`4px 4px 0px \${primary}\`;
-  if (mood === 'dark') return \`0 0 20px \${primary}40\`;
-  if (mood === 'playful') return \`6px 6px 0px \${primary}\`;
-  return \`0 4px 16px rgba(0,0,0,0.2)\`;
+  if (mood === 'luxury') return `0 8px 32px rgba(0,0,0,0.6)`;
+  if (mood === 'energetic') return `4px 4px 0px ${primary}`;
+  if (mood === 'dark') return `0 0 20px ${primary}40`;
+  if (mood === 'playful') return `6px 6px 0px ${primary}`;
+  return `0 4px 16px rgba(0,0,0,0.2)`;
 }
 
 // ── Генератор SVG паттернов ─────────────────────────────────────────────────
@@ -237,36 +237,36 @@ function getBackgroundPattern(mood: string, primaryHex: string, secondaryHex: st
   
   // Minimal: subtle dot grid
   if (mood === 'minimal') {
-    return \`data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1z' fill='\${pColor}' fill-opacity='0.2' fill-rule='evenodd'/%3E%3C/svg%3E\`;
+    return `data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1z' fill='${pColor}' fill-opacity='0.2' fill-rule='evenodd'/%3E%3C/svg%3E`;
   }
   
   // Luxury: elegant diagonal lines
   if (mood === 'luxury') {
-    return \`data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z' fill='\${pColor}' fill-opacity='0.05'/%3E%3C/g%3E%3C/svg%3E\`;
+    return `data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z' fill='${pColor}' fill-opacity='0.05'/%3E%3C/g%3E%3C/svg%3E`;
   }
   
   // Energetic: Halftone / thick stripes and dots
   if (mood === 'energetic') {
-    return \`data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z' fill='\${pColor}' fill-opacity='0.06' fill-rule='evenodd'/%3E%3C/svg%3E\`;
+    return `data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z' fill='${pColor}' fill-opacity='0.06' fill-rule='evenodd'/%3E%3C/svg%3E`;
   }
   
   // Dark / Cyberpunk: High tech grid
   if (mood === 'dark') {
-    return \`data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h40v40H0V0zm1 1h38v38H1V1z' fill='\${sColor}' fill-opacity='0.08' fill-rule='evenodd'/%3E%3C/svg%3E\`;
+    return `data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h40v40H0V0zm1 1h38v38H1V1z' fill='${sColor}' fill-opacity='0.08' fill-rule='evenodd'/%3E%3C/svg%3E`;
   }
   
   // Warm: Soft overlapping circles/waves (Topography)
   if (mood === 'warm') {
-    return \`data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 50c-11.046 0-20-8.954-20-20s8.954-20 20-20 20 8.954 20 20-8.954 20-20 20zm0-2c9.941 0 18-8.059 18-18S59.941 12 50 12 32 20.059 32 30s8.059 18 18 18z' fill='\${pColor}' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E\`;
+    return `data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 50c-11.046 0-20-8.954-20-20s8.954-20 20-20 20 8.954 20 20-8.954 20-20 20zm0-2c9.941 0 18-8.059 18-18S59.941 12 50 12 32 20.059 32 30s8.059 18 18 18z' fill='${pColor}' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E`;
   }
   
   // Playful: Zigzags and confetti
   if (mood === 'playful') {
-    return \`data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54.627 0l1.414 1.414-2.828 2.828 2.828 2.828-1.414 1.414-2.828-2.828-2.828 2.828-1.414-1.414 2.828-2.828-2.828-2.828 1.414-1.414 2.828 2.828 2.828-2.828zM24.627 30l1.414 1.414-2.828 2.828 2.828 2.828-1.414 1.414-2.828-2.828-2.828 2.828-1.414-1.414 2.828-2.828-2.828-2.828 1.414-1.414 2.828 2.828 2.828-2.828z' fill='\${pColor}' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E\`;
+    return `data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54.627 0l1.414 1.414-2.828 2.828 2.828 2.828-1.414 1.414-2.828-2.828-2.828 2.828-1.414-1.414 2.828-2.828-2.828-2.828 1.414-1.414 2.828 2.828 2.828-2.828zM24.627 30l1.414 1.414-2.828 2.828 2.828 2.828-1.414 1.414-2.828-2.828-2.828 2.828-1.414-1.414 2.828-2.828-2.828-2.828 1.414-1.414 2.828 2.828 2.828-2.828z' fill='${pColor}' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E`;
   }
 
   // Default neutral pattern
-  return \`data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='2' cy='2' r='2' fill='\${pColor}' fill-opacity='0.05'/%3E%3C/svg%3E\`;
+  return `data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='2' cy='2' r='2' fill='${pColor}' fill-opacity='0.05'/%3E%3C/svg%3E`;
 }
 
 export async function createStyle(input: CreateStyleInput): Promise<string> {

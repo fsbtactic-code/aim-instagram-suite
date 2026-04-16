@@ -96,7 +96,7 @@ const glassmorphismCSS = `
   }
 
   .slide-title {
-    font-size: clamp(163px, 3.5vw, 238px);
+    font-size: 90px;
     font-weight: 700;
     line-height: 1.25;
     color: #ffffff;
@@ -105,7 +105,7 @@ const glassmorphismCSS = `
   }
 
   .slide-subtitle {
-    font-size: clamp(88px, 1.8vw, 113px);
+    font-size: 48px;
     font-weight: 500;
     color: rgba(139,92,246,0.95);
     margin-bottom: 40px;
@@ -113,7 +113,7 @@ const glassmorphismCSS = `
   }
 
   .slide-body {
-    font-size: clamp(83px, 1.6vw, 100px);
+    font-size: 46px;
     font-weight: 400;
     line-height: 1.7;
     color: rgba(255,255,255,0.75);
@@ -192,7 +192,7 @@ const neoBrutalismCSS = `
   }
 
   .slide-title {
-    font-size: clamp(150px, 3.2vw, 225px);
+    font-size: 83px;
     font-weight: 900;
     line-height: 1.15;
     color: #000;
@@ -202,7 +202,7 @@ const neoBrutalismCSS = `
   }
 
   .slide-subtitle {
-    font-size: clamp(83px, 1.6vw, 100px);
+    font-size: 46px;
     font-weight: 800;
     color: #FF2D55;
     margin-bottom: 35px;
@@ -211,7 +211,7 @@ const neoBrutalismCSS = `
   }
 
   .slide-body {
-    font-size: clamp(75px, 1.5vw, 95px);
+    font-size: 41px;
     font-weight: 500;
     line-height: 1.6;
     color: #111;
@@ -290,7 +290,7 @@ const minimalistCSS = `
 
   .slide-title {
     font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(188px, 4.0vw, 288px);
+    font-size: 103px;
     font-weight: 600;
     font-style: italic;
     line-height: 1.2;
@@ -300,7 +300,7 @@ const minimalistCSS = `
 
   .slide-subtitle {
     font-family: 'Montserrat', sans-serif;
-    font-size: clamp(70px, 1.4vw, 88px);
+    font-size: 39px;
     font-weight: 600;
     color: #C9A96E;
     margin-bottom: 40px;
@@ -310,7 +310,7 @@ const minimalistCSS = `
 
   .slide-body {
     font-family: 'Montserrat', sans-serif;
-    font-size: clamp(75px, 1.5vw, 95px);
+    font-size: 41px;
     font-weight: 400;
     line-height: 1.85;
     color: #5C5040;
@@ -409,7 +409,7 @@ const cyberpunkCSS = `
   }
 
   .slide-title {
-    font-size: clamp(138px, 2.8vw, 200px);
+    font-size: 76px;
     font-weight: 700;
     line-height: 1.25;
     color: #FFFFFF;
@@ -418,7 +418,7 @@ const cyberpunkCSS = `
   }
 
   .slide-subtitle {
-    font-size: clamp(70px, 1.4vw, 83px);
+    font-size: 39px;
     font-weight: 400;
     color: #00FF88;
     margin-bottom: 35px;
@@ -426,7 +426,7 @@ const cyberpunkCSS = `
   }
 
   .slide-body {
-    font-size: clamp(70px, 1.4vw, 83px);
+    font-size: 39px;
     font-weight: 400;
     line-height: 1.75;
     color: rgba(255,255,255,0.6);
@@ -501,7 +501,7 @@ const applePremiumCSS = `
   }
 
   .slide-title {
-    font-size: clamp(200px, 4.2vw, 325px);
+    font-size: 110px;
     font-weight: 800;
     line-height: 1.1;
     letter-spacing: -1.5px;
@@ -513,7 +513,7 @@ const applePremiumCSS = `
   }
 
   .slide-subtitle {
-    font-size: clamp(83px, 1.6vw, 100px);
+    font-size: 46px;
     font-weight: 500;
     color: rgba(255,255,255,0.45);
     margin-bottom: 40px;
@@ -521,7 +521,7 @@ const applePremiumCSS = `
   }
 
   .slide-body {
-    font-size: clamp(83px, 1.6vw, 100px);
+    font-size: 46px;
     font-weight: 400;
     line-height: 1.7;
     color: rgba(255,255,255,0.55);
@@ -617,7 +617,7 @@ const y2kAcidCSS = `
   }
 
   .slide-title {
-    font-size: clamp(163px, 3.4vw, 250px);
+    font-size: 90px;
     font-weight: 900;
     line-height: 1.15;
     color: #FFFFFF;
@@ -629,7 +629,7 @@ const y2kAcidCSS = `
   }
 
   .slide-subtitle {
-    font-size: clamp(83px, 1.6vw, 100px);
+    font-size: 46px;
     font-weight: 700;
     color: rgba(255,255,255,0.9);
     margin-bottom: 35px;
@@ -639,7 +639,7 @@ const y2kAcidCSS = `
 
   .slide-body {
     font-family: 'Russo One', sans-serif;
-    font-size: clamp(75px, 1.4vw, 88px);
+    font-size: 41px;
     font-weight: 400;
     line-height: 1.7;
     color: rgba(255,255,255,0.85);
@@ -724,7 +724,7 @@ const edtechCSS = `
   }
 
   .slide-title {
-    font-size: clamp(150px, 3.0vw, 213px);
+    font-size: 83px;
     font-weight: 800;
     line-height: 1.25;
     color: #0F172A;
@@ -732,7 +732,7 @@ const edtechCSS = `
   }
 
   .slide-subtitle {
-    font-size: clamp(75px, 1.5vw, 95px);
+    font-size: 41px;
     font-weight: 700;
     color: #2563EB;
     margin-bottom: 35px;
@@ -748,7 +748,7 @@ const edtechCSS = `
   }
 
   .slide-body {
-    font-size: clamp(75px, 1.5vw, 95px);
+    font-size: 41px;
     font-weight: 400;
     line-height: 1.75;
     color: #475569;
