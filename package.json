@@ -1,6 +1,6 @@
 {
-  "name": "aim-videolens",
-  "version": "1.1.0",
+  "name": "aim-instagram-suite",
+  "version": "3.1.0",
   "description": "MCP Server for viral video analysis, hook scoring, script generation and premium carousel rendering",
   "main": "src/index.ts",
   "scripts": {
