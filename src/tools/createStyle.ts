@@ -204,9 +204,7 @@ function getShadow(mood: string, primary: string): string {
   return `0 4px 16px rgba(0,0,0,0.2)`;
 }
 
-// ── Главная функция ──────────────────────────────────────────────────────────
-
-export function createStyle(input: CreateStyleInput): string {
+export async function createStyle(input: CreateStyleInput): Promise<string> {
   const step = input.step ?? 1;
 
   // ── ШАГ 1: Настроение ────────────────────────────────────────────────────
@@ -216,14 +214,14 @@ export function createStyle(input: CreateStyleInput): string {
       step: 1,
       wizard: '🎨 Мастер создания стиля AIM — Шаг 1 из 4',
       question: 'Какое ощущение должна создавать твоя карусель?',
-      instruction: 'Покажи пользователю варианты ниже в виде нумерованного списка. Пусть выберет ОДНУ цифру.',
+      instruction: 'Покажи пользователю эти варианты в виде красивого нумерованного списка-меню, как "кнопки". Предложи выбрать одну цифру. ОБЯЗАТЕЛЬНО ЖДИ ОТВЕТА ПОЛЬЗОВАТЕЛЯ, не продолжай сам.',
       choices: Object.entries(MOODS).map(([id, m], i) => ({
         number: i + 1,
         id,
         label: m.label,
         description: m.desc,
       })),
-      nextCall: 'После выбора вызови aim_create_style со { step: 2, mood: "<выбранный id>" }',
+      nextCall: 'После ответа вызови aim_create_style со { step: 2, mood: "<выбранный id>" }',
     }, null, 2);
   }
 
@@ -237,18 +235,18 @@ export function createStyle(input: CreateStyleInput): string {
       step: 2,
       wizard: `🎨 Шаг 2 из 4 — Цвета (выбрано: ${moodData.label})`,
       question: 'Настрой цветовую схему:',
-      instruction: 'Задай пользователю три уточняющих вопроса:\n1. Светлый или тёмный фон?\n2. Основной акцент HEX (или "авто")\n3. Вторичный акцент HEX (или "авто")',
+      instruction: 'Оформи этот шаг как интерактивные "кнопки" (номер списка с жирным текстом). Задай пользователю три уточняющих вопроса сразу:\n1. Фон (1, 2, 3)?\n2. Основной цвет HEX?\n3. Вторичный цвет HEX?',
       colorBaseOptions: [
-        { id: 'dark',     label: '🌙 Тёмный фон (рекомендуется)',      example: '#0A0A0A' },
-        { id: 'light',    label: '☀️ Светлый фон',                      example: '#FAFAF9' },
-        { id: 'contrast', label: '⬛ Максимальный контраст (чёрный)',    example: '#000000' },
+        { number: 1, id: 'dark',     label: '🌙 Тёмный фон (рекомендуется)' },
+        { number: 2, id: 'light',    label: '☀️ Светлый фон' },
+        { number: 3, id: 'contrast', label: '⬛ Максимальный контраст (чёрный)' },
       ],
       moodDefaults: {
         primary:   getDefaultPrimary(input.mood),
         secondary: getDefaultSecondary(input.mood),
-        note: 'Можно оставить "авто" — подберём под настроение',
+        note: 'Если цвета не указаны, я подберу их сам (оставь пустыми)',
       },
-      nextCall: 'После ответов вызови aim_create_style со { step: 3, mood, colorBase, primaryHex?, secondaryHex? }',
+      nextCall: 'После ответов (когда юзер введет цифру фона и/или цвета), вызови aim_create_style со { step: 3, ... }',
     }, null, 2);
   }
 
@@ -259,7 +257,7 @@ export function createStyle(input: CreateStyleInput): string {
       step: 3,
       wizard: '🎨 Шаг 3 из 4 — Шрифт и типографика',
       question: 'Какой стиль шрифта соответствует твоему блогу?',
-      instruction: 'Покажи варианты как нумерованный список. Один выбор.',
+      instruction: 'Покажи как нумерованное меню-"кнопки" для выбора.',
       choices: Object.entries(FONT_STYLES).map(([id, f], i) => ({
         number: i + 1,
         id,
@@ -267,7 +265,7 @@ export function createStyle(input: CreateStyleInput): string {
         description: f.desc,
         fonts: f.fonts,
       })),
-      nextCall: 'Вызови aim_create_style со { step: 4, ...предыдущие параметры..., fontStyle: "<id>" }',
+      nextCall: 'Вызови aim_create_style со { step: 4, ...предыдущие параметры..., fontStyle: "<выбранный id>" }',
     }, null, 2);
   }
 
@@ -359,6 +357,100 @@ export function createStyle(input: CreateStyleInput): string {
       fs.writeFileSync(savedPath, JSON.stringify(styleConfig, null, 2), 'utf-8');
     }
 
+    // ==== ГЕНЕРАЦИЯ PREVIEW ====
+    // Создаем демо HTML с этим кастомным стилем
+    const tmpDir = path.join(os.tmpdir(), `aim_preview_${Date.now()}`);
+    fs.mkdirSync(tmpDir, { recursive: true });
+    
+    // Подготовим фейковый HTML для демо-слайда
+    const demoHtml = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          /* Base Renderer CSS (simplified version of htmlRenderer template) */
+          * { box-sizing: border-box; }
+          body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; background: #333; height: 100vh; font-family: sans-serif; }
+          .carousel-container { display: flex; gap: 40px; }
+          .slide { width: 1080px; height: 1350px; background: #000; position: relative; overflow: hidden; display: flex; flex-direction: column; padding: 80px; }
+          .tag { display: inline-block; padding: 12px 24px; border-radius: 9999px; font-size: 24px; font-weight: 700; margin-bottom: 40px; }
+          .slide-title { font-size: 80px; font-weight: 800; line-height: 1.1; margin: 0 0 40px 0; letter-spacing: -0.02em; }
+          .slide-body { font-size: 32px; line-height: 1.5; opacity: 0.9; margin: 0 0 60px 0; }
+          .card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 40px; margin-bottom: 40px; }
+          .card-title { font-size: 36px; font-weight: 700; margin: 0 0 20px 0; }
+          .card-text { font-size: 28px; opacity: 0.8; margin: 0; }
+          .cta-banner { position: absolute; bottom: 80px; left: 80px; right: 80px; padding: 40px; text-align: center; border-radius: 20px; font-size: 36px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+          .slide-number { position: absolute; top: 80px; right: 80px; font-size: 28px; opacity: 0.5; font-weight: bold; }
+          .check-item { display: flex; align-items: flex-start; gap: 20px; font-size: 30px; margin-bottom: 20px; }
+          
+          /* Вставляем сгенерированный кастомный стиль! */
+          ${css}
+        </style>
+      </head>
+      <body>
+        <div class="carousel-container">
+          <div class="slide">
+            <div class="slide-number">Style Preview</div>
+            <div>
+              <span class="tag"># ${styleConfig.name.toUpperCase()}</span>
+            </div>
+            <h1 class="slide-title">Визуальный<br>Style Guide<br>Для Карусели</h1>
+            <p class="slide-body">
+              Именно так будут выглядеть ваши будущие посты. Заголовок, 
+              шрифты, теги и цвета уже настроены под выбранный vibe (${moodData.label}).
+            </p>
+            <div class="card">
+              <h3 class="card-title">Демонстрация Инфоблока</h3>
+              <div class="check-item">
+                <span>Primary Color: <b>${styleConfig.settings.primaryHex}</b></span>
+              </div>
+              <div class="check-item" style="border-left-color: var(--color-secondary) !important">
+                <span>Secondary Color: <b>${styleConfig.settings.secondaryHex}</b></span>
+              </div>
+            </div>
+            <div class="cta-banner">
+              <span>Сохраняйте в закладки 👇</span>
+              <span style="font-size: 48px">↗️</span>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+    
+    let previewBase64 = null;
+    try {
+      const htmlPath = path.join(tmpDir, 'preview.html');
+      fs.writeFileSync(htmlPath, demoHtml, 'utf-8');
+      
+      console.error('[AIM] Рендерим демо-слайд для Style Creator...');
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const puppeteer = require('puppeteer');
+      const browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+      });
+      const page = await browser.newPage();
+      await page.setViewport({ width: 1080, height: 1350, deviceScaleFactor: 1 });
+      await page.goto(`file://${htmlPath}`, { waitUntil: 'networkidle0', timeout: 30000 });
+      
+      // Ждём шрифты
+      await Promise.race([
+        page.evaluateHandle('document.fonts.ready'),
+        new Promise(r => setTimeout(r, 3000))
+      ]);
+      
+      const imgPath = path.join(tmpDir, 'preview.jpeg');
+      await page.screenshot({ path: imgPath, type: 'jpeg', quality: 90 });
+      await browser.close();
+      
+      const imgBuffer = fs.readFileSync(imgPath);
+      previewBase64 = imgBuffer.toString('base64');
+    } catch (err) {
+      console.error('[AIM] Ошибка рендера превью:', err);
+    }
+
     return JSON.stringify({
       tool: 'aim_create_style',
       step: 'complete',
@@ -371,7 +463,6 @@ export function createStyle(input: CreateStyleInput): string {
         primary: styleConfig.settings.primaryHex,
         base:    input.colorBase ?? 'dark',
         density: input.contentDensity,
-        emoji:   input.emojiUsage,
       },
 
       savedTo: savedPath,
@@ -382,14 +473,23 @@ export function createStyle(input: CreateStyleInput): string {
         renderParams: {
           theme:             moodData.baseTheme,
           format:            styleConfig.render.recommendedFormat,
-          brandColorOverlay: '← используй значение из styleConfig.render.brandColorOverlay ниже',
+          brandColorOverlay: '← используй сгенерированный CSS',
         },
       },
+      
+      // Если отрендерилось превью - кидаем в вывод (index.ts подхватит его)
+      ...(previewBase64 ? {
+        stylePreview: {
+          mimeType: 'image/jpeg',
+          base64: previewBase64,
+          description: `Визуальное превью для стиля: ${styleConfig.name}`,
+        }
+      } : {}),
 
-      styleConfig,
       brandColorOverlay: css,
 
-      quickCopyPrompt: `Используй этот стиль при рендере: тема ${moodData.baseTheme}, передай brandColorOverlay из файла ${savedPath}`,
+      // Инструкция для ИИ
+      nextAction: 'Покажи параметры финального стиля. Картинка-превью уже приложена выше. Спроси пользователя, хочет ли он теперь создать черновик карусели в этом стиле (нажав/написав "Да").',
     }, null, 2);
   }
 

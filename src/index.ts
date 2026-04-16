@@ -614,7 +614,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       case 'aim_create_style': {
         const parsed = CreateStyleSchema.parse(args);
-        result = createStyle(parsed as Parameters<typeof createStyle>[0]);
+        result = await createStyle(parsed as Parameters<typeof createStyle>[0]);
         break;
       }
 
@@ -662,6 +662,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     } else if (parsedResult.originalCollage?.base64) {
       imagesToPush.push({ base64: parsedResult.originalCollage.base64, mimeType: parsedResult.originalCollage.mimeType ?? 'image/jpeg' });
       textOnly.originalCollage = { ...parsedResult.originalCollage, base64: '[base64 image attached]' };
+    } else if (parsedResult.stylePreview?.base64) {
+      // aim_create_style
+      imagesToPush.push({ base64: parsedResult.stylePreview.base64, mimeType: parsedResult.stylePreview.mimeType ?? 'image/jpeg' });
+      textOnly.stylePreview = { ...parsedResult.stylePreview, base64: '[base64 image attached]' };
     } else if (parsedResult.scoringWeights && parsedResult.visualAnalysis?.gridImages) {
       // aim_score_virality (одноуровневая вложенность, уже поймается первым if, но на всякий)
       extractGridImages(parsedResult.visualAnalysis);
