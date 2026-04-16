@@ -136,6 +136,40 @@ function buildSlideHTML(
   width: number,
   height: number,
 ): string {
+  const autoFitScript = `
+  <script>
+    (function autoFit() {
+      const title = document.querySelector('.slide-title, h1, .cta-main-title');
+      if (title) {
+        let size = parseInt(window.getComputedStyle(title).fontSize) || 80;
+        while((title.clientHeight > window.innerHeight * 0.45 || document.body.scrollHeight > window.innerHeight + 10) && size > 30) {
+          size -= 2;
+          title.style.setProperty('font-size', size + 'px', 'important');
+          title.style.setProperty('line-height', '1.1', 'important');
+        }
+      }
+      
+      const bodies = document.querySelectorAll('.slide-body, p, .check-text, .cmp-cell, .step-body, .card-text');
+      bodies.forEach(b => {
+        let size = parseInt(window.getComputedStyle(b).fontSize) || 30;
+        while(document.body.scrollHeight > window.innerHeight + 10 && size > 16) {
+          size -= 1;
+          b.style.setProperty('font-size', size + 'px', 'important');
+        }
+      });
+      
+      const container = document.querySelector('.glass-card') || document.querySelector('.slide');
+      if (container && document.body.scrollHeight > window.innerHeight + 10) {
+         let scale = 1.0;
+         while(document.body.scrollHeight > window.innerHeight + 10 && scale > 0.5) {
+            scale -= 0.05;
+            container.style.transform = 'scale(' + scale + ')';
+            container.style.transformOrigin = 'center center';
+         }
+      }
+    })();
+  </script>`;
+
   // Кастомный HTML (полное переопределение)
   if (slide.customHtml) {
     return `<!DOCTYPE html>
@@ -152,7 +186,9 @@ function buildSlideHTML(
     ${css}
   </style>
 </head>
-<body>${slide.customHtml}</body>
+<body>${slide.customHtml}
+${autoFitScript}
+</body>
 </html>`;
   }
 
@@ -188,6 +224,7 @@ function buildSlideHTML(
     <div class="blob blob-2"    aria-hidden="true"></div>
     ${innerHTML}
   </div>
+  ${autoFitScript}
 </body>
 </html>`;
 }
