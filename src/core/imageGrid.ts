@@ -29,7 +29,7 @@ export async function buildGrid(
   options: GridOptions = {},
 ): Promise<Buffer> {
   const {
-    cols = 3,
+    cols = Math.max(3, Math.ceil(Math.sqrt(imagePaths.length))),
     cellWidth = 256,
     outputQuality = 70,
     maxWidth = 768,

@@ -68,7 +68,12 @@ export async function renderPremiumCarousel(input: RenderPremiumCarouselInput): 
   try {
     let raw: SlideData[];
     if (typeof slidesData === 'string') {
-      const parsed = JSON.parse(slidesData);
+      let cleanData = slidesData.trim();
+      // Убираем обертки ```json и ```
+      if (cleanData.startsWith('```')) {
+        cleanData = cleanData.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
+      }
+      const parsed = JSON.parse(cleanData);
       raw = Array.isArray(parsed) ? parsed : (parsed.slides ?? parsed);
     } else {
       raw = slidesData as SlideData[];

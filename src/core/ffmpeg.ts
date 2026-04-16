@@ -50,7 +50,7 @@ export async function extractSceneFrames(
   videoPath: string,
   outDir: string,
   threshold = 0.3,
-  maxFrames = 9,
+  maxFrames = 16,
 ): Promise<{ framePaths: string[]; timecodes: string[] }> {
   if (!fs.existsSync(outDir)) {
     fs.mkdirSync(outDir, { recursive: true });
@@ -58,49 +58,51 @@ export async function extractSceneFrames(
 
   const outPattern = path.join(outDir, 'frame_%04d.jpg');
 
-  // FFmpeg scene detection filter + save frames
+  // FFmpeg scene detection filter + save ALL scenes
   await execFileAsync(ffmpegPath, [
     '-y',
     '-i', videoPath,
     '-vf', `select='gt(scene,${threshold})',scale=768:-1`,
     '-vsync', 'vfr',
-    '-frames:v', String(maxFrames),
     '-q:v', '5',              // JPEG quality ~70%
     outPattern,
   ]);
 
-  const frames = fs.readdirSync(outDir)
+  const allFrames = fs.readdirSync(outDir)
     .filter(f => f.startsWith('frame_') && f.endsWith('.jpg'))
     .sort()
     .map(f => path.join(outDir, f));
 
-  // Extract timecodes for each saved frame using ffprobe
-  const timecodes: string[] = [];
-  for (let i = 0; i < frames.length; i++) {
-    // Approximate: we use scene change times via ffmpeg showinfo
-    timecodes.push(formatTimecode(i * 0));  // placeholder, updated below
-  }
-
-  // Get actual scene change timestamps
+  // Get actual scene change timestamps for ALL scenes
   const { stdout } = await execFileAsync(ffmpegPath, [
     '-i', videoPath,
     '-vf', `select='gt(scene,${threshold})',showinfo`,
     '-vsync', 'vfr',
-    '-frames:v', String(maxFrames),
     '-f', 'null',
     '-',
   ], { maxBuffer: 10 * 1024 * 1024 }).catch(() => ({ stdout: '' }));
 
   // Parse pts_time from showinfo output (comes to stderr actually)
   const timeMatches = stdout.matchAll(/pts_time:([\d.]+)/g);
-  const times = Array.from(timeMatches).map(m => parseFloat(m[1]));
+  const allTimes = Array.from(timeMatches).map(m => parseFloat(m[1]));
 
-  // Re-built timecodes
-  const finalTimecodes = frames.map((_, i) =>
-    times[i] !== undefined ? formatTimecode(times[i]) : formatTimecode(i * 2),
+  // Re-build full timecodes
+  const allTimecodes = allFrames.map((_, i) =>
+    allTimes[i] !== undefined ? formatTimecode(allTimes[i]) : formatTimecode(i * 2),
   );
 
-  return { framePaths: frames, timecodes: finalTimecodes };
+  // Сэмплируем (равномерно выбираем maxFrames)
+  let framePaths = allFrames;
+  let timecodes = allTimecodes;
+
+  if (allFrames.length > maxFrames) {
+    const step = allFrames.length / maxFrames;
+    const indices = Array.from({ length: maxFrames }).map((_, i) => Math.floor(i * step));
+    framePaths = indices.map(i => allFrames[i]);
+    timecodes = indices.map(i => allTimecodes[i]);
+  }
+
+  return { framePaths, timecodes };
 }
 
 /**

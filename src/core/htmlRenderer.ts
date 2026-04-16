@@ -95,9 +95,12 @@ export async function renderCarousel(
       await page.setViewport({ width, height, deviceScaleFactor: 1 });
       await page.goto(`file://${tmpHtmlPath}`, { waitUntil: 'networkidle0', timeout: 30000 });
 
-      // ⚡ КРИТИЧНО: ждём все шрифты (кириллица)
-      await page.evaluateHandle('document.fonts.ready');
-      await new Promise(resolve => setTimeout(resolve, 400));
+      // ⚡ КРИТИЧНО: ждём все шрифты (кириллица), но не дольше 3 секунд
+      await Promise.race([
+        page.evaluateHandle('document.fonts.ready'),
+        new Promise(resolve => setTimeout(resolve, 3000))
+      ]);
+      await new Promise(resolve => setTimeout(resolve, 300));
 
       const slideElement = await page.$('.slide');
       if (!slideElement) {
