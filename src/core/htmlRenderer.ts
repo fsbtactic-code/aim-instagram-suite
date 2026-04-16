@@ -92,6 +92,15 @@ export async function renderCarousel(
       fs.writeFileSync(tmpHtmlPath, html, 'utf-8');
 
       const page = await browser.newPage();
+      
+      // Capture debug messages from browser
+      page.on('console', (msg: any) => {
+        const text = msg.text();
+        if (text.startsWith('[AIM-DEBUG]')) {
+          console.warn(`\x1b[33m${text}\x1b[0m`);
+        }
+      });
+
       await page.setViewport({ width, height, deviceScaleFactor: 1 });
       await page.goto(`file://${tmpHtmlPath}`, { waitUntil: 'networkidle0', timeout: 30000 });
 
@@ -139,13 +148,27 @@ function buildSlideHTML(
   const autoFitScript = `
   <script>
     (function autoFit() {
+      const container = document.querySelector('.glass-card') || document.querySelector('.slide') || document.body;
+      const getContainerOverflow = () => {
+         // Для .slide (поскольку он height: 100%)
+         if (container.classList.contains('slide')) {
+           return (container.scrollHeight > container.clientHeight + 5) || (container.scrollWidth > container.clientWidth + 5);
+         }
+         // Для .glass-card (может и не иметь фикс высоты, поэтому смотрим на родительский .slide)
+         const parentSlide = container.closest('.slide');
+         if (parentSlide) {
+           return (parentSlide.scrollHeight > parentSlide.clientHeight + 5) || (parentSlide.scrollWidth > parentSlide.clientWidth + 5);
+         }
+         return (document.body.scrollHeight > window.innerHeight + 5) || (document.body.scrollWidth > window.innerWidth + 5);
+      };
+
       // 1. Фикс для заголовков (высота + ширина)
       const title = document.querySelector('.slide-title, h1, .cta-main-title');
       if (title) {
         let size = parseInt(window.getComputedStyle(title).fontSize) || 80;
+        let p = title.parentElement;
         while((title.clientHeight > window.innerHeight * 0.45 || 
-               title.scrollWidth > window.innerWidth * 0.85 ||
-               document.body.scrollHeight > window.innerHeight + 10) && size > 24) {
+               title.scrollWidth > (title.clientWidth || (p && p.clientWidth) || window.innerWidth * 0.85)) && size > 40) {
           size -= 2;
           title.style.setProperty('font-size', size + 'px', 'important');
           title.style.setProperty('line-height', '1.1', 'important');
@@ -156,21 +179,23 @@ function buildSlideHTML(
       const bodies = document.querySelectorAll('.slide-body, p, .check-text, .cmp-cell, .step-body, .card-text');
       bodies.forEach(b => {
         let size = parseInt(window.getComputedStyle(b).fontSize) || 30;
-        while((b.scrollWidth > window.innerWidth * 0.85 || 
-               document.body.scrollHeight > window.innerHeight + 10) && size > 16) {
+        let pw = b.parentElement ? b.parentElement.clientWidth : window.innerWidth;
+        while((b.scrollWidth > (b.clientWidth || pw)) && size > 24) {
           size -= 1;
           b.style.setProperty('font-size', size + 'px', 'important');
         }
       });
       
       // 3. Финальный глобальный скейлинг всей карточки
-      const container = document.querySelector('.glass-card') || document.querySelector('.slide');
-      if (container && document.body.scrollHeight > window.innerHeight + 5) {
+      if (container) {
          let scale = 1.0;
-         while(document.body.scrollHeight > window.innerHeight + 5 && scale > 0.5) {
+         while(getContainerOverflow() && scale > 0.5) {
             scale -= 0.05;
-            container.style.transform = 'scale(' + scale + ')';
-            container.style.transformOrigin = 'center center';
+            container.style.zoom = scale;
+         }
+         // Debug log for Claude if it still overflows
+         if (getContainerOverflow()) {
+            console.log('[AIM-DEBUG] Layout Overflow on Slide ' + ${slide.slideNumber} + ': scrollHeight=' + container.scrollHeight + ', clientHeight=' + container.clientHeight + ' | scrollWidth=' + container.scrollWidth + ', clientWidth=' + container.clientWidth);
          }
       }
     })();

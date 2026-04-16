@@ -43,6 +43,7 @@ const glassmorphismCSS = `
     position: relative;
     overflow: hidden;
     font-family: 'Golos Text', 'Inter', sans-serif;
+    color: #ffffff;
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 70%, #533483 100%);
   }
 
@@ -464,6 +465,7 @@ const applePremiumCSS = `
     position: relative;
     overflow: hidden;
     font-family: 'Onest', sans-serif;
+    color: #ffffff;
     background: #000000;
   }
 
@@ -560,6 +562,7 @@ const y2kAcidCSS = `
     position: relative;
     overflow: hidden;
     font-family: 'Russo One', sans-serif;
+    color: #ffffff;
     background: linear-gradient(135deg, #FF006E 0%, #FB5607 25%, #FFBE0B 50%, #3A86FF 75%, #8338EC 100%);
   }
 

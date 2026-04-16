@@ -1,0 +1,204 @@
+{
+  "topic": "AIM Instagram Suite — 14 бесплатных инструментов для Instagram в Claude Code",
+  "toneOfVoice": "motivational",
+  "slides": [
+    {
+      "slideNumber": 1,
+      "layout": "standard",
+      "emoji": "🛠️",
+      "title": "14 инструментов для Instagram уже в Claude",
+      "subtitle": "Карусели, видео, виральность — одной командой",
+      "body": "Бесплатный репозиторий. Ставится за 3 минуты. Никаких подписок.",
+      "tag": "github.com/fsbtactic-code/aim-instagram-suite"
+    },
+    {
+      "slideNumber": 2,
+      "layout": "standard",
+      "emoji": "📦",
+      "title": "Что это такое?",
+      "subtitle": "MCP-сервер, который подключается к Claude Code",
+      "body": "Ставишь один раз — и в Claude появляются 14 новых команд. Они делают карусели, разбирают видео конкурентов и пишут сценарии. Без сторонних сервисов.",
+      "tag": "AIM Instagram Suite"
+    },
+    {
+      "slideNumber": 3,
+      "layout": "hero-number",
+      "heroNumber": "14",
+      "heroUnit": "инструментов",
+      "title": "Всё что нужно для Instagram-контента",
+      "subtitle": "Видео · Карусели · Аналитика"
+    },
+    {
+      "slideNumber": 4,
+      "layout": "checklist",
+      "title": "🎬 Видео-инструменты:",
+      "subtitle": "5 команд для работы с видео",
+      "blocks": [
+        { "value": "aim_evaluate_video — оценить виральность до публикации", "accent": false },
+        { "value": "aim_analyze_viral_reels — разобрать видео конкурента", "accent": true },
+        { "value": "aim_generate_script — написать сценарий по успешной структуре", "accent": false },
+        { "value": "aim_analyze_hook — усилить первые 5 секунд", "accent": false },
+        { "value": "aim_extract_pacing — найти скучные моменты в монтаже", "accent": false }
+      ]
+    },
+    {
+      "slideNumber": 5,
+      "layout": "checklist",
+      "title": "🎨 Карусели и стили:",
+      "subtitle": "4 команды для создания каруселей",
+      "blocks": [
+        { "value": "aim_draft_carousel_structure — структура и тексты", "accent": true },
+        { "value": "aim_render_premium_carousel — рендер PNG 1080×1350", "accent": true },
+        { "value": "aim_auto_brand_colors — бренд-цвета с WCAG-контрастностью", "accent": false },
+        { "value": "aim_create_style — кастомный стиль из файла дизайн-системы", "accent": false }
+      ]
+    },
+    {
+      "slideNumber": 6,
+      "layout": "checklist",
+      "title": "🔥 Аналитика и реверс-инжиниринг:",
+      "subtitle": "5 команд для анализа и адаптации",
+      "blocks": [
+        { "value": "aim_score_virality — индекс видео 0–100 по 7 критериям", "accent": false },
+        { "value": "aim_score_carousel_virality — индекс карусели 0–100", "accent": true },
+        { "value": "aim_analyze_carousel — разобрать чужую карусель", "accent": false },
+        { "value": "aim_localize_carousel — скопировать / адаптировать карусель", "accent": false },
+        { "value": "aim_viral_structure — библиотека 12 вирусных структур", "accent": false }
+      ]
+    },
+    {
+      "slideNumber": 7,
+      "layout": "before-after",
+      "title": "Твой контент-процесс",
+      "leftBlocks": [
+        { "value": "3+ часа на одну карусель" },
+        { "value": "Ищешь вдохновение вручную" },
+        { "value": "Промпты с нуля каждый раз" },
+        { "value": "Узнаёшь результат после публикации" }
+      ],
+      "rightBlocks": [
+        { "value": "Готовые PNG за 5 минут" },
+        { "value": "Разбираешь конкурентов по ссылке" },
+        { "value": "Одна команда — структура готова" },
+        { "value": "Индекс виральности до публикации" }
+      ]
+    },
+    {
+      "slideNumber": 8,
+      "layout": "standard",
+      "emoji": "🎨",
+      "title": "Пишешь тему — получаешь карусель",
+      "subtitle": "/aim-draft-carousel «7 ошибок в Stories»",
+      "body": "Claude создаёт структуру, пишет тексты для каждого слайда и рендерит PNG 1080×1350 прямо в папку. Весь процесс — одна команда.",
+      "tag": "aim_draft + aim_render"
+    },
+    {
+      "slideNumber": 9,
+      "layout": "standard",
+      "emoji": "🕵️",
+      "title": "Кидаешь ссылку — получаешь разбор",
+      "subtitle": "/aim-analyze-viral [ссылка на рилс конкурента]",
+      "body": "Скачает видео, транскрибирует аудио, разберёт структуру хука и воронки. Готовый .md-отчёт с шаблоном «кражи» структуры.",
+      "tag": "aim_analyze_viral_reels"
+    },
+    {
+      "slideNumber": 10,
+      "layout": "standard",
+      "emoji": "📊",
+      "title": "Узнаёшь счёт до публикации",
+      "subtitle": "Индекс виральности 0–100 по 7 критериям",
+      "body": "Хук · Динамика · Звук · Ценность · Эмоции · Визуал · CTA\n\nПолучаешь топ-3 конкретных правки с прогнозом роста индекса.",
+      "tag": "aim_score_virality"
+    },
+    {
+      "slideNumber": 11,
+      "layout": "steps-3",
+      "title": "Установка за 3 шага",
+      "blocks": [
+        {
+          "label": "Клонируй",
+          "value": "git clone репозиторий на рабочий стол"
+        },
+        {
+          "label": "Запусти",
+          "value": "node scripts/setup.js — всё установится само"
+        },
+        {
+          "label": "Подключи",
+          "value": "Зарегистрируй MCP-сервер в настройках Claude Code"
+        }
+      ]
+    },
+    {
+      "slideNumber": 12,
+      "layout": "grid-2x2",
+      "title": "4 задачи — 4 команды",
+      "blocks": [
+        { "label": "Создать карусель", "value": "/aim-draft-carousel", "accent": true },
+        { "label": "Разобрать конкурента", "value": "/aim-analyze-viral", "accent": false },
+        { "label": "Оценить контент", "value": "/aim-score-video", "accent": false },
+        { "label": "Написать сценарий", "value": "/aim-generate-script", "accent": true }
+      ]
+    },
+    {
+      "slideNumber": 13,
+      "layout": "comparison",
+      "title": "Без AIM vs С AIM",
+      "blocks": [
+        { "label": "❌ Без AIM" },
+        { "label": "✅ С AIM" }
+      ],
+      "leftBlocks": [
+        { "value": "Промпты с нуля каждый раз" },
+        { "value": "Ручной рендер в Canva" },
+        { "value": "Угадываешь виральность" },
+        { "value": "Часы на один контент" }
+      ],
+      "rightBlocks": [
+        { "value": "Команда из 2–3 слов" },
+        { "value": "Авторендер PNG" },
+        { "value": "Индекс 0–100 до публикации" },
+        { "value": "Минуты на готовый контент" }
+      ]
+    },
+    {
+      "slideNumber": 14,
+      "layout": "good-bad",
+      "title": "Контент в 2025 году",
+      "leftBlocks": [
+        { "value": "Структура карусели за 30 секунд" },
+        { "value": "Разбор конкурента по ссылке" },
+        { "value": "Рендер 10 PNG-слайдов за минуту" },
+        { "value": "Оценка контента до публикации" }
+      ],
+      "rightBlocks": [
+        { "value": "2 часа на промпты с нуля" },
+        { "value": "Смотришь «на интуицию»" },
+        { "value": "Вручную в дизайн-редакторе" },
+        { "value": "Узнаёшь результат через неделю" }
+      ]
+    },
+    {
+      "slideNumber": 15,
+      "layout": "quote",
+      "quoteText": "Подключил за 10 минут. За первый день сделал карусель, разобрал 3 вирусных рилса и получил готовый сценарий. Раньше на это уходила неделя.",
+      "quoteAuthor": "Пользователь AIM Instagram Suite"
+    },
+    {
+      "slideNumber": 16,
+      "layout": "hero-number",
+      "heroNumber": "0 ₽",
+      "title": "Полностью бесплатно",
+      "subtitle": "Open source · MIT · Без подписок и регистраций"
+    },
+    {
+      "slideNumber": 17,
+      "layout": "cta-final",
+      "emoji": "👇",
+      "title": "Напиши «14» в комментарии",
+      "subtitle": "Пришлю инструкцию по установке и ссылку на репозиторий",
+      "body": "github.com/fsbtactic-code/aim-instagram-suite",
+      "ctaText": "Пиши «14» прямо сейчас 👇"
+    }
+  ]
+}

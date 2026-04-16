@@ -100,6 +100,7 @@ export function renderGrid2x2(slide: ExtendedSlideData): string {
   return `
     <div class="glass-card layout-grid2x2">
       <span class="slide-number">${pad(slide.slideNumber)}</span>
+      ${slide.emoji ? `<span class="emoji-icon" role="img">${escHtml(slide.emoji)}</span>` : ''}
       <h1 class="slide-title">${escHtml(title)}</h1>
       <div class="grid2x2">${cells}</div>
       ${buildCtaBanner(ctaText)}
@@ -114,6 +115,7 @@ export function renderGoodBad(slide: ExtendedSlideData): string {
   return `
     <div class="glass-card layout-good-bad">
       <span class="slide-number">${pad(slide.slideNumber)}</span>
+      ${slide.emoji ? `<span class="emoji-icon" role="img">${escHtml(slide.emoji)}</span>` : ''}
       <h1 class="slide-title">${escHtml(title)}</h1>
       <div class="gb-split">
         <div class="gb-col">
@@ -138,6 +140,7 @@ export function renderBeforeAfter(slide: ExtendedSlideData): string {
   return `
     <div class="glass-card layout-before-after">
       <span class="slide-number">${pad(slide.slideNumber)}</span>
+      ${slide.emoji ? `<span class="emoji-icon" role="img">${escHtml(slide.emoji)}</span>` : ''}
       <h1 class="slide-title">${escHtml(title)}</h1>
       <div class="ba-container">
         <div class="ba-section ba-before">
@@ -166,6 +169,7 @@ export function renderSteps3(slide: ExtendedSlideData): string {
   return `
     <div class="glass-card layout-steps3">
       <span class="slide-number">${pad(slide.slideNumber)}</span>
+      ${slide.emoji ? `<span class="emoji-icon" role="img">${escHtml(slide.emoji)}</span>` : ''}
       <h1 class="slide-title">${escHtml(title)}</h1>
       <div class="steps-row">${steps}</div>
       ${buildCtaBanner(ctaText)}
@@ -196,6 +200,7 @@ export function renderChecklist(slide: ExtendedSlideData): string {
   return `
     <div class="glass-card layout-checklist">
       <span class="slide-number">${pad(slide.slideNumber)}</span>
+      ${slide.emoji ? `<span class="emoji-icon" role="img">${escHtml(slide.emoji)}</span>` : ''}
       <h1 class="slide-title">${escHtml(title)}</h1>
       ${subtitle ? `<p class="slide-subtitle">${escHtml(subtitle)}</p>` : ''}
       <div class="checklist">${items}</div>
@@ -205,29 +210,29 @@ export function renderChecklist(slide: ExtendedSlideData): string {
 
 // ── ЛЕЙАУТ 9: Comparison Table (A vs B таблица) ──────────────────────────────
 export function renderComparison(slide: ExtendedSlideData): string {
-  const { title, leftBlocks = [], rightBlocks = [], blocks = [], ctaText } = slide;
+  const { title, subtitle, leftBlocks = [], rightBlocks = [], blocks = [], ctaText } = slide;
   // blocks[0].label = заголовок A, blocks[1].label = заголовок B
   const headerA = blocks[0]?.label ?? 'Вариант A';
   const headerB = blocks[1]?.label ?? 'Вариант B';
   const maxRows = Math.max(leftBlocks.length, rightBlocks.length);
   const rows = Array.from({ length: maxRows }, (_, i) => `
-    <tr>
-      <td class="cmp-cell cmp-a">${escHtml(leftBlocks[i]?.value ?? '—')}</td>
-      <td class="cmp-cell cmp-b">${escHtml(rightBlocks[i]?.value ?? '—')}</td>
-    </tr>`).join('');
+    <div class="cmp-row">
+      <div class="cmp-card cmp-a">${escHtml(leftBlocks[i]?.value ?? '—')}</div>
+      <div class="cmp-card cmp-b">${escHtml(rightBlocks[i]?.value ?? '—')}</div>
+    </div>`).join('');
   return `
     <div class="glass-card layout-comparison">
       <span class="slide-number">${pad(slide.slideNumber)}</span>
+      ${slide.emoji ? `<span class="emoji-icon" role="img">${escHtml(slide.emoji)}</span>` : ''}
       <h1 class="slide-title">${escHtml(title)}</h1>
-      <table class="cmp-table">
-        <thead>
-          <tr>
-            <th class="cmp-head cmp-ha">${escHtml(headerA)}</th>
-            <th class="cmp-head cmp-hb">${escHtml(headerB)}</th>
-          </tr>
-        </thead>
-        <tbody>${rows}</tbody>
-      </table>
+      ${subtitle ? `<p class="slide-subtitle">${escHtml(subtitle)}</p>` : ''}
+      <div class="cmp-list">
+        <div class="cmp-header-row">
+          <div class="cmp-head cmp-ha">${escHtml(headerA)}</div>
+          <div class="cmp-head cmp-hb">${escHtml(headerB)}</div>
+        </div>
+        ${rows}
+      </div>
       ${buildCtaBanner(ctaText)}
     </div>`;
 }
@@ -282,23 +287,23 @@ export const LAYOUTS_CSS = `
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
-  padding: 30px 60px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
-  backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(255,255,255,0.15);
-  font-size: 40px;
-  font-weight: 600;
-  color: rgba(255,255,255,0.95);
-  letter-spacing: 0.02em;
+  gap: 15px;
+  padding: 20px 40px;
+  background: transparent;
+  font-size: 26px;
+  font-weight: 500;
+  color: inherit;
+  opacity: 0.35;
+  letter-spacing: 0.03em;
   z-index: 10;
   border-bottom-left-radius: inherit;
   border-bottom-right-radius: inherit;
 }
 .cta-banner--large {
-  font-size: 55px;
-  padding: 50px 80px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.08));
+  font-size: 40px;
+  padding: 40px 60px;
+  opacity: 0.8;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
   border-radius: 40px;
   position: relative;
   margin-top: 60px;
@@ -308,7 +313,7 @@ export const LAYOUTS_CSS = `
   border: 1px solid rgba(255,255,255,0.3);
 }
 .cta-arrow { font-size: 50px; }
-.cta-text { flex: 1; text-align: center; }
+.cta-text { flex: 1; text-align: center; white-space: nowrap; }
 
 /* Отступ для glass-card чтобы CTA не перекрывал контент */
 .glass-card { padding-bottom: 140px; }
@@ -326,8 +331,9 @@ export const LAYOUTS_CSS = `
 .hero-stat {
   display: flex;
   align-items: baseline;
+  justify-content: center;
   gap: 20px;
-  margin: 50px 0 40px;
+  margin: 40px 0 30px;
 }
 .hero-num {
   font-size: 300px;
@@ -381,6 +387,7 @@ export const LAYOUTS_CSS = `
   font-size: 43px;
   font-weight: 600;
   line-height: 1.4;
+  flex: 1; min-width: 0; word-wrap: break-word;
 }
 
 /* ── LAYOUT: Good / Bad ─────────────────────────────── */
@@ -416,6 +423,7 @@ export const LAYOUTS_CSS = `
   line-height: 1.4;
   padding: 20px 25px;
   border-radius: 20px;
+  flex: 1; min-width: 0; word-wrap: break-word;
 }
 .gb-good { background: rgba(34,197,94,0.1); color: rgba(255,255,255,0.9); }
 .gb-bad  { background: rgba(239,68,68,0.1);  color: rgba(255,255,255,0.75); }
@@ -456,7 +464,7 @@ export const LAYOUTS_CSS = `
 }
 .ba-before .ba-label { color: #fca5a5; }
 .ba-after  .ba-label { color: #86efac; }
-.ba-text { font-size: 43px; font-weight: 600; line-height: 1.5; }
+.ba-text { font-size: 43px; font-weight: 600; line-height: 1.5; flex: 1; min-width: 0; word-wrap: break-word; }
 
 /* ── LAYOUT: Steps-3 ────────────────────────────────── */
 .layout-steps3 .slide-title { font-size: 65px; margin-bottom: 40px; }
@@ -471,13 +479,14 @@ export const LAYOUTS_CSS = `
   flex: 1;
   background: rgba(255,255,255,0.07);
   border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 40px;
-  padding: 40px 30px;
+  border-radius: 30px;
+  padding: 30px 25px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 20px;
+  gap: 15px;
+  min-width: 0;
 }
 .step-num {
   width: 100px;
@@ -499,7 +508,7 @@ export const LAYOUTS_CSS = `
   letter-spacing: 0.08em;
   opacity: 0.65;
 }
-.step-body { font-size: 38px; line-height: 1.4; }
+.step-body { font-size: 38px; line-height: 1.4; flex: 1; min-width: 0; word-wrap: break-word; }
 
 /* ── LAYOUT: Quote ──────────────────────────────────── */
 .layout-quote {
@@ -539,55 +548,73 @@ export const LAYOUTS_CSS = `
 .checklist {
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 15px;
   width: 100%;
   flex: 1;
   overflow: hidden;
+  justify-content: center;
 }
 .check-item {
   display: flex;
   align-items: flex-start;
-  gap: 30px;
-  padding: 25px 35px;
+  gap: 25px;
+  padding: 20px 30px;
   background: rgba(255,255,255,0.06);
-  border-radius: 25px;
+  border-radius: 20px;
   border: 1px solid rgba(255,255,255,0.08);
 }
 .check-item--accent {
   background: rgba(255,255,255,0.12);
   border-color: rgba(255,255,255,0.22);
 }
-.check-mark { font-size: 45px; flex-shrink: 0; margin-top: 1px; }
-.check-text { font-size: 40px; line-height: 1.4; }
+.check-mark { font-size: 45px; flex-shrink: 0; margin-top: 2px; }
+.check-text { font-size: 40px; line-height: 1.4; flex: 1; min-width: 0; word-wrap: break-word; }
 
 /* ── LAYOUT: Comparison Table ───────────────────────── */
 .layout-comparison .slide-title { font-size: 65px; margin-bottom: 35px; }
-.cmp-table {
+.cmp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
   width: 100%;
-  border-collapse: collapse;
   flex: 1;
 }
+.cmp-header-row {
+  display: flex;
+  gap: 15px;
+  width: 100%;
+}
+.cmp-row {
+  display: flex;
+  gap: 15px;
+  width: 100%;
+}
 .cmp-head {
+  flex: 1;
   font-size: 33px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   padding: 25px 35px;
   text-align: center;
-  border-radius: 25px 25px 0 0;
+  border-radius: 20px;
 }
-.cmp-ha { background: rgba(99,102,241,0.25); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); }
-.cmp-hb { background: rgba(245,158,11,0.2); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
-.cmp-cell {
+.cmp-card {
+  flex: 1;
   font-size: 38px;
   padding: 25px 35px;
   text-align: center;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  vertical-align: middle;
-  line-height: 1.35;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  word-wrap: break-word;
+  min-width: 0;
 }
-.cmp-a { background: rgba(99,102,241,0.06); }
-.cmp-b { background: rgba(245,158,11,0.06); }
+.cmp-ha { background: rgba(99,102,241,0.25); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); }
+.cmp-hb { background: rgba(245,158,11,0.2); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
+.cmp-a { background: rgba(99,102,241,0.06); border: 1px solid rgba(99,102,241,0.15); }
+.cmp-b { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.15); }
 
 /* ── LAYOUT: CTA Final ──────────────────────────────── */
 .layout-cta-final {
