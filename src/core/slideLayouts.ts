@@ -355,14 +355,15 @@ export const LAYOUTS_CSS = `
   margin: 20px 0;
 }
 .hero-num {
-  font-size: 160px;
+  font-size: 180px;
   font-weight: 900;
-  line-height: 1;
+  line-height: 0.9;
   background: linear-gradient(135deg, currentColor 0%, rgba(255,255,255,0.6) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  letter-spacing: -3px;
+  letter-spacing: -5px;
+  filter: drop-shadow(0 0 40px rgba(255,255,255,0.08));
 }
 .hero-unit {
   font-size: 48px;
@@ -511,17 +512,18 @@ export const LAYOUTS_CSS = `
   min-width: 0;
 }
 .step-num {
-  width: 52px;
-  height: 52px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.1);
+  background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
   border: 2px solid rgba(255,255,255,0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 900;
   flex-shrink: 0;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
 }
 .step-label {
   font-size: 16px;
@@ -539,11 +541,12 @@ export const LAYOUTS_CSS = `
   text-align: center;
 }
 .quote-mark {
-  font-size: 140px;
-  line-height: 0.7;
-  opacity: 0.12;
+  font-size: 160px;
+  line-height: 0.65;
+  opacity: 0.15;
   font-family: Georgia, serif;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  filter: drop-shadow(0 0 30px rgba(255,255,255,0.05));
 }
 .quote-text {
   font-size: 44px;
@@ -609,13 +612,14 @@ export const LAYOUTS_CSS = `
 }
 .cmp-head {
   flex: 1;
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  padding: 14px 20px;
+  letter-spacing: 0.08em;
+  padding: 16px 20px;
   text-align: center;
   border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
 }
 .cmp-card {
   flex: 1;
@@ -645,7 +649,11 @@ export const LAYOUTS_CSS = `
   text-align: center;
   max-width: 95%;
 }
-.emoji-large { font-size: 72px !important; margin-bottom: 16px; }
+.emoji-large {
+  font-size: 80px !important;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 0 30px rgba(255,255,255,0.15));
+}
 `;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

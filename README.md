@@ -37,7 +37,7 @@
 > 💬 Склонируй репозиторий `https://github.com/fsbtactic-code/aim-instagram-suite.git` на рабочий стол в папку `aim-instagram-suite`. <br/>
 ***[Только для Windows]*** Убедись, что стоят C++ Build Tools (`winget install Microsoft.VisualStudio.2022.BuildTools --override "--quiet --add Microsoft.VisualStudio.Workload.VCTools"`).<br/>
 Затем зайди в папку локальным терминалом, выполни `npm install` и `npm run build`. 
-После чего зарегистрируй этот MCP сервер как `node АБСОЛЮТНЫЙ_ПУТЬ/build/index.js` в свои настройки.
+После чего зарегистрируй этот MCP сервер как `node АБСОЛЮТНЫЙ_ПУТЬ/dist/index.js` в свои настройки.
 
 📖 [Подробная пошаговая инструкция для разных программ (Claude Desktop, и др.)](INSTALL.md)
 

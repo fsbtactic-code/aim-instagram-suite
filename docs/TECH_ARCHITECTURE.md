@@ -69,5 +69,5 @@
    Все генерации упадут в папку \`carousel_test\`.
 5. Для отладки MCP сервера используйте стандартный инспектор:
    \`\`\`bash
-   npx @modelcontextprotocol/inspector node build/index.js
+   npx @modelcontextprotocol/inspector node dist/index.js
    \`\`\`
