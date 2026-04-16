@@ -84,6 +84,52 @@
 - **Цвета вашего Бренда**: Программа умеет перекрашивать слайды под ваш фирменный стиль (HEX) и сама следит, чтобы текст читался ярко и не сливался с фоном.
 - **Перевод чужих каруселей**: Увидели гениальную картинку-карусель на английском? Дайте ссылку, и ИИ скачает её, переведет на русский, улучшит и *сразу нарисует* новые карточки.
 
+### 🖼️ Галерея Стилей (Авто-генерируемое превью)
+
+Посмотрите, как выглядит один и тот же контент в разных темах оформления:
+
+<details>
+<summary><b>✨ Тема 1: Glassmorphism (Тренд 2024 года)</b></summary>
+<br/>
+<img src="assets/previews/preview_theme_1_glassmorphism.png" width="100%">
+</details>
+
+<details>
+<summary><b>💥 Тема 2: Neo-Brutalism (Кислотный Бунтарь)</b></summary>
+<br/>
+<img src="assets/previews/preview_theme_2_neo_brutalism.png" width="100%">
+</details>
+
+<details>
+<summary><b>🤍 Тема 3: Minimalist Elegance (Эстетика Журнала)</b></summary>
+<br/>
+<img src="assets/previews/preview_theme_3_minimalist_elegance.png" width="100%">
+</details>
+
+<details>
+<summary><b>🟩 Тема 4: Dark Cyberpunk (Неон и Код)</b></summary>
+<br/>
+<img src="assets/previews/preview_theme_4_dark_cyberpunk.png" width="100%">
+</details>
+
+<details>
+<summary><b>🍏 Тема 5: Apple Premium (Темная роскошь)</b></summary>
+<br/>
+<img src="assets/previews/preview_theme_5_apple_premium.png" width="100%">
+</details>
+
+<details>
+<summary><b>💿 Тема 6: Y2K / Acid Graphic (Ретро-интернет)</b></summary>
+<br/>
+<img src="assets/previews/preview_theme_6_y2k___acid_graphic.png" width="100%">
+</details>
+
+<details>
+<summary><b>📘 Тема 7: EdTech Trust (Доверие и Экспертность)</b></summary>
+<br/>
+<img src="assets/previews/preview_theme_7_edtech___trust.png" width="100%">
+</details>
+
 ---
 
 ## 🤓 Для продвинутых (Как это работает под капотом)

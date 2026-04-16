@@ -634,7 +634,8 @@ export const LAYOUTS_CSS = `
 `;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-function escHtml(t: string): string {
+function escHtml(t?: string | null): string {
+  if (!t) return '';
   return t
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -643,7 +644,8 @@ function escHtml(t: string): string {
     .replace(/'/g, '&#039;');
 }
 
-function nl2br(t: string): string {
+function nl2br(t?: string | null): string {
+  if (!t) return '';
   return escHtml(t).replace(/\n/g, '<br>');
 }
 
