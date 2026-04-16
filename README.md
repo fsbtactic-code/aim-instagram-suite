@@ -19,31 +19,18 @@
 
 **AIM Instagram Suite** — это набор из 13 инструментов (tools), работающих как локальный сервер [Model Context Protocol (MCP)](https://modelcontextprotocol.io/). Он подключается к Claude Desktop или вашему IDE (Cursor, Windsurf) и позволяет AI-агенту автономно анализировать видео, скачивать Reels и карусели, оценивать их виральность и автоматически рендерить новые посты в премиум-дизайне прямо у вас на компьютере. **Без платных API и сторонних сервисов.**
 
-## 🛠 Установка (Для "чайников")
+## 🛠 Авто-установка через Claude Code
 
-1. Убедитесь, что у вас установлен **Node.js** (версия 18 или выше).
-2. Склонируйте этот репозиторий:
-   ```bash
-   git clone https://github.com/fsbtactic-code/aim-instagram-suite.git
-   cd aim-instagram-suite
-   ```
-3. Установите зависимости (и автоматически скачайте бинарники `yt-dlp` и `Puppeteer`):
-   ```bash
-   npm run setup
-   npm run build
-   ```
-4. Добавьте MCP сервер в ваш Claude Desktop (Файл: `%APPDATA%\Claude\claude_desktop_config.json` на Windows или `~/Library/Application Support/Claude/claude_desktop_config.json` на Mac):
-   ```json
-   {
-     "mcpServers": {
-       "aim-instagram": {
-         "command": "node",
-         "args": ["C:/путь/к/aim-instagram-suite/dist/index.js"]
-       }
-     }
-   }
-   ```
-5. Перезапустите Claude Desktop. Поздравляю! Инструменты с префиксом `aim_` теперь доступны.
+Установка этого проекта происходит полностью автоматически.
+Просто скопируйте этот промпт и вставьте его в **Claude Code** (или Cursor/Windsurf):
+
+> Склонируй репозиторий: `https://github.com/fsbtactic-code/aim-instagram-suite.git` 
+> Установи все зависимости через `npm run setup` и скомпилируй проект через `npm run build`. 
+> Найди мой файл `claude_desktop_config.json` и добавь этот проект в блок `mcpServers` под именем "aim-instagram-suite". Используй команду `node` и укажи абсолютный путь к скомпилированному файлу `dist/index.js`.
+> После перезагрузи Claude Desktop.
+
+После выполнения промпта все инструменты `aim_` (рендеринг каруселей, анализ видео и т.д.) будут готовы к работе!
+
 
 ---
 

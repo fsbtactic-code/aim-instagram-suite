@@ -19,31 +19,17 @@
 
 **AIM Instagram Suite** is a collection of 13 modular tools functioning as a local [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server. Pluggable into Claude Desktop or your IDE (Cursor, Windsurf), it enables the AI agent to autonomously analyze your videos, download competitor Reels/Carousels, score their virality indices, and automatically render new premium-designed posts straight to your local disk. **No paid APIs required.**
 
-## 🛠 Installation (For Beginners)
+## 🛠 Auto-Installation via Claude Code
 
-1. Ensure you have **Node.js** (v18 or higher) installed.
-2. Clone this repository:
-   ```bash
-   git clone https://github.com/fsbtactic-code/aim-instagram-suite.git
-   cd aim-instagram-suite
-   ```
-3. Install dependencies (this will automatically fetch `yt-dlp` and `Puppeteer` binaries):
-   ```bash
-   npm run setup
-   npm run build
-   ```
-4. Add the MCP server to your Claude Desktop Configuration (File: `%APPDATA%\Claude\claude_desktop_config.json` on Win or `~/Library/Application Support/Claude/claude_desktop_config.json` on Mac):
-   ```json
-   {
-     "mcpServers": {
-       "aim-instagram": {
-         "command": "node",
-         "args": ["C:/path/to/aim-instagram-suite/dist/index.js"]
-       }
-     }
-   }
-   ```
-5. Restart Claude Desktop. Congratulations! All `aim_` prefixed tools are now unlocked.
+The installation of this project can be completely automated.
+Just copy this prompt and paste it into **Claude Code** (or Cursor/Windsurf):
+
+> Clone the repository: `https://github.com/fsbtactic-code/aim-instagram-suite.git`
+> Install all dependencies using `npm run setup` and build the project using `npm run build`.
+> Find my `claude_desktop_config.json` file and add this project to the `mcpServers` block under the name "aim-instagram-suite". Use the `node` command and provide the absolute path to the compiled `dist/index.js` file.
+> After that, restart Claude Desktop.
+
+Once the prompt is executed, all `aim_` tools (carousel rendering, video analysis, etc.) will be ready to use!
 
 ---
 
