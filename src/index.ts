@@ -1,6 +1,6 @@
 /**
- * AIM Instagram Suite — MCP Server Entry Point v1.2.0
- * 12 инструментов: Video Analysis + CarouselStudio + Virality Score + Carousel Intelligence
+ * AIM Instagram Suite — MCP Server Entry Point v1.3.0
+ * 14 инструментов: Video Analysis + CarouselStudio + Virality Score + Carousel Intelligence + Style Creator
  * Транспорт: stdio (совместим с `claude mcp add`)
  */
 
@@ -32,6 +32,7 @@ import { analyzeCarousel } from './tools/analyzeCarousel.js';
 import { localizeCarousel } from './tools/localizeCarousel.js';
 import { listViralStructures, getViralStructure, structureToSlides } from './core/viralStructures.js';
 import { listAvailableFonts } from './core/designSystem.js';
+import { createStyle } from './tools/createStyle.js';
 
 // ============================================================
 // Схемы входных параметров — Video Tools
@@ -131,6 +132,21 @@ const LocalizeCarouselSchema = z.object({
   outputDir: z.string().optional().describe('Папка для авторендера PNG (необязательно)'),
 });
 
+const CreateStyleSchema = z.object({
+  step: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]).optional()
+    .describe('Шаг мастера (1=настроение, 2=цвета, 3=шрифт, 4=подача, 5=генерация). Пропусти для старта.'),
+  mood: z.enum(['luxury','energetic','minimal','warm','dark','playful']).optional(),
+  colorBase: z.enum(['dark','light','contrast']).optional(),
+  primaryHex: z.string().optional().describe('Основной цвет HEX, например #C9A84C'),
+  secondaryHex: z.string().optional().describe('Вторичный цвет HEX'),
+  fontStyle: z.enum(['serif','modern','bold','handwritten','mono']).optional(),
+  contentDensity: z.enum(['minimal','balanced','rich']).optional(),
+  emojiUsage: z.enum(['none','subtle','expressive']).optional(),
+  customWishes: z.string().optional().describe('Дополнительные пожелания к стилю свободным текстом'),
+  styleName: z.string().optional().describe('Название стиля'),
+  saveToPath: z.string().optional().describe('Путь для сохранения JSON стиля'),
+});
+
 const ViralStructureSchema = z.object({
   structureId: z.enum([
     'open-loop', 'listicle', 'before-after', 'myth-busting', 'step-by-step',
@@ -144,6 +160,38 @@ const ViralStructureSchema = z.object({
 // ============================================================
 
 const TOOLS: Tool[] = [
+
+  // ── 🎨 STYLE CREATOR ──────────────────────────────────────────────────────
+
+  {
+    name: 'aim_create_style',
+    description: `🎨 Интерактивный мастер создания кастомного стиля карусели.
+Ведёт пользователя через 5 шагов: настроение → цвета → шрифт → подача → генерация.
+В итоге создаёт готовый CSS-стиль и JSON-конфиг, который применяется в aim_render_premium_carousel.
+
+КАК ИСПОЛЬЗОВАТЬ:
+1. Вызови без параметров или с step=1 — начнёт опрос
+2. После каждого шага показывай пользователю варианты и жди выбора
+3. Передавай ответы в следующий шаг
+4. На шаге 5 — получишь готовый brandColorOverlay для рендера`,
+    inputSchema: {
+      type: 'object',
+      properties: {
+        step:           { type: 'number', enum: [1,2,3,4,5], description: 'Текущий шаг (1-5). Пропусти для начала.' },
+        mood:           { type: 'string', enum: ['luxury','energetic','minimal','warm','dark','playful'] },
+        colorBase:      { type: 'string', enum: ['dark','light','contrast'] },
+        primaryHex:     { type: 'string', description: 'HEX цвет, например #C9A84C' },
+        secondaryHex:   { type: 'string', description: 'HEX цвет' },
+        fontStyle:      { type: 'string', enum: ['serif','modern','bold','handwritten','mono'] },
+        contentDensity: { type: 'string', enum: ['minimal','balanced','rich'] },
+        emojiUsage:     { type: 'string', enum: ['none','subtle','expressive'] },
+        customWishes:   { type: 'string', description: 'Дополнительные пожелания к стилю' },
+        styleName:      { type: 'string', description: 'Название стиля' },
+        saveToPath:     { type: 'string', description: 'Путь для сохранения JSON файла стиля' },
+      },
+      required: [],
+    },
+  },
 
   // ── 🎬 VIDEO ANALYSIS ─────────────────────────────────────────────────────
 
@@ -561,6 +609,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             usage: 'Вызови снова с structureId чтобы получить детальный шаблон',
           }, null, 2);
         }
+        break;
+      }
+
+      case 'aim_create_style': {
+        const parsed = CreateStyleSchema.parse(args);
+        result = createStyle(parsed as Parameters<typeof createStyle>[0]);
         break;
       }
 
