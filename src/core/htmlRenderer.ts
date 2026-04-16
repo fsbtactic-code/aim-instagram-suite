@@ -139,29 +139,35 @@ function buildSlideHTML(
   const autoFitScript = `
   <script>
     (function autoFit() {
+      // 1. Фикс для заголовков (высота + ширина)
       const title = document.querySelector('.slide-title, h1, .cta-main-title');
       if (title) {
         let size = parseInt(window.getComputedStyle(title).fontSize) || 80;
-        while((title.clientHeight > window.innerHeight * 0.45 || document.body.scrollHeight > window.innerHeight + 10) && size > 30) {
+        while((title.clientHeight > window.innerHeight * 0.45 || 
+               title.scrollWidth > window.innerWidth * 0.85 ||
+               document.body.scrollHeight > window.innerHeight + 10) && size > 24) {
           size -= 2;
           title.style.setProperty('font-size', size + 'px', 'important');
           title.style.setProperty('line-height', '1.1', 'important');
         }
       }
       
+      // 2. Фикс для текстов
       const bodies = document.querySelectorAll('.slide-body, p, .check-text, .cmp-cell, .step-body, .card-text');
       bodies.forEach(b => {
         let size = parseInt(window.getComputedStyle(b).fontSize) || 30;
-        while(document.body.scrollHeight > window.innerHeight + 10 && size > 16) {
+        while((b.scrollWidth > window.innerWidth * 0.85 || 
+               document.body.scrollHeight > window.innerHeight + 10) && size > 16) {
           size -= 1;
           b.style.setProperty('font-size', size + 'px', 'important');
         }
       });
       
+      // 3. Финальный глобальный скейлинг всей карточки
       const container = document.querySelector('.glass-card') || document.querySelector('.slide');
-      if (container && document.body.scrollHeight > window.innerHeight + 10) {
+      if (container && document.body.scrollHeight > window.innerHeight + 5) {
          let scale = 1.0;
-         while(document.body.scrollHeight > window.innerHeight + 10 && scale > 0.5) {
+         while(document.body.scrollHeight > window.innerHeight + 5 && scale > 0.5) {
             scale -= 0.05;
             container.style.transform = 'scale(' + scale + ')';
             container.style.transformOrigin = 'center center';
@@ -169,6 +175,23 @@ function buildSlideHTML(
       }
     })();
   </script>`;
+
+  // Базовый глобальный CSS для защиты верстки
+  const typographyProtection = `
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: ${width}px; height: ${height}px; overflow: hidden; }
+    h1, h2, h3, .slide-title, .cta-main-title {
+      text-wrap: balance; /* Магическое свойство для красивых переносов заголовков */
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      word-break: break-word;
+    }
+    p, .slide-body, .check-text {
+      text-wrap: pretty; /* Избавляет от висячих 'вдов' в последней строке текста */
+      overflow-wrap: break-word;
+    }
+    :root { --slide-width: ${width}px; --slide-height: ${height}px; }
+  `;
 
   // Кастомный HTML (полное переопределение)
   if (slide.customHtml) {
@@ -180,9 +203,7 @@ function buildSlideHTML(
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="${fontsUrl}" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    :root { --slide-width: ${width}px; --slide-height: ${height}px; }
-    html, body { width: ${width}px; height: ${height}px; overflow: hidden; }
+    ${typographyProtection}
     ${css}
   </style>
 </head>
@@ -203,9 +224,7 @@ ${autoFitScript}
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="${fontsUrl}" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    :root { --slide-width: ${width}px; --slide-height: ${height}px; }
-    html, body { width: ${width}px; height: ${height}px; overflow: hidden; }
+    ${typographyProtection}
     ${css}
   </style>
 </head>
