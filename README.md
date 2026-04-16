@@ -19,20 +19,79 @@
 
 **AIM Instagram Suite** — это набор из 13 инструментов (tools), работающих как локальный сервер [Model Context Protocol (MCP)](https://modelcontextprotocol.io/). Он подключается к Claude Desktop или вашему IDE (Cursor, Windsurf) и позволяет AI-агенту автономно анализировать видео, скачивать Reels и карусели, оценивать их виральность и автоматически рендерить новые посты в премиум-дизайне прямо у вас на компьютере. **Без платных API и сторонних сервисов.**
 
-## 🛠 Авто-установка через Claude Code
+## 🛠 Установка
 
-Установка этого проекта происходит полностью автоматически.
-Просто скопируйте этот промпт и вставьте его в **Claude Code** (или Cursor/Windsurf):
+### Вариант 1 — Claude Code CLI (рекомендуется, одна команда)
 
-> Склонируй репозиторий `https://github.com/fsbtactic-code/aim-instagram-suite.git` в новую папку "AIM-Suite" в моих Документах (или на рабочем столе).
-> Перейди в эту папку, установи все зависимости через `npm run setup` и скомпилируй проект через `npm run build`. 
-> Найди конфиг `claude_desktop_config.json`, добавь в `mcpServers` сервер "aim-instagram-suite": команда `node`, аргумент — абсолютный путь к `dist/index.js` в папке, куда мы только что склонировали.
-> Перезагрузи Claude Desktop.
+Клонируй репо и зарегистрируй MCP одной командой:
 
-После выполнения промпта все инструменты `aim_` (рендеринг каруселей, анализ видео и т.д.) будут готовы к работе!
+```bash
+git clone https://github.com/fsbtactic-code/aim-instagram-suite.git
+cd aim-instagram-suite
+npm install
+claude mcp add aim-instagram-suite -- npx tsx "$(pwd)/src/index.ts"
+```
 
+> **Windows PowerShell:**
+> ```powershell
+> git clone https://github.com/fsbtactic-code/aim-instagram-suite.git
+> cd aim-instagram-suite
+> npm install
+> claude mcp add aim-instagram-suite -- npx tsx "$PWD\src\index.ts"
+> ```
+
+После этого перезапусти Claude Code. Slash-команды `/project:aim-*` появятся автоматически — файлы уже в `.claude/commands/`.
 
 ---
+
+### Вариант 2 — Claude Desktop (ручная настройка)
+
+1. Склонируй и установи зависимости:
+```bash
+git clone https://github.com/fsbtactic-code/aim-instagram-suite.git
+cd aim-instagram-suite
+npm install
+```
+
+2. Открой конфиг Claude Desktop:
+   - **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+   - **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+
+3. Добавь сервер в `mcpServers` (замени путь на свой):
+```json
+{
+  "mcpServers": {
+    "aim-instagram-suite": {
+      "command": "npx",
+      "args": ["tsx", "C:\\путь\\к\\aim-instagram-suite\\src\\index.ts"]
+    }
+  }
+}
+```
+
+4. Полностью перезапусти Claude Desktop (не просто сверни — закрой через трей).
+
+> ⚠️ **Важно:** не используй `node dist/index.js` — build не нужен. Сервер запускается напрямую через `npx tsx src/index.ts`.
+
+---
+
+### Вариант 3 — Авто-установка промптом (для Cursor / Windsurf)
+
+Вставь этот промпт в чат своего AI-агента:
+
+> Склонируй репозиторий `https://github.com/fsbtactic-code/aim-instagram-suite.git` в папку на рабочем столе.
+> Перейди в папку, выполни `npm install`.
+> Добавь MCP сервер с командой `npx tsx` и аргументом — абсолютный путь к `src/index.ts` в склонированной папке.
+> Перезапусти IDE и подтверди что сервер `aim-instagram-suite` подключён (должно появиться 13 инструментов `aim_`).
+
+---
+
+> 💡 **Slash-команды `/project:aim-*`** работают только в **Claude Code CLI** (не в Claude Desktop).
+> В Claude Desktop инструменты вызываются напрямую в чате: *"используй aim_draft_carousel_structure..."*
+
+---
+
+
 
 ## 🚀 Примеры промптов для Claude
 
