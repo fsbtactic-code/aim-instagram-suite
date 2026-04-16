@@ -75,6 +75,44 @@
 
 ---
 
+## ⌨️ Slash Commands (Skills) — поддерживаемые платформы
+
+Все 13 инструментов доступны как slash-команды. Файлы уже включены в репозиторий — просто скопируйте в нужное место.
+
+| Платформа | Формат | Директория в репо | Вызов |
+|---|---|---|---|
+| **Claude Code** | `.md` | `.claude/commands/` | `/project:aim-*` |
+| **Gemini CLI / Antigravity** | `.toml` | `.gemini/commands/aim/` | `/aim:*` |
+| **Cursor** | `.mdc` | `.cursor/rules/` | Авто-контекст |
+| **GitHub Copilot** | `.md` | `.github/` | Авто-контекст |
+| **Windsurf** | rules | `.windsurfrules` | Авто-контекст |
+
+### Быстрая установка
+
+**Claude Code** — команды работают сразу (файлы в `.claude/commands/`):
+```
+/project:aim-evaluate-video
+/project:aim-draft-carousel
+/project:aim-render-carousel
+/project:aim-score-video
+# и т.д. для всех 13 инструментов
+```
+
+**Gemini / Antigravity** — скопировать глобально:
+```powershell
+# Windows
+Copy-Item .gemini\commands\aim $HOME\.gemini\commands\ -Recurse -Force
+```
+```bash
+# macOS / Linux
+cp -r .gemini/commands/aim ~/.gemini/commands/
+```
+Команды: `/aim:evaluate_video`, `/aim:draft_carousel`, `/aim:render_carousel` и т.д.
+
+**Cursor / Windsurf / Copilot** — подробная инструкция в [`SKILLS_SETUP.md`](SKILLS_SETUP.md).
+
+---
+
 ## 🎨 Система дизайна и Лейауты
 
 Наш движок рендеринга `htmlRenderer` включает **10 умных лейаутов**:
@@ -91,8 +129,60 @@
 
 А также поддерживает персистентный CTA-баннер на каждом слайде: *"Напиши слово X..."*
 
+---
+
+## 📦 Полный справочник MCP-инструментов
+
+### 🎬 Видео-аналитика
+
+| Инструмент | Входные параметры | Что делает |
+|---|---|---|
+| `aim_evaluate_video` | `videoPath` | Полный анализ видео: хук, удержание, эмоции, индекс виральности (0-100). Использует FFmpeg → кадровая сетка → Vision. |
+| `aim_analyze_viral_reels` | `url`, `outputMdPath` | Скачивает видео (Instagram/TikTok/YouTube/VK), транскрибирует через Whisper, делает реверс-инжиниринг структуры, сохраняет .md отчёт. |
+| `aim_generate_script` | `referenceMdPath`, `targetTopic` | Читает .md отчёт из `aim_analyze_viral_reels` и адаптирует успешную структуру под новую тему/нишу. |
+| `aim_analyze_hook` | `videoPath` или `url` | Изолированный анализ хука (первые 5 секунд) + 5 вариантов усиления с указанием триггеров. |
+| `aim_extract_pacing` | `videoPath` или `url`, `slowThresholdSec?` | Детектор скуки: таймкоды смен кадра, провисания, оценка динамики монтажа. |
+
+### 📊 Оценка виральности
+
+| Инструмент | Входные параметры | Что делает |
+|---|---|---|
+| `aim_score_virality` | `videoPath` или `url`, `context?` | Индекс Виральности ВИДЕО (0-100) по 7 критериям: Хук 25%, Динамика 20%, Звук 15%, Ценность 15%, Эмоции 12%, Визуал 8%, CTA 5%. |
+| `aim_score_carousel_virality` | `url` или `slidesDir`, `context?`, `goal?` | Индекс Виральности КАРУСЕЛИ (0-100) по 6 carousel-специфичным критериям. Анализирует save-rate и share-rate. |
+
+### 🔍 Анализ каруселей конкурентов
+
+| Инструмент | Входные параметры | Что делает |
+|---|---|---|
+| `aim_analyze_carousel` | `url`, `outputMdPath?` | Скачивает все слайды, склеивает в коллаж, анализирует AIDA-воронку и психологические триггеры каждого слайда. |
+| `aim_localize_carousel` | `url`, `mode`, `targetTopic?`, `slideCount?`, `designTheme?`, `outputDir?` | Три режима: `copy` (рерайт), `localize` (перевод на RU), `adapt` (адаптация под новую нишу). Опционально — авторендер в PNG. |
+| `aim_viral_structure` | `structureId?`, `topic?` | Библиотека из 12 доказанных структур каруселей. Без `structureId` — список всех. С ID — детальный шаблон слайдов. |
+
+### 🎨 Carousel Studio (создание и рендер)
+
+| Инструмент | Входные параметры | Что делает |
+|---|---|---|
+| `aim_draft_carousel_structure` | `topic`, `slideCount?` (3-15), `toneOfVoice?` | ШАГ 1: Генерирует JSON-структуру карусели с заголовками, текстом и эмодзи. Поддерживает 5 тонов подачи. |
+| `aim_render_premium_carousel` | `slidesData`, `theme` (1-8), `outputDir`, `format?`, `globalCta?`, `brandColorOverlay?` | ШАГ 2: Рендерит PNG через Puppeteer. 8 тем дизайна, 10 лейаутов, кириллица, размеры 1080×1080 или 1080×1350. |
+| `aim_auto_brand_colors` | `baseTheme` (1-8), `primaryColor`, `secondaryColor`, `textColor?` | Генерирует CSS-оверлей бренд-цветов с проверкой контрастности WCAG AA. Передаётся в `aim_render_premium_carousel`. |
+
+### 🎨 Темы дизайна (aim_render_premium_carousel)
+
+| # | Название | Стиль |
+|---|---|---|
+| 1 | ✨ Glassmorphism | Матовое стекло, фиолетовый градиент |
+| 2 | 💥 Neo-Brutalism | Кислотные цвета, чёрные тени |
+| 3 | 🤍 Minimalist Elegance | Журнальный, бежевый |
+| 4 | 💚 Dark Cyberpunk | Неон, сетка кода |
+| 5 | 🍎 Apple Premium | Чёрный/белый градиент |
+| 6 | 🌈 Y2K / Acid | Ретро-футуризм, хром |
+| 7 | 🔵 EdTech / Trust | Синий, корпоративный |
+| 8 | 🎯 Custom Brand | Под бренд через `aim_auto_brand_colors` |
+
+---
+
 ## ⚠️ Предупреждения и приватность
-* **Zero APIs**: Вся работа (FFmpeg транскодинг, склейка кадров, Puppeteer рендер, скачивание `yt-dlp`) выполняется строго локально. 
+* **Zero APIs**: Вся работа (FFmpeg транскодинг, склейка кадров, Puppeteer рендер, скачивание `yt-dlp`) выполняется строго локально.
 * Единственный внешний процесс — Python Whisper (если установлен локально) или OCR/Vision анализ, который запускается самим Claude. Мы не сохраняем ваши данные.
 
 ## Разработчик
