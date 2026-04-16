@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" width="100%" height="100%">
+  <!-- Left Side: Light Theme (Pure white background) -->
+  <rect x="0" y="0" width="600" height="400" fill="#ffffff" />
+  <g transform="translate(40, 100)">
+    <!-- Brackets < > -->
+    <path d="M 40 40 L 10 100 L 40 160" fill="none" stroke="#000000" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M 160 40 L 190 100 L 160 160" fill="none" stroke="#000000" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+    <!-- Target / Camera Aperture inside Brackets -->
+    <circle cx="100" cy="100" r="50" fill="none" stroke="#000000" stroke-width="6" />
+    <circle cx="100" cy="100" r="20" fill="none" stroke="#000000" stroke-width="6" />
+    <!-- Crosshairs intersecting aperture blades -->
+    <path d="M 100 40 L 100 65" fill="none" stroke="#000000" stroke-width="6" stroke-linecap="round" />
+    <path d="M 100 160 L 100 135" fill="none" stroke="#000000" stroke-width="6" stroke-linecap="round" />
+    <path d="M 40 100 L 65 100" fill="none" stroke="#000000" stroke-width="6" stroke-linecap="round" />
+    <path d="M 160 100 L 135 100" fill="none" stroke="#000000" stroke-width="6" stroke-linecap="round" />
+    
+    <!-- Text -->
+    <text x="230" y="94" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="800" font-size="44" fill="#000000" letter-spacing="-1">AIM Instagram</text>
+    <text x="230" y="142" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="400" font-size="34" fill="#333333" letter-spacing="4">SUITE</text>
+  </g>
+
+  <!-- Right Side: Dark Theme (Charcoal background) -->
+  <rect x="600" y="0" width="600" height="400" fill="#111111" />
+  <g transform="translate(640, 100)">
+    <!-- Brackets < > -->
+    <path d="M 40 40 L 10 100 L 40 160" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M 160 40 L 190 100 L 160 160" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+    <!-- Target / Camera Aperture inside Brackets -->
+    <circle cx="100" cy="100" r="50" fill="none" stroke="#ffffff" stroke-width="6" />
+    <circle cx="100" cy="100" r="20" fill="none" stroke="#ffffff" stroke-width="6" />
+    <!-- Crosshairs intersecting aperture blades -->
+    <path d="M 100 40 L 100 65" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" />
+    <path d="M 100 160 L 100 135" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" />
+    <path d="M 40 100 L 65 100" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" />
+    <path d="M 160 100 L 135 100" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" />
+    
+    <!-- Text -->
+    <text x="230" y="94" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="800" font-size="44" fill="#ffffff" letter-spacing="-1">AIM Instagram</text>
+    <text x="230" y="142" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="400" font-size="34" fill="#cccccc" letter-spacing="4">SUITE</text>
+  </g>
+  
+  <!-- Divider -->
+  <line x1="600" y1="0" x2="600" y2="400" stroke="#333333" stroke-width="2" />
+</svg>
