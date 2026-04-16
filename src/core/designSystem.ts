@@ -39,7 +39,7 @@ const glassmorphismCSS = `
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 60px 56px;
+    padding: 150px 140px;
     position: relative;
     overflow: hidden;
     font-family: 'Golos Text', 'Inter', sans-serif;
@@ -49,19 +49,19 @@ const glassmorphismCSS = `
   .slide::before {
     content: '';
     position: absolute;
-    width: 500px; height: 500px;
+    width: 1250px; height: 1250px;
     border-radius: 50%;
     background: radial-gradient(circle, rgba(99,102,241,0.35) 0%, transparent 70%);
-    top: -150px; right: -150px;
+    top: -375px; right: -375px;
     pointer-events: none;
   }
   .slide::after {
     content: '';
     position: absolute;
-    width: 400px; height: 400px;
+    width: 1000px; height: 1000px;
     border-radius: 50%;
     background: radial-gradient(circle, rgba(139,92,246,0.25) 0%, transparent 70%);
-    bottom: -100px; left: -100px;
+    bottom: -250px; left: -250px;
     pointer-events: none;
   }
 
@@ -70,50 +70,50 @@ const glassmorphismCSS = `
     z-index: 2;
     width: 100%;
     background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(60px);
+    -webkit-backdrop-filter: blur(60px);
     border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 28px;
-    padding: 50px 44px;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.12);
+    border-radius: 70px;
+    padding: 125px 110px;
+    box-shadow: 0 20px 100px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.12);
     text-align: center;
   }
 
   .slide-number {
-    font-size: 13px;
+    font-size: 33px;
     font-weight: 500;
     letter-spacing: 3px;
     text-transform: uppercase;
     color: rgba(139,92,246,0.9);
-    margin-bottom: 20px;
+    margin-bottom: 50px;
   }
 
   .emoji-icon {
-    font-size: 52px;
-    margin-bottom: 20px;
+    font-size: 130px;
+    margin-bottom: 50px;
     display: block;
-    filter: drop-shadow(0 4px 12px rgba(139,92,246,0.5));
+    filter: drop-shadow(0 4px 30px rgba(139,92,246,0.5));
   }
 
   .slide-title {
-    font-size: clamp(26px, 3.5vw, 38px);
+    font-size: clamp(163px, 3.5vw, 238px);
     font-weight: 700;
     line-height: 1.25;
     color: #ffffff;
-    margin-bottom: 18px;
-    text-shadow: 0 2px 20px rgba(139,92,246,0.4);
+    margin-bottom: 45px;
+    text-shadow: 0 2px 50px rgba(139,92,246,0.4);
   }
 
   .slide-subtitle {
-    font-size: clamp(14px, 1.8vw, 18px);
+    font-size: clamp(88px, 1.8vw, 113px);
     font-weight: 500;
     color: rgba(139,92,246,0.95);
-    margin-bottom: 16px;
+    margin-bottom: 40px;
     letter-spacing: 0.5px;
   }
 
   .slide-body {
-    font-size: clamp(13px, 1.6vw, 16px);
+    font-size: clamp(83px, 1.6vw, 100px);
     font-weight: 400;
     line-height: 1.7;
     color: rgba(255,255,255,0.75);
@@ -123,11 +123,11 @@ const glassmorphismCSS = `
     display: inline-block;
     background: rgba(139,92,246,0.2);
     border: 1px solid rgba(139,92,246,0.4);
-    border-radius: 50px;
-    padding: 6px 16px;
-    font-size: 13px;
+    border-radius: 125px;
+    padding: 15px 40px;
+    font-size: 33px;
     color: rgba(139,92,246,0.95);
-    margin-top: 20px;
+    margin-top: 50px;
   }
 `;
 
@@ -146,7 +146,7 @@ const neoBrutalismCSS = `
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    padding: 64px 60px;
+    padding: 160px 150px;
     position: relative;
     overflow: hidden;
     font-family: 'Unbounded', 'Space Grotesk', sans-serif;
@@ -156,7 +156,7 @@ const neoBrutalismCSS = `
   .accent-block {
     position: absolute;
     top: 0; right: 0;
-    width: 220px; height: 220px;
+    width: 550px; height: 550px;
     background: #FF2D55;
     border-left: 5px solid #000;
     border-bottom: 5px solid #000;
@@ -169,54 +169,54 @@ const neoBrutalismCSS = `
     background: #fff;
     border: 4px solid #000;
     border-radius: 0;
-    padding: 44px 40px;
-    box-shadow: 8px 8px 0 #000;
+    padding: 110px 100px;
+    box-shadow: 20px 20px 0 #000;
   }
 
   .slide-number {
-    font-size: 11px;
+    font-size: 28px;
     font-weight: 800;
     letter-spacing: 4px;
     text-transform: uppercase;
     color: #000;
-    margin-bottom: 14px;
+    margin-bottom: 35px;
     background: #FF2D55;
     display: inline-block;
-    padding: 4px 12px;
+    padding: 4px 30px;
   }
 
   .emoji-icon {
-    font-size: 48px;
-    margin-bottom: 16px;
+    font-size: 120px;
+    margin-bottom: 40px;
     display: block;
   }
 
   .slide-title {
-    font-size: clamp(24px, 3.2vw, 36px);
+    font-size: clamp(150px, 3.2vw, 225px);
     font-weight: 900;
     line-height: 1.15;
     color: #000;
-    margin-bottom: 16px;
+    margin-bottom: 40px;
     text-transform: uppercase;
     word-break: break-word;
   }
 
   .slide-subtitle {
-    font-size: clamp(13px, 1.6vw, 16px);
+    font-size: clamp(83px, 1.6vw, 100px);
     font-weight: 800;
     color: #FF2D55;
-    margin-bottom: 14px;
+    margin-bottom: 35px;
     text-transform: uppercase;
     letter-spacing: 1px;
   }
 
   .slide-body {
-    font-size: clamp(12px, 1.5vw, 15px);
+    font-size: clamp(75px, 1.5vw, 95px);
     font-weight: 500;
     line-height: 1.6;
     color: #111;
     border-left: 4px solid #000;
-    padding-left: 14px;
+    padding-left: 35px;
   }
 
   .tag {
@@ -224,11 +224,11 @@ const neoBrutalismCSS = `
     background: #F5F000;
     border: 3px solid #000;
     border-radius: 0;
-    padding: 6px 14px;
-    font-size: 12px;
+    padding: 15px 35px;
+    font-size: 30px;
     font-weight: 800;
     color: #000;
-    margin-top: 18px;
+    margin-top: 45px;
     text-transform: uppercase;
     box-shadow: 3px 3px 0 #000;
   }
@@ -249,7 +249,7 @@ const minimalistCSS = `
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    padding: 80px 76px;
+    padding: 200px 190px;
     position: relative;
     overflow: hidden;
     background: #FAF8F5;
@@ -272,67 +272,67 @@ const minimalistCSS = `
 
   .slide-number {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 48px;
+    font-size: 120px;
     font-weight: 300;
     font-style: italic;
     color: rgba(201,169,110,0.35);
     line-height: 1;
-    margin-bottom: 12px;
+    margin-bottom: 30px;
     display: block;
   }
 
   .emoji-icon {
-    font-size: 40px;
-    margin-bottom: 18px;
+    font-size: 100px;
+    margin-bottom: 45px;
     display: block;
     opacity: 0.85;
   }
 
   .slide-title {
     font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(30px, 4vw, 46px);
+    font-size: clamp(188px, 4.0vw, 288px);
     font-weight: 600;
     font-style: italic;
     line-height: 1.2;
     color: #2C2416;
-    margin-bottom: 20px;
+    margin-bottom: 50px;
   }
 
   .slide-subtitle {
     font-family: 'Montserrat', sans-serif;
-    font-size: clamp(11px, 1.4vw, 14px);
+    font-size: clamp(70px, 1.4vw, 88px);
     font-weight: 600;
     color: #C9A96E;
-    margin-bottom: 16px;
+    margin-bottom: 40px;
     letter-spacing: 3px;
     text-transform: uppercase;
   }
 
   .slide-body {
     font-family: 'Montserrat', sans-serif;
-    font-size: clamp(12px, 1.5vw, 15px);
+    font-size: clamp(75px, 1.5vw, 95px);
     font-weight: 400;
     line-height: 1.85;
     color: #5C5040;
   }
 
   .divider {
-    width: 50px;
+    width: 125px;
     height: 1px;
     background: #C9A96E;
-    margin: 20px 0;
+    margin: 50px 0;
   }
 
   .tag {
     display: inline-block;
     border: 1px solid #C9A96E;
     border-radius: 2px;
-    padding: 5px 14px;
+    padding: 5px 35px;
     font-family: 'Montserrat', sans-serif;
-    font-size: 11px;
+    font-size: 28px;
     font-weight: 600;
     color: #C9A96E;
-    margin-top: 18px;
+    margin-top: 45px;
     letter-spacing: 2px;
     text-transform: uppercase;
   }
@@ -353,7 +353,7 @@ const cyberpunkCSS = `
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    padding: 60px 56px;
+    padding: 150px 140px;
     position: relative;
     overflow: hidden;
     font-family: 'JetBrains Mono', 'Jura', monospace;
@@ -361,7 +361,7 @@ const cyberpunkCSS = `
     background-image:
       linear-gradient(rgba(0,255,136,0.04) 1px, transparent 1px),
       linear-gradient(90deg, rgba(0,255,136,0.04) 1px, transparent 1px);
-    background-size: 40px 40px;
+    background-size: 100px 100px;
   }
 
   .scan-line {
@@ -373,13 +373,13 @@ const cyberpunkCSS = `
   }
   .corner-tl, .corner-br {
     position: absolute;
-    width: 30px; height: 30px;
+    width: 75px; height: 75px;
     border-color: #00FF88;
     border-style: solid;
     opacity: 0.7;
   }
-  .corner-tl { top: 24px; left: 24px; border-width: 2px 0 0 2px; }
-  .corner-br { bottom: 24px; right: 24px; border-width: 0 2px 2px 0; }
+  .corner-tl { top: 60px; left: 60px; border-width: 2px 0 0 2px; }
+  .corner-br { bottom: 60px; right: 60px; border-width: 0 2px 2px 0; }
 
   .glass-card {
     position: relative;
@@ -388,45 +388,45 @@ const cyberpunkCSS = `
     background: rgba(0,255,136,0.03);
     border: 1px solid rgba(0,255,136,0.2);
     border-radius: 4px;
-    padding: 44px 40px;
-    box-shadow: 0 0 30px rgba(0,255,136,0.08), inset 0 0 30px rgba(0,0,0,0.3);
+    padding: 110px 100px;
+    box-shadow: 0 0 75px rgba(0,255,136,0.08), inset 0 0 75px rgba(0,0,0,0.3);
   }
 
   .slide-number {
-    font-size: 11px;
+    font-size: 28px;
     font-weight: 400;
     letter-spacing: 4px;
     color: #00FF88;
-    margin-bottom: 16px;
+    margin-bottom: 40px;
     opacity: 0.7;
   }
 
   .emoji-icon {
-    font-size: 44px;
-    margin-bottom: 16px;
+    font-size: 110px;
+    margin-bottom: 40px;
     display: block;
-    filter: drop-shadow(0 0 10px rgba(0,255,136,0.6));
+    filter: drop-shadow(0 0 25px rgba(0,255,136,0.6));
   }
 
   .slide-title {
-    font-size: clamp(22px, 2.8vw, 32px);
+    font-size: clamp(138px, 2.8vw, 200px);
     font-weight: 700;
     line-height: 1.25;
     color: #FFFFFF;
-    margin-bottom: 16px;
-    text-shadow: 0 0 20px rgba(0,255,136,0.3);
+    margin-bottom: 40px;
+    text-shadow: 0 0 50px rgba(0,255,136,0.3);
   }
 
   .slide-subtitle {
-    font-size: clamp(11px, 1.4vw, 13px);
+    font-size: clamp(70px, 1.4vw, 83px);
     font-weight: 400;
     color: #00FF88;
-    margin-bottom: 14px;
+    margin-bottom: 35px;
     letter-spacing: 2px;
   }
 
   .slide-body {
-    font-size: clamp(11px, 1.4vw, 13px);
+    font-size: clamp(70px, 1.4vw, 83px);
     font-weight: 400;
     line-height: 1.75;
     color: rgba(255,255,255,0.6);
@@ -437,10 +437,10 @@ const cyberpunkCSS = `
     background: rgba(0,255,136,0.1);
     border: 1px solid rgba(0,255,136,0.4);
     border-radius: 2px;
-    padding: 5px 14px;
-    font-size: 11px;
+    padding: 5px 35px;
+    font-size: 28px;
     color: #00FF88;
-    margin-top: 18px;
+    margin-top: 45px;
     letter-spacing: 2px;
   }
 `;
@@ -460,7 +460,7 @@ const applePremiumCSS = `
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    padding: 72px 68px;
+    padding: 180px 170px;
     position: relative;
     overflow: hidden;
     font-family: 'Onest', sans-serif;
@@ -469,10 +469,10 @@ const applePremiumCSS = `
 
   .glow-orb {
     position: absolute;
-    width: 600px; height: 600px;
+    width: 1500px; height: 1500px;
     border-radius: 50%;
     background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 60%);
-    top: -200px; right: -200px;
+    top: -500px; right: -500px;
     pointer-events: none;
   }
 
@@ -485,23 +485,23 @@ const applePremiumCSS = `
   }
 
   .slide-number {
-    font-size: 11px;
+    font-size: 28px;
     font-weight: 500;
     letter-spacing: 4px;
     text-transform: uppercase;
     color: rgba(255,255,255,0.3);
-    margin-bottom: 20px;
+    margin-bottom: 50px;
     display: block;
   }
 
   .emoji-icon {
-    font-size: 50px;
-    margin-bottom: 20px;
+    font-size: 125px;
+    margin-bottom: 50px;
     display: block;
   }
 
   .slide-title {
-    font-size: clamp(32px, 4.2vw, 52px);
+    font-size: clamp(200px, 4.2vw, 325px);
     font-weight: 800;
     line-height: 1.1;
     letter-spacing: -1.5px;
@@ -509,19 +509,19 @@ const applePremiumCSS = `
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-bottom: 20px;
+    margin-bottom: 50px;
   }
 
   .slide-subtitle {
-    font-size: clamp(13px, 1.6vw, 16px);
+    font-size: clamp(83px, 1.6vw, 100px);
     font-weight: 500;
     color: rgba(255,255,255,0.45);
-    margin-bottom: 16px;
+    margin-bottom: 40px;
     letter-spacing: 0.3px;
   }
 
   .slide-body {
-    font-size: clamp(13px, 1.6vw, 16px);
+    font-size: clamp(83px, 1.6vw, 100px);
     font-weight: 400;
     line-height: 1.7;
     color: rgba(255,255,255,0.55);
@@ -531,12 +531,12 @@ const applePremiumCSS = `
     display: inline-block;
     background: rgba(255,255,255,0.08);
     border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 50px;
-    padding: 7px 18px;
-    font-size: 12px;
+    border-radius: 125px;
+    padding: 18px 45px;
+    font-size: 30px;
     font-weight: 500;
     color: rgba(255,255,255,0.6);
-    margin-top: 22px;
+    margin-top: 55px;
     letter-spacing: 0.5px;
   }
 `;
@@ -556,7 +556,7 @@ const y2kAcidCSS = `
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 60px 56px;
+    padding: 150px 140px;
     position: relative;
     overflow: hidden;
     font-family: 'Russo One', sans-serif;
@@ -579,49 +579,49 @@ const y2kAcidCSS = `
     position: absolute;
     border-radius: 50%;
     background: rgba(255,255,255,0.1);
-    filter: blur(40px);
+    filter: blur(100px);
   }
-  .blob-1 { width: 300px; height: 300px; top: -80px; left: -80px; }
-  .blob-2 { width: 250px; height: 250px; bottom: -60px; right: -60px; }
+  .blob-1 { width: 750px; height: 750px; top: -200px; left: -200px; }
+  .blob-2 { width: 625px; height: 625px; bottom: -150px; right: -150px; }
 
   .glass-card {
     position: relative;
     z-index: 2;
     width: 100%;
     background: rgba(0,0,0,0.15);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(25px);
     border: 2px solid rgba(255,255,255,0.4);
-    border-radius: 16px;
-    padding: 50px 44px;
+    border-radius: 40px;
+    padding: 125px 110px;
     text-align: center;
     box-shadow:
       0 0 0 4px rgba(255,255,255,0.15),
-      0 20px 60px rgba(0,0,0,0.2);
+      0 50px 150px rgba(0,0,0,0.2);
   }
 
   .slide-number {
-    font-size: 12px;
+    font-size: 30px;
     font-weight: 700;
     letter-spacing: 5px;
     text-transform: uppercase;
     color: rgba(255,255,255,0.8);
-    margin-bottom: 14px;
+    margin-bottom: 35px;
     display: block;
   }
 
   .emoji-icon {
-    font-size: 54px;
-    margin-bottom: 16px;
+    font-size: 135px;
+    margin-bottom: 40px;
     display: block;
-    filter: drop-shadow(0 4px 20px rgba(0,0,0,0.3));
+    filter: drop-shadow(0 4px 50px rgba(0,0,0,0.3));
   }
 
   .slide-title {
-    font-size: clamp(26px, 3.4vw, 40px);
+    font-size: clamp(163px, 3.4vw, 250px);
     font-weight: 900;
     line-height: 1.15;
     color: #FFFFFF;
-    margin-bottom: 16px;
+    margin-bottom: 40px;
     text-shadow:
       3px 3px 0 rgba(0,0,0,0.25),
       -1px -1px 0 rgba(255,255,255,0.3);
@@ -629,17 +629,17 @@ const y2kAcidCSS = `
   }
 
   .slide-subtitle {
-    font-size: clamp(13px, 1.6vw, 16px);
+    font-size: clamp(83px, 1.6vw, 100px);
     font-weight: 700;
     color: rgba(255,255,255,0.9);
-    margin-bottom: 14px;
+    margin-bottom: 35px;
     letter-spacing: 1px;
     text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
   }
 
   .slide-body {
     font-family: 'Russo One', sans-serif;
-    font-size: clamp(12px, 1.4vw, 14px);
+    font-size: clamp(75px, 1.4vw, 88px);
     font-weight: 400;
     line-height: 1.7;
     color: rgba(255,255,255,0.85);
@@ -649,12 +649,12 @@ const y2kAcidCSS = `
     display: inline-block;
     background: rgba(255,255,255,0.25);
     border: 2px solid rgba(255,255,255,0.6);
-    border-radius: 50px;
-    padding: 6px 18px;
-    font-size: 12px;
+    border-radius: 125px;
+    padding: 15px 45px;
+    font-size: 30px;
     font-weight: 700;
     color: #fff;
-    margin-top: 18px;
+    margin-top: 45px;
     letter-spacing: 2px;
   }
 `;
@@ -674,7 +674,7 @@ const edtechCSS = `
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    padding: 64px 60px;
+    padding: 160px 150px;
     position: relative;
     overflow: hidden;
     font-family: 'Manrope', 'Roboto Flex', sans-serif;
@@ -701,54 +701,54 @@ const edtechCSS = `
     width: 100%;
     background: #FFFFFF;
     border: 1px solid #E8EFF8;
-    border-radius: 16px;
-    padding: 44px 40px;
-    box-shadow: 0 4px 24px rgba(37,99,235,0.08);
+    border-radius: 40px;
+    padding: 110px 100px;
+    box-shadow: 0 4px 60px rgba(37,99,235,0.08);
   }
 
   .slide-number {
-    font-size: 11px;
+    font-size: 28px;
     font-weight: 700;
     letter-spacing: 3px;
     text-transform: uppercase;
     color: #2563EB;
-    margin-bottom: 16px;
+    margin-bottom: 40px;
     display: block;
     opacity: 0.7;
   }
 
   .emoji-icon {
-    font-size: 44px;
-    margin-bottom: 16px;
+    font-size: 110px;
+    margin-bottom: 40px;
     display: block;
   }
 
   .slide-title {
-    font-size: clamp(24px, 3vw, 34px);
+    font-size: clamp(150px, 3.0vw, 213px);
     font-weight: 800;
     line-height: 1.25;
     color: #0F172A;
-    margin-bottom: 16px;
+    margin-bottom: 40px;
   }
 
   .slide-subtitle {
-    font-size: clamp(12px, 1.5vw, 15px);
+    font-size: clamp(75px, 1.5vw, 95px);
     font-weight: 700;
     color: #2563EB;
-    margin-bottom: 14px;
+    margin-bottom: 35px;
     letter-spacing: 0.5px;
   }
 
   .highlight-box {
     background: linear-gradient(135deg, rgba(37,99,235,0.06), rgba(6,182,212,0.06));
     border-left: 3px solid #2563EB;
-    border-radius: 0 8px 8px 0;
-    padding: 12px 16px;
-    margin: 14px 0;
+    border-radius: 0 20px 20px 0;
+    padding: 30px 40px;
+    margin: 35px 0;
   }
 
   .slide-body {
-    font-size: clamp(12px, 1.5vw, 15px);
+    font-size: clamp(75px, 1.5vw, 95px);
     font-weight: 400;
     line-height: 1.75;
     color: #475569;
@@ -758,12 +758,12 @@ const edtechCSS = `
     display: inline-block;
     background: rgba(37,99,235,0.08);
     border: 1px solid rgba(37,99,235,0.2);
-    border-radius: 6px;
-    padding: 6px 14px;
-    font-size: 12px;
+    border-radius: 15px;
+    padding: 15px 35px;
+    font-size: 30px;
     font-weight: 600;
     color: #2563EB;
-    margin-top: 18px;
+    margin-top: 45px;
   }
 `;
 

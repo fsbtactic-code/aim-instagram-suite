@@ -5,7 +5,7 @@
  * Результат: 1 JPEG 768px, quality 70% — минимум токенов для Claude.
  */
 
-import * as sharp from 'sharp';
+import sharp from 'sharp';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -37,7 +37,7 @@ export async function buildGrid(
 
   if (imagePaths.length === 0) {
     // Возвращаем пустую серую картинку если нет кадров
-    return await (sharp as unknown as typeof import('sharp'))({
+    return await sharp({
       create: { width: cellWidth, height: cellWidth, channels: 3, background: { r: 50, g: 50, b: 50 } },
     })
       .jpeg({ quality: outputQuality })
@@ -59,13 +59,13 @@ export async function buildGrid(
 
     try {
       // Resize кадр до размера ячейки
-      const cell = await (sharp as unknown as typeof import('sharp'))(imgPath)
+      const cell = await sharp(imgPath)
         .resize(cellWidth, cellHeight, { fit: 'contain', background: { r: 20, g: 20, b: 20 } })
         .jpeg({ quality: 85 })
         .toBuffer();
 
       // Добавляем SVG-оверлей с таймкодом
-      const cellWithTimecode = await (sharp as unknown as typeof import('sharp'))(cell)
+      const cellWithTimecode = await sharp(cell)
         .composite([{
           input: Buffer.from(buildTimecodeOverlay(timecode, cellWidth)),
           gravity: 'southwest',
@@ -76,7 +76,7 @@ export async function buildGrid(
       processedCells.push(cellWithTimecode);
     } catch {
       // Если кадр битый — добавляем серый placeholder
-      const placeholder = await (sharp as unknown as typeof import('sharp'))({
+      const placeholder = await sharp({
         create: { width: cellWidth, height: cellHeight, channels: 3, background: { r: 40, g: 40, b: 40 } },
       })
         .jpeg({ quality: 85 })
@@ -100,7 +100,7 @@ export async function buildGrid(
     };
   });
 
-  const grid = await (sharp as unknown as typeof import('sharp'))({
+  const grid = await sharp({
     create: {
       width: gridWidth,
       height: gridHeight,

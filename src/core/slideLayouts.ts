@@ -282,12 +282,12 @@ export const LAYOUTS_CSS = `
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 12px 24px;
+  gap: 20px;
+  padding: 30px 60px;
   background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(20px);
   border-top: 1px solid rgba(255,255,255,0.15);
-  font-size: 16px;
+  font-size: 40px;
   font-weight: 600;
   color: rgba(255,255,255,0.95);
   letter-spacing: 0.02em;
@@ -296,24 +296,24 @@ export const LAYOUTS_CSS = `
   border-bottom-right-radius: inherit;
 }
 .cta-banner--large {
-  font-size: 22px;
-  padding: 20px 32px;
+  font-size: 55px;
+  padding: 50px 80px;
   background: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.08));
-  border-radius: 16px;
+  border-radius: 40px;
   position: relative;
-  margin-top: 24px;
+  margin-top: 60px;
   bottom: auto;
   left: auto;
   right: auto;
   border: 1px solid rgba(255,255,255,0.3);
 }
-.cta-arrow { font-size: 20px; }
+.cta-arrow { font-size: 50px; }
 .cta-text { flex: 1; text-align: center; }
 
 /* Отступ для glass-card чтобы CTA не перекрывал контент */
-.glass-card { padding-bottom: 56px; }
+.glass-card { padding-bottom: 140px; }
 .layout-cta-final .glass-card,
-.glass-card.layout-cta-final { padding-bottom: 24px; }
+.glass-card.layout-cta-final { padding-bottom: 60px; }
 
 /* ── LAYOUT: Hero Number ─────────────────────────────── */
 .layout-hero-number {
@@ -326,11 +326,11 @@ export const LAYOUTS_CSS = `
 .hero-stat {
   display: flex;
   align-items: baseline;
-  gap: 8px;
-  margin: 20px 0 16px;
+  gap: 20px;
+  margin: 50px 0 40px;
 }
 .hero-num {
-  font-size: 120px;
+  font-size: 300px;
   font-weight: 900;
   line-height: 1;
   background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%);
@@ -340,51 +340,51 @@ export const LAYOUTS_CSS = `
   letter-spacing: -4px;
 }
 .hero-unit {
-  font-size: 36px;
+  font-size: 90px;
   font-weight: 700;
   opacity: 0.7;
   color: inherit;
   -webkit-text-fill-color: currentColor;
 }
-.hero-title { font-size: 28px !important; text-align: center; }
+.hero-title { font-size: 70px !important; text-align: center; }
 
 /* ── LAYOUT: Grid 2×2 ───────────────────────────────── */
-.layout-grid2x2 .slide-title { font-size: 28px; margin-bottom: 20px; }
+.layout-grid2x2 .slide-title { font-size: 70px; margin-bottom: 50px; }
 .grid2x2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 30px;
   width: 100%;
   flex: 1;
 }
 .grid-cell {
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 16px;
-  padding: 16px;
+  border-radius: 40px;
+  padding: 40px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 15px;
 }
 .grid-cell--accent {
   background: rgba(255,255,255,0.15);
   border-color: rgba(255,255,255,0.3);
 }
 .grid-label {
-  font-size: 11px;
+  font-size: 28px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   opacity: 0.6;
 }
 .grid-value {
-  font-size: 17px;
+  font-size: 43px;
   font-weight: 600;
   line-height: 1.4;
 }
 
 /* ── LAYOUT: Good / Bad ─────────────────────────────── */
-.layout-good-bad .slide-title { font-size: 28px; margin-bottom: 16px; }
+.layout-good-bad .slide-title { font-size: 70px; margin-bottom: 40px; }
 .gb-split {
   display: flex;
   gap: 0;
@@ -392,40 +392,40 @@ export const LAYOUTS_CSS = `
   flex: 1;
   align-items: stretch;
 }
-.gb-col { flex: 1; display: flex; flex-direction: column; gap: 8px; padding: 12px; }
+.gb-col { flex: 1; display: flex; flex-direction: column; gap: 20px; padding: 30px; }
 .gb-divider {
   width: 2px;
   background: rgba(255,255,255,0.15);
   align-self: stretch;
-  margin: 8px 0;
+  margin: 20px 0;
 }
 .gb-header {
-  font-size: 13px;
+  font-size: 33px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  padding: 8px 12px;
-  border-radius: 8px;
+  padding: 20px 30px;
+  border-radius: 20px;
   margin-bottom: 4px;
 }
 .good-header { background: rgba(34,197,94,0.2); color: #86efac; border: 1px solid rgba(34,197,94,0.3); }
 .bad-header  { background: rgba(239,68,68,0.2); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
-.gb-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.gb-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 20px; }
 .gb-item {
-  font-size: 15px;
+  font-size: 38px;
   line-height: 1.4;
-  padding: 8px 10px;
-  border-radius: 8px;
+  padding: 20px 25px;
+  border-radius: 20px;
 }
 .gb-good { background: rgba(34,197,94,0.1); color: rgba(255,255,255,0.9); }
 .gb-bad  { background: rgba(239,68,68,0.1);  color: rgba(255,255,255,0.75); }
 
 /* ── LAYOUT: Before / After ─────────────────────────── */
-.layout-before-after .slide-title { font-size: 26px; }
+.layout-before-after .slide-title { font-size: 65px; }
 .ba-container {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 30px;
   width: 100%;
   flex: 1;
   justify-content: center;
@@ -433,22 +433,22 @@ export const LAYOUTS_CSS = `
 }
 .ba-arrow {
   text-align: center;
-  font-size: 28px;
+  font-size: 70px;
   opacity: 0.5;
   transform: rotate(90deg);
 }
 .ba-section {
   flex: 1;
-  border-radius: 16px;
-  padding: 16px 20px;
+  border-radius: 40px;
+  padding: 40px 50px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 20px;
 }
 .ba-before { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.25); }
 .ba-after  { background: rgba(34,197,94,0.12);  border: 1px solid rgba(34,197,94,0.3); }
 .ba-label {
-  font-size: 11px;
+  font-size: 28px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -456,13 +456,13 @@ export const LAYOUTS_CSS = `
 }
 .ba-before .ba-label { color: #fca5a5; }
 .ba-after  .ba-label { color: #86efac; }
-.ba-text { font-size: 17px; font-weight: 600; line-height: 1.5; }
+.ba-text { font-size: 43px; font-weight: 600; line-height: 1.5; }
 
 /* ── LAYOUT: Steps-3 ────────────────────────────────── */
-.layout-steps3 .slide-title { font-size: 26px; margin-bottom: 16px; }
+.layout-steps3 .slide-title { font-size: 65px; margin-bottom: 40px; }
 .steps-row {
   display: flex;
-  gap: 12px;
+  gap: 30px;
   width: 100%;
   flex: 1;
   align-items: stretch;
@@ -471,35 +471,35 @@ export const LAYOUTS_CSS = `
   flex: 1;
   background: rgba(255,255,255,0.07);
   border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 16px;
-  padding: 16px 12px;
+  border-radius: 40px;
+  padding: 40px 30px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 8px;
+  gap: 20px;
 }
 .step-num {
-  width: 40px;
-  height: 40px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   background: rgba(255,255,255,0.15);
   border: 2px solid rgba(255,255,255,0.3);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 50px;
   font-weight: 900;
   flex-shrink: 0;
 }
 .step-label {
-  font-size: 12px;
+  font-size: 30px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   opacity: 0.65;
 }
-.step-body { font-size: 15px; line-height: 1.4; }
+.step-body { font-size: 38px; line-height: 1.4; }
 
 /* ── LAYOUT: Quote ──────────────────────────────────── */
 .layout-quote {
@@ -510,15 +510,15 @@ export const LAYOUTS_CSS = `
   text-align: center;
 }
 .quote-mark {
-  font-size: 120px;
+  font-size: 300px;
   line-height: 0.6;
   opacity: 0.15;
   font-family: Georgia, serif;
-  margin-bottom: 16px;
-  margin-top: 24px;
+  margin-bottom: 40px;
+  margin-top: 60px;
 }
 .quote-text {
-  font-size: 32px;
+  font-size: 80px;
   font-weight: 700;
   line-height: 1.4;
   font-style: italic;
@@ -528,18 +528,18 @@ export const LAYOUTS_CSS = `
   align-items: center;
 }
 .quote-author {
-  font-size: 16px;
+  font-size: 40px;
   opacity: 0.6;
-  margin-top: 16px;
+  margin-top: 40px;
   font-style: normal;
 }
 
 /* ── LAYOUT: Checklist ──────────────────────────────── */
-.layout-checklist .slide-title { font-size: 28px; }
+.layout-checklist .slide-title { font-size: 70px; }
 .checklist {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 25px;
   width: 100%;
   flex: 1;
   overflow: hidden;
@@ -547,40 +547,40 @@ export const LAYOUTS_CSS = `
 .check-item {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  padding: 10px 14px;
+  gap: 30px;
+  padding: 25px 35px;
   background: rgba(255,255,255,0.06);
-  border-radius: 10px;
+  border-radius: 25px;
   border: 1px solid rgba(255,255,255,0.08);
 }
 .check-item--accent {
   background: rgba(255,255,255,0.12);
   border-color: rgba(255,255,255,0.22);
 }
-.check-mark { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
-.check-text { font-size: 16px; line-height: 1.4; }
+.check-mark { font-size: 45px; flex-shrink: 0; margin-top: 1px; }
+.check-text { font-size: 40px; line-height: 1.4; }
 
 /* ── LAYOUT: Comparison Table ───────────────────────── */
-.layout-comparison .slide-title { font-size: 26px; margin-bottom: 14px; }
+.layout-comparison .slide-title { font-size: 65px; margin-bottom: 35px; }
 .cmp-table {
   width: 100%;
   border-collapse: collapse;
   flex: 1;
 }
 .cmp-head {
-  font-size: 13px;
+  font-size: 33px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  padding: 10px 14px;
+  padding: 25px 35px;
   text-align: center;
-  border-radius: 10px 10px 0 0;
+  border-radius: 25px 25px 0 0;
 }
 .cmp-ha { background: rgba(99,102,241,0.25); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); }
 .cmp-hb { background: rgba(245,158,11,0.2); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
 .cmp-cell {
-  font-size: 15px;
-  padding: 10px 14px;
+  font-size: 38px;
+  padding: 25px 35px;
   text-align: center;
   border-bottom: 1px solid rgba(255,255,255,0.06);
   vertical-align: middle;
@@ -596,14 +596,14 @@ export const LAYOUTS_CSS = `
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding-bottom: 24px !important;
+  padding-bottom: 60px !important;
 }
 .cta-main-title {
-  font-size: 36px !important;
+  font-size: 90px !important;
   text-align: center;
   max-width: 90%;
 }
-.emoji-large { font-size: 64px !important; margin-bottom: 12px; }
+.emoji-large { font-size: 160px !important; margin-bottom: 30px; }
 `;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
