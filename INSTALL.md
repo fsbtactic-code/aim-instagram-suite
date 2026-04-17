@@ -39,19 +39,25 @@ cp .claude/commands/aim-*.md ~/.claude/commands/
 
 ## 🟣 Claude Desktop
 
+> ⚠️ **Важно:** Claude Desktop и Claude Code CLI — это **разные приложения** с **разными конфигами**:
+> - **Claude Desktop** (GUI) → `%APPDATA%\Claude\claude_desktop_config.json`
+> - **Claude Code** (CLI) → `~/.claude/settings.json` (или `claude mcp add`)
+>
+> Убедитесь, что добавляете сервер в правильный файл!
+
 ### 1. Установка одним промптом
 
 Вставь этот промпт в чат Claude Desktop (до подключения MCP):
 
-> Склонируй репозиторий `https://github.com/fsbtactic-code/aim-instagram-suite.git` на рабочий стол в папку `aim-instagram-suite`. Перейди в эту папку и выполни `npm install`. Затем найди файл `claude_desktop_config.json`:
+> Склонируй репозиторий `https://github.com/fsbtactic-code/aim-instagram-suite.git` на рабочий стол. Перейди в папку `aim-instagram-suite` и выполни `npm install && npm run build`. Затем открой файл `claude_desktop_config.json`:
 > - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
 > - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
 >
 > Добавь в него запись в `mcpServers`:
 > ```json
 > "aim-instagram-suite": {
->   "command": "npx",
->   "args": ["АБСОЛЮТНЫЙ_ПУТЬ_ДО_ПАПКИ/aimvideo/dist/index.js"]
+>   "command": "node",
+>   "args": ["АБСОЛЮТНЫЙ_ПУТЬ/aim-instagram-suite/dist/index.js"]
 > }
 > ```
 > Подставь реальный абсолютный путь к папке. Полностью перезапусти Claude Desktop (закрой через трей). Подтверди что сервер подключён — должны появиться 14 инструментов `aim_`.
@@ -73,7 +79,7 @@ cp .claude/commands/aim-*.md ~/.claude/commands/
 }
 ```
 
-> ⚠️ Используй `node dist/index.js` — билд создаётся автоматически во время `node scripts/setup.js`.
+> ⚠️ Используй `node dist/index.js` — билд создаётся автоматически во время `npm run build` или `node scripts/setup.js`.
 
 ### 3. Перезапуск
 
