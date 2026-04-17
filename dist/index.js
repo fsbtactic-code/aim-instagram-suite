@@ -695,7 +695,6 @@ server.setRequestHandler(types_js_1.CallToolRequestSchema, async (request) => {
             imagesToPush.push({ base64: parsedResult.stylePreview.base64, mimeType: parsedResult.stylePreview.mimeType ?? 'image/jpeg' });
             textOnly.stylePreview = { ...parsedResult.stylePreview, base64: '[base64 image attached]' };
         }
-        imagesToPush = [];
         content.push({ type: 'text', text: JSON.stringify(textOnly, null, 2) });
         if (imagesToPush.length > 0) {
             imagesToPush.forEach(img => {

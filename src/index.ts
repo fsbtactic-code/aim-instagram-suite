@@ -750,7 +750,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       textOnly.stylePreview = { ...parsedResult.stylePreview, base64: '[base64 image attached]' };
     }
 
-    imagesToPush = [];
     content.push({ type: 'text', text: JSON.stringify(textOnly, null, 2) });
 
     if (imagesToPush.length > 0) {
