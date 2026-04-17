@@ -252,7 +252,9 @@ export function renderComparison(slide: ExtendedSlideData, total: number): strin
   const { title, subtitle, leftBlocks = [], rightBlocks = [], blocks = [], ctaText } = slide;
   const headerA = blocks[0]?.label ?? 'Вариант A';
   const headerB = blocks[1]?.label ?? 'Вариант B';
-  const maxRows = Math.max(leftBlocks.length, rightBlocks.length);
+  let maxRows = Math.max(leftBlocks.length, rightBlocks.length);
+  if (maxRows === 0) maxRows = 3; // Fallback to 3 empty rows if no data provided
+  
   const rows = Array.from({ length: maxRows }, (_, i) => `
     <div class="cmp-row">
       <div class="cmp-card cmp-a">${escHtml(leftBlocks[i]?.value ?? '—')}</div>
@@ -655,7 +657,7 @@ export const LAYOUTS_CSS = `
   letter-spacing: 0.06em;
   opacity: 0.58;
 }
-.step-body { font-size: 36px; font-weight: 600; line-height: 1.35; word-wrap: break-word; min-width: 0; }
+.step-body { font-size: 26px; font-weight: 600; line-height: 1.35; overflow-wrap: break-word; word-break: break-word; min-width: 0; }
 
 /* ── LAYOUT: Quote ──────────────────────────────────────────────────── */
 .layout-quote {
