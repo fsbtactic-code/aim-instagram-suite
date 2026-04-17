@@ -40,15 +40,21 @@ export const RenderPremiumCarouselSchema = z.object({
   theme: z.union([
     z.literal(1), z.literal(2), z.literal(3), z.literal(4),
     z.literal(5), z.literal(6), z.literal(7), z.literal(8),
-  ]).describe(`Номер темы:
-1 = Glassmorphism (матовое стекло, фиолетовый)
-2 = Neo-Brutalism (кислотный, чёрные тени)
-3 = Minimalist Elegance (журнальный, бежевый)
-4 = Dark Cyberpunk (неон, зелёный)
-5 = Apple Premium (чёрный, белый)
-6 = Y2K / Acid Graphic (хром, ретро)
-7 = EdTech / Trust (корпоративный, синий)
-8 = Custom Brand (кастомный)`),
+    z.literal(9), z.literal(10), z.literal(11), z.literal(12),
+  ]).describe(`Номер темы (1-12):
+1  = Aurora Glassmorphism — тёмный, purple aurora, frosted glass
+2  = Neo-Brutalism RAW    — кислотный жёлтый #F2EF00, агрессия, floating card
+3  = Warm Editorial ⭐     — кремовый, dot-grid, персик — КАК В РЕФЕРЕНСЕ
+4  = Matrix Cyberpunk     — чёрный матрикс, neon-зелёный #00FF41
+5  = Obsidian Premium     — почти чёрный, градиентный заголовок, glow
+6  = Chrome Y2K           — хромированный ретрофутуризм, кислота
+7  = Soft Gradient        — лавандовый, белая glass-карточка, пастель
+8  = Custom Brand         — кастомный (передай customCssOverlay)
+9  = Ink & Paper 🆕        — чистый белый, красный акцент, editorial serif
+10 = Deep Space 🆕         — тёмно-синий, золото, star-field, luxury
+11 = Concrete Swiss 🆕     — светло-серый, signal-red, Swiss grid, Unbounded
+12 = Sakura Neon 🆕        — чёрный, pink #FF2882 + cyan #00E5FF, Tokyo night`),
+
   format: z.enum(['square', 'portrait']).default('square')
     .describe('square=1080x1080 | portrait=1080x1350'),
   outputDir: z.string().describe('Папка для PNG (напр. C:\\Users\\Alina\\Desktop\\carousel)'),
@@ -93,9 +99,8 @@ export async function renderPremiumCarousel(input: RenderPremiumCarouselInput): 
   const themeDefinition = getTheme(theme as ThemeId);
   if (!themeDefinition) return JSON.stringify({ error: `Тема ${theme} не найдена` });
 
-  if (theme === 8 && !customCssOverlay && !themeDefinition.css) {
-    themeDefinition.css = THEMES[1].css;
-    themeDefinition.googleFontsUrl = THEMES[1].googleFontsUrl;
+  if (theme === 8 && !customCssOverlay) {
+    // Custom Brand — uses base of theme 1 if no overlay provided
   }
 
   // ── Проверяем папку ─────────────────────────────────────────────────────────
@@ -136,10 +141,11 @@ export async function renderPremiumCarousel(input: RenderPremiumCarouselInput): 
       files: result.slidePaths,
       quickActions: [
         '→ 1. Оценить виральность карусели: aim_score_carousel_virality с slidesDir=' + outputDir,
-        '→ 2. Перерендерить с другой темой (1-8)',
+        '→ 2. Перерендерить с другой темой (1-12). Новые: 9=Ink&Paper, 10=DeepSpace, 11=Swiss, 12=SakuraNeon',
         '→ 3. Изменить CTA-текст через globalCta',
         '→ 4. Добавить лейаут hero-number / quote / grid-2x2 к нужным слайдам',
         '→ 5. Применить цвета бренда: aim_auto_brand_colors',
+        '→ 6. Переключить format: portrait (1080×1350) для Instagram feed формата 4:5',
       ],
     }, null, 2);
   } catch (error: unknown) {
@@ -156,7 +162,6 @@ export function listAvailableThemes(): string {
   const themes = Object.values(THEMES).map(t => ({
     id: t.id,
     name: t.label,
-    description: t.description,
     fonts: t.googleFontsUrl.match(/family=([^&:]+)/g)?.map(f => f.replace('family=', '').replace(/\+/g, ' ')) ?? [],
   }));
   return JSON.stringify({

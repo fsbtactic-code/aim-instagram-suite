@@ -81,20 +81,25 @@ const DraftCarouselSchema = z.object({
 const RenderCarouselSchema = z.object({
   slidesData: z.union([z.string(), z.array(z.any())]).describe('JSON-строка или массив слайдов'),
   theme: z.union([
+    z.literal('1'), z.literal('2'), z.literal('3'), z.literal('4'),
+    z.literal('5'), z.literal('6'), z.literal('7'), z.literal('8'),
     z.literal(1), z.literal(2), z.literal(3), z.literal(4),
     z.literal(5), z.literal(6), z.literal(7), z.literal(8),
-  ]).describe('Номер темы 1-8'),
+  ]).transform(v => Number(v)).describe('Номер темы 1-8'),
   format: z.enum(['square', 'portrait']).default('square').describe('square=1080x1080, portrait=1080x1350'),
   outputDir: z.string().describe('Папка для сохранения PNG'),
+  globalCta: z.string().optional().describe('Текст CTA-баннера'),
   brandColorOverlay: z.string().optional().describe('CSS из aim_auto_brand_colors'),
   customCssOverlay: z.string().optional().describe('Кастомный CSS'),
 });
 
 const BrandColorsSchema = z.object({
   baseTheme: z.union([
+    z.literal('1'), z.literal('2'), z.literal('3'), z.literal('4'),
+    z.literal('5'), z.literal('6'), z.literal('7'), z.literal('8'),
     z.literal(1), z.literal(2), z.literal(3), z.literal(4),
     z.literal(5), z.literal(6), z.literal(7), z.literal(8),
-  ]).describe('Номер базовой темы (1-8)'),
+  ]).transform(v => Number(v)).describe('Номер базовой темы (1-8)'),
   primaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).describe('Основной цвет HEX'),
   secondaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).describe('Вторичный цвет HEX'),
   textColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional().default('#FFFFFF').describe('Цвет текста HEX'),
@@ -133,7 +138,10 @@ const LocalizeCarouselSchema = z.object({
 });
 
 const CreateStyleSchema = z.object({
-  step: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]).optional()
+  step: z.union([
+    z.literal('1'), z.literal('2'), z.literal('3'), z.literal('4'), z.literal('5'),
+    z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5),
+  ]).transform(v => Number(v)).optional()
     .describe('Шаг мастера (1=настроение, 2=цвета, 3=шрифт, 4=подача, 5=генерация). Пропусти для старта.'),
   mood: z.enum(['luxury','energetic','minimal','warm','dark','playful']).optional(),
   colorBase: z.enum(['dark','light','contrast']).optional(),
@@ -177,7 +185,7 @@ const TOOLS: Tool[] = [
     inputSchema: {
       type: 'object',
       properties: {
-        step:           { type: 'number', enum: [1,2,3,4,5], description: 'Текущий шаг (1-5). Пропусти для начала.' },
+        step:           { type: 'string', enum: ['1','2','3','4','5'], description: 'Текущий шаг (1-5). Пропусти для начала.' },
         mood:           { type: 'string', enum: ['luxury','energetic','minimal','warm','dark','playful'] },
         colorBase:      { type: 'string', enum: ['dark','light','contrast'] },
         primaryHex:     { type: 'string', description: 'HEX цвет, например #C9A84C' },
@@ -456,7 +464,7 @@ const TOOLS: Tool[] = [
       type: 'object',
       properties: {
         slidesData: { description: 'JSON-строка или массив слайдов (с поддержкой layout, blocks, leftBlocks и т.д.)' },
-        theme: { type: 'number', enum: [1, 2, 3, 4, 5, 6, 7, 8], description: 'Номер темы 1-8' },
+        theme: { type: 'string', enum: ['1', '2', '3', '4', '5', '6', '7', '8'], description: 'Номер темы 1-8' },
         format: { type: 'string', enum: ['square', 'portrait'], description: 'square=1080x1080, portrait=1080x1350' },
         outputDir: { type: 'string', description: 'Папка для PNG (например: C:\\Users\\Alina\\Desktop\\carousel)' },
         globalCta: { type: 'string', description: 'Текст CTA-баннера на каждый слайд. Например: "Напиши СЛОВО в директ"' },
@@ -475,7 +483,7 @@ const TOOLS: Tool[] = [
     inputSchema: {
       type: 'object',
       properties: {
-        baseTheme: { type: 'number', enum: [1, 2, 3, 4, 5, 6, 7, 8], description: 'Номер базовой темы' },
+        baseTheme: { type: 'string', enum: ['1', '2', '3', '4', '5', '6', '7', '8'], description: 'Номер базовой темы' },
         primaryColor: { type: 'string', description: 'Основной цвет HEX (#FF5722)' },
         secondaryColor: { type: 'string', description: 'Вторичный цвет HEX (#FFC107)' },
         textColor: { type: 'string', description: 'Цвет текста HEX (default: #FFFFFF)' },
@@ -539,12 +547,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
       case 'aim_render_premium_carousel': {
         const parsed = RenderCarouselSchema.parse(args);
-        result = await renderPremiumCarousel(parsed);
+        result = await renderPremiumCarousel(parsed as any);
         break;
       }
       case 'aim_auto_brand_colors': {
         const parsed = BrandColorsSchema.parse(args);
-        result = autoBrandColors(parsed);
+        result = autoBrandColors(parsed as any);
         break;
       }
 
