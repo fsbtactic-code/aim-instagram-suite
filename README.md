@@ -117,9 +117,7 @@ AIM скачивает видео по ссылке (Instagram, TikTok, YouTube)
 <summary><b>✨ 1. Aurora Glassmorphism — Матовое стекло</b></summary>
 <br/>
 <div align="center">
-  <img src="assets/presentation/themes/theme_1_glassmorphism/slide_01.png" width="32%">
-  <img src="assets/presentation/themes/theme_1_glassmorphism/slide_02.png" width="32%">
-  <img src="assets/presentation/themes/theme_1_glassmorphism/slide_03.png" width="32%">
+  <img src="assets/screenshot_sets/style_01_glassmorphism.jpg" width="100%">
 </div>
 <br/><br/>
 Полупрозрачные карточки с размытием на глубоком фиолетовом фоне. Идеально для: tech-блогов, стартапов, IT-услуг.
@@ -129,9 +127,7 @@ AIM скачивает видео по ссылке (Instagram, TikTok, YouTube)
 <summary><b>💥 2. Neo-Brutalism — Яркий и дерзкий</b></summary>
 <br/>
 <div align="center">
-  <img src="assets/presentation/themes/theme_2_neo-brutalism/slide_01.png" width="32%">
-  <img src="assets/presentation/themes/theme_2_neo-brutalism/slide_02.png" width="32%">
-  <img src="assets/presentation/themes/theme_2_neo-brutalism/slide_03.png" width="32%">
+  <img src="assets/screenshot_sets/style_02_neo-brutalism.jpg" width="100%">
 </div>
 <br/><br/>
 Кислотный жёлтый + жирные тени + крупный шрифт. Идеально для: молодёжных брендов, образовательных проектов, smm-агентств.
@@ -141,9 +137,7 @@ AIM скачивает видео по ссылке (Instagram, TikTok, YouTube)
 <summary><b>🤍 3. Warm Editorial — Журнальная эстетика</b></summary>
 <br/>
 <div align="center">
-  <img src="assets/presentation/themes/theme_3_warm-editorial/slide_01.png" width="32%">
-  <img src="assets/presentation/themes/theme_3_warm-editorial/slide_02.png" width="32%">
-  <img src="assets/presentation/themes/theme_3_warm-editorial/slide_03.png" width="32%">
+  <img src="assets/screenshot_sets/style_03_warm-editorial.jpg" width="100%">
 </div>
 <br/><br/>
 Тёплые бежевые тона, элегантная типографика. Идеально для: beauty-блогов, психологов, коучей, премиум-услуг.
@@ -153,9 +147,7 @@ AIM скачивает видео по ссылке (Instagram, TikTok, YouTube)
 <summary><b>🟩 4. Matrix Cyberpunk — Неон и код</b></summary>
 <br/>
 <div align="center">
-  <img src="assets/presentation/themes/theme_4_cyberpunk/slide_01.png" width="32%">
-  <img src="assets/presentation/themes/theme_4_cyberpunk/slide_02.png" width="32%">
-  <img src="assets/presentation/themes/theme_4_cyberpunk/slide_03.png" width="32%">
+  <img src="assets/screenshot_sets/style_04_cyberpunk.jpg" width="100%">
 </div>
 <br/><br/>
 Чёрный фон, зелёный неон, моношрифт. Идеально для: разработчиков, крипто, геймеров, tech-стартапов.
@@ -165,9 +157,7 @@ AIM скачивает видео по ссылке (Instagram, TikTok, YouTube)
 <summary><b>🍏 5. Obsidian Premium — Тёмная роскошь</b></summary>
 <br/>
 <div align="center">
-  <img src="assets/presentation/themes/theme_5_apple-premium/slide_01.png" width="32%">
-  <img src="assets/presentation/themes/theme_5_apple-premium/slide_02.png" width="32%">
-  <img src="assets/presentation/themes/theme_5_apple-premium/slide_03.png" width="32%">
+  <img src="assets/screenshot_sets/style_05_apple-premium.jpg" width="100%">
 </div>
 <br/><br/>
 Стиль презентаций: глубокий чёрный, градиентный текст, свечения. Идеально для: продуктовых презентаций, инвесторских питчей, премиум-брендов.
@@ -177,9 +167,7 @@ AIM скачивает видео по ссылке (Instagram, TikTok, YouTube)
 <summary><b>💿 6. Chrome Y2K — Ретро-интернет</b></summary>
 <br/>
 <div align="center">
-  <img src="assets/presentation/themes/theme_6_y2k-acid/slide_01.png" width="32%">
-  <img src="assets/presentation/themes/theme_6_y2k-acid/slide_02.png" width="32%">
-  <img src="assets/presentation/themes/theme_6_y2k-acid/slide_03.png" width="32%">
+  <img src="assets/screenshot_sets/style_06_y2k-acid.jpg" width="100%">
 </div>
 <br/><br/>
 Радужные градиенты, ретро-шрифт, стеклянные карточки. Идеально для: креативных агентств, модных брендов, lifestyle-блогов.
@@ -189,9 +177,7 @@ AIM скачивает видео по ссылке (Instagram, TikTok, YouTube)
 <summary><b>📘 7. Soft Gradient — Спокойный и экспертный</b></summary>
 <br/>
 <div align="center">
-  <img src="assets/presentation/themes/theme_7_soft-gradient/slide_01.png" width="32%">
-  <img src="assets/presentation/themes/theme_7_soft-gradient/slide_02.png" width="32%">
-  <img src="assets/presentation/themes/theme_7_soft-gradient/slide_03.png" width="32%">
+  <img src="assets/screenshot_sets/style_07_soft-gradient.jpg" width="100%">
 </div>
 <br/><br/>
 Светлый фон, мягкие акценты, чистая типографика. Идеально для: онлайн-школ, экспертов, B2B-контента.
@@ -201,9 +187,7 @@ AIM скачивает видео по ссылке (Instagram, TikTok, YouTube)
 <summary><b>🎯 8. Custom Brand — Цвета вашего бизнеса</b></summary>
 <br/>
 <div align="center">
-  <img src="assets/presentation/themes/theme_8_custom-brand/slide_01.png" width="32%">
-  <img src="assets/presentation/themes/theme_8_custom-brand/slide_02.png" width="32%">
-  <img src="assets/presentation/themes/theme_8_custom-brand/slide_03.png" width="32%">
+  <img src="assets/screenshot_sets/style_08_custom-brand.jpg" width="100%">
 </div>
 <br/><br/>
 Умная подстройка под цвета вашего бренда (WCAG AA). Сгенерируется автоматически, если вы используете aim_auto_brand_colors.
@@ -213,9 +197,7 @@ AIM скачивает видео по ссылке (Instagram, TikTok, YouTube)
 <summary><b>🖋️ 9. Ink & Paper — Классическая верстка</b></summary>
 <br/>
 <div align="center">
-  <img src="assets/presentation/themes/theme_9_ink-paper/slide_01.png" width="32%">
-  <img src="assets/presentation/themes/theme_9_ink-paper/slide_02.png" width="32%">
-  <img src="assets/presentation/themes/theme_9_ink-paper/slide_03.png" width="32%">
+  <img src="assets/screenshot_sets/style_09_ink-paper.jpg" width="100%">
 </div>
 <br/><br/>
 Классическая книжная верстка с засечками и современным налетом. Отлично для лонгридов и мыслителей.
@@ -225,9 +207,7 @@ AIM скачивает видео по ссылке (Instagram, TikTok, YouTube)
 <summary><b>🌌 10. Deep Space — Тенденции 2025</b></summary>
 <br/>
 <div align="center">
-  <img src="assets/presentation/themes/theme_10_deep-space/slide_01.png" width="32%">
-  <img src="assets/presentation/themes/theme_10_deep-space/slide_02.png" width="32%">
-  <img src="assets/presentation/themes/theme_10_deep-space/slide_03.png" width="32%">
+  <img src="assets/screenshot_sets/style_10_deep-space.jpg" width="100%">
 </div>
 <br/><br/>
 Глубокий космос, градиенты и звездная пыль. Идеально для нейросетей и футуристичных проектов.
@@ -237,9 +217,7 @@ AIM скачивает видео по ссылке (Instagram, TikTok, YouTube)
 <summary><b>🇨🇭 11. Concrete Swiss — Архитектура контента</b></summary>
 <br/>
 <div align="center">
-  <img src="assets/presentation/themes/theme_11_concrete-swiss/slide_01.png" width="32%">
-  <img src="assets/presentation/themes/theme_11_concrete-swiss/slide_02.png" width="32%">
-  <img src="assets/presentation/themes/theme_11_concrete-swiss/slide_03.png" width="32%">
+  <img src="assets/screenshot_sets/style_11_concrete-swiss.jpg" width="100%">
 </div>
 <br/><br/>
 Строгий структурированный дизайн. Крупные рубленые шрифты, красный акцент и сетки.
@@ -249,9 +227,7 @@ AIM скачивает видео по ссылке (Instagram, TikTok, YouTube)
 <summary><b>🌸 12. Sakura Neon — Азиатский киберпанк</b></summary>
 <br/>
 <div align="center">
-  <img src="assets/presentation/themes/theme_12_sakura-neon/slide_01.png" width="32%">
-  <img src="assets/presentation/themes/theme_12_sakura-neon/slide_02.png" width="32%">
-  <img src="assets/presentation/themes/theme_12_sakura-neon/slide_03.png" width="32%">
+  <img src="assets/screenshot_sets/style_12_sakura-neon.jpg" width="100%">
 </div>
 <br/><br/>
 Неоновые свечения на глубоком сакурово-розовом фоне. Дерзкий современный стиль для прорывных проектов.
