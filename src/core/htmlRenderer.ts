@@ -243,12 +243,13 @@ function buildSlideHTML(
       --slide-height: ${height}px;
     }
     h1, h2, h3, .slide-title, .cta-main-title {
-      text-wrap: balance; overflow-wrap: break-word; word-break: break-word;
+      text-wrap: balance; overflow-wrap: break-word; word-break: normal; hyphens: auto;
     }
     p, .slide-body, .check-text, .ba-text, .grid-value, .step-body, .gb-text {
-      text-wrap: pretty; overflow-wrap: break-word;
+      text-wrap: pretty; overflow-wrap: break-word; word-break: normal; hyphens: auto;
     }
   `;
+
 
   if (slide.customHtml) {
     return `<!DOCTYPE html>

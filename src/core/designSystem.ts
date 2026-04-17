@@ -91,7 +91,7 @@ const BASE_LAYOUT = `
     margin-bottom: 18px;
     text-wrap: balance;
     overflow-wrap: break-word;
-    word-break: break-word;
+    hyphens: auto;
   }
 
   /* ── Subtitle ────────────────────────────────────────────────────── */

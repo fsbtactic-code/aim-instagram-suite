@@ -657,7 +657,7 @@ export const LAYOUTS_CSS = `
   letter-spacing: 0.06em;
   opacity: 0.58;
 }
-.step-body { font-size: 26px; font-weight: 600; line-height: 1.35; overflow-wrap: break-word; word-break: break-word; min-width: 0; }
+.step-body { font-size: 26px; font-weight: 600; line-height: 1.35; overflow-wrap: break-word; hyphens: auto; min-width: 0; }
 
 /* ── LAYOUT: Quote ──────────────────────────────────────────────────── */
 .layout-quote {
@@ -786,8 +786,8 @@ export const LAYOUTS_CSS = `
   text-align: center;
 }
 .cta-main-title {
-  font-size: 100px !important;
-  letter-spacing: -3.5px !important;
+  font-size: clamp(60px, 8vw, 85px) !important;
+  letter-spacing: -2px !important;
   text-align: center;
   max-width: 95%;
 }
