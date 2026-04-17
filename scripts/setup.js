@@ -319,6 +319,8 @@ async function runNpmInstall() {
   try {
     execSync('npm install', { stdio: 'inherit', cwd: projectRoot });
     ok('npm install завершён');
+    execSync('npm run build', { stdio: 'inherit', cwd: projectRoot });
+    ok('TypeScript код скомпилирован');
   } catch (err) {
     fail(`npm install завершился с ошибкой`);
 
@@ -515,7 +517,7 @@ async function main() {
     '',
     'Claude Code CLI:',
     `claude mcp add aim-instagram-suite --`,
-    `  npx tsx "${cwd}/src/index.ts"`,
+    `  node "${cwd}/dist/index.js"`,
     '',
     'Claude Desktop — см. INSTALL.md',
   ]);

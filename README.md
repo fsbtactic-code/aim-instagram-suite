@@ -25,8 +25,8 @@
 > Скрипт `setup.js` автоматически проверит Node.js 18+, установит C++ Build Tools (Windows) / Xcode CLT (Mac), CMake, npm-пакеты, Chromium для Puppeteer и yt-dlp. Если на Windows он попросит перезапустить терминал после установки Build Tools — сделай это и запусти `node scripts/setup.js` повторно.
 >
 > **2. Подключи MCP-сервер** — определи на какой платформе ты работаешь и выполни нужное:
-> - **Claude Code CLI**: `claude mcp add aim-instagram-suite -- npx tsx "ПУТЬ/src/index.ts"` (подставь абсолютный путь к склонированной папке)
-> - **Claude Desktop**: открой конфиг (`%APPDATA%\Claude\claude_desktop_config.json` на Windows или `~/Library/Application Support/Claude/claude_desktop_config.json` на Mac) и добавь в `mcpServers`: `"aim-instagram-suite": { "command": "npx", "args": ["tsx", "АБСОЛЮТНЫЙ_ПУТЬ/src/index.ts"] }`
+> - **Claude Code CLI**: `claude mcp add aim-instagram-suite -- node "ПУТЬ/dist/index.js"` (подставь абсолютный путь к склонированной папке)
+> - **Claude Desktop**: открой конфиг (`%APPDATA%\Claude\claude_desktop_config.json` на Windows или `~/Library/Application Support/Claude/claude_desktop_config.json` на Mac) и добавь в `mcpServers`: `"aim-instagram-suite": { "command": "node", "args": ["АБСОЛЮТНЫЙ_ПУТЬ/dist/index.js"] }`
 > - **Cursor**: открой `~/.cursor/mcp.json` и добавь аналогичную запись в `mcpServers`
 > - **Antigravity / Gemini**: открой `~/.gemini/antigravity/mcp_config.json` и добавь запись с `"env": {}`
 > - **Windsurf**: открой `~/.codeium/windsurf/mcp_config.json` и добавь запись

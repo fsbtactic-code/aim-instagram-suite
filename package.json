@@ -2,10 +2,10 @@
   "name": "aim-instagram-suite",
   "version": "3.1.0",
   "description": "MCP Server for viral video analysis, hook scoring, script generation and premium carousel rendering",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
   "scripts": {
     "setup": "node scripts/setup.js",
-    "start": "tsx src/index.ts",
+    "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "postinstall": "node scripts/postinstall.js",

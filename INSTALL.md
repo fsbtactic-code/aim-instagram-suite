@@ -51,7 +51,7 @@ cp .claude/commands/aim-*.md ~/.claude/commands/
 > ```json
 > "aim-instagram-suite": {
 >   "command": "npx",
->   "args": ["tsx", "АБСОЛЮТНЫЙ_ПУТЬ/aim-instagram-suite/src/index.ts"]
+>   "args": ["АБСОЛЮТНЫЙ_ПУТЬ_ДО_ПАПКИ/aimvideo/dist/index.js"]
 > }
 > ```
 > Подставь реальный абсолютный путь к папке. Полностью перезапусти Claude Desktop (закрой через трей). Подтверди что сервер подключён — должны появиться 13 инструментов `aim_`.
@@ -73,7 +73,7 @@ cp .claude/commands/aim-*.md ~/.claude/commands/
 }
 ```
 
-> ⚠️ Не используй `node dist/index.js` — билд не нужен. Только `npx tsx src/index.ts`.
+> ⚠️ Используй `node dist/index.js` — билд создаётся автоматически во время `node scripts/setup.js`.
 
 ### 3. Перезапуск
 
@@ -87,7 +87,7 @@ cp .claude/commands/aim-*.md ~/.claude/commands/
 
 Вставь в чат Cursor:
 
-> Склонируй `https://github.com/fsbtactic-code/aim-instagram-suite.git` на рабочий стол. Выполни `npm install` внутри папки. Открой настройки Cursor → MCP → добавь сервер: name=`aim-instagram-suite`, command=`npx`, args=`tsx АБСОЛЮТНЫЙ_ПУТЬ/src/index.ts`. Перезапусти Cursor и подтверди подключение 13 инструментов.
+> Склонируй `https://github.com/fsbtactic-code/aim-instagram-suite.git` на рабочий стол. Выполни `node scripts/setup.js` внутри папки. Открой настройки Cursor → MCP → добавь сервер: name=`aim-instagram-suite`, command=`node`, args=`АБСОЛЮТНЫЙ_ПУТЬ/dist/index.js`. Перезапусти Cursor и подтверди подключение 14 инструментов.
 
 ### Вручную через `cursor_mcp.json`
 
@@ -97,8 +97,8 @@ Cursor хранит MCP конфиг в `~/.cursor/mcp.json`:
 {
   "mcpServers": {
     "aim-instagram-suite": {
-      "command": "npx",
-      "args": ["tsx", "/Users/name/Desktop/aim-instagram-suite/src/index.ts"]
+      "command": "node",
+      "args": ["/Users/name/Desktop/aim-instagram-suite/dist/index.js"]
     }
   }
 }
@@ -127,8 +127,8 @@ Get-Content .claude\commands\aim-*.md | Set-Content .cursor\rules\aim-instagram-
 > Склонируй `https://github.com/fsbtactic-code/aim-instagram-suite.git` на рабочий стол. Выполни `npm install` внутри папки. Открой файл `~/.gemini/antigravity/mcp_config.json` и добавь:
 > ```json
 > "aim-instagram-suite": {
->   "command": "npx",
->   "args": ["tsx", "АБСОЛЮТНЫЙ_ПУТЬ/src/index.ts"],
+>   "command": "node",
+>   "args": ["АБСОЛЮТНЫЙ_ПУТЬ/dist/index.js"],
 >   "env": {}
 > }
 > ```
@@ -158,7 +158,7 @@ cp -r .gemini/commands/aim ~/.gemini/commands/
 git clone https://github.com/fsbtactic-code/aim-instagram-suite.git
 cd aim-instagram-suite
 npm install
-claude mcp add aim-instagram-suite -- npx tsx "$(pwd)/src/index.ts"
+claude mcp add aim-instagram-suite -- node "$(pwd)/dist/index.js"
 ```
 
 **Windows PowerShell:**
@@ -191,8 +191,8 @@ MCP конфиг Windsurf: `~/.codeium/windsurf/mcp_config.json`
 {
   "mcpServers": {
     "aim-instagram-suite": {
-      "command": "npx",
-      "args": ["tsx", "/absolute/path/to/aim-instagram-suite/src/index.ts"]
+      "command": "node",
+      "args": ["/absolute/path/to/aim-instagram-suite/dist/index.js"]
     }
   }
 }

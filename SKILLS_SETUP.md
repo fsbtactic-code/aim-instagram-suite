@@ -150,21 +150,21 @@ npm install
 
 **Claude Code** — add to `claude_desktop_config.json` or run:
 ```bash
-claude mcp add aim-instagram-suite -- npx tsx /absolute/path/to/aimvideo/src/index.ts
+claude mcp add aim-instagram-suite -- node /absolute/path/to/aimvideo/dist/index.js
 ```
 
 **Gemini / Antigravity** — add to `~/.gemini/antigravity/mcp_config.json`:
 ```json
 "aim-instagram-suite": {
-  "command": "npx",
-  "args": ["tsx", "/absolute/path/to/aimvideo/src/index.ts"],
+  "command": "node",
+  "args": ["/absolute/path/to/aimvideo/dist/index.js"],
   "env": {}
 }
 ```
 
 **Cursor / Windsurf / other** — follow your platform's MCP documentation and point to:
 ```
-command: npx tsx /absolute/path/to/aimvideo/src/index.ts
+command: node /absolute/path/to/aimvideo/dist/index.js
 ```
 
 ---
