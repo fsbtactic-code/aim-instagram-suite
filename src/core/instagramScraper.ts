@@ -144,10 +144,10 @@ async function fetchViaRapidAPI(url: string, apiKey: string): Promise<InstagramM
 }
 
 /**
- * Извлечение через Puppeteer используя сторонние сервисы (например, snapinsta)
+ * Извлечение через Puppeteer используя список сторонних сервисов (igram, iqsaved, fastdl)
  */
-async function fetchViaPuppeteer(url: string): Promise<InstagramMedia[]> {
-  console.error('[AIM] Запускаем Puppeteer для скачивания через snapinsta...');
+async function fetchViaWebScraper(url: string): Promise<InstagramMedia[]> {
+  console.error('[AIM] Запускаем Puppeteer Web Scraper...');
   const browser = await puppeteer.launch({ 
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'] 
@@ -156,76 +156,93 @@ async function fetchViaPuppeteer(url: string): Promise<InstagramMedia[]> {
   try {
     const page = await browser.newPage();
     
-    // Блокируем лишние ресурсы для ускорения загрузки
     await page.setRequestInterception(true);
     page.on('request', (req) => {
       const type = req.resourceType();
-      if (['image', 'stylesheet', 'font', 'media'].includes(type) && !req.url().includes('fastdl')) {
+      if (['image', 'stylesheet', 'font', 'media'].includes(type) && !req.url().includes('fastdl') && !req.url().includes('igram') && !req.url().includes('iqsaved')) {
         req.abort();
       } else {
         req.continue();
       }
     });
+    const scrapers = [
+      {
+        name: 'iqsaved.com',
+        url: 'https://iqsaved.com/ru',
+        input: 'input',
+        submit: 'button[type="submit"]',
+        waitCondition: () => ((globalThis as any).document.querySelectorAll('a[href*="cdn.iqsaved.com"], .download-button').length > 0) || ((globalThis as any).document.querySelectorAll('.error, .alert').length > 0)
+      },
+      {
+        name: 'igram.world',
+        url: 'https://igram.world/ru',
+        input: '#search-form-input',
+        submit: '.search-form__button',
+        waitCondition: () => ((globalThis as any).document.querySelectorAll('a[href*=".mp4"], a[download], .output-list a, .download-wrapper a').length > 0) || ((globalThis as any).document.querySelectorAll('.error-msg, .alert-danger, .msg-error').length > 0)
+      },
+      {
+        name: 'fastdl.app',
+        url: 'https://fastdl.app/ru',
+        input: 'input[name="url"], input[type="text"]',
+        submit: 'button[type="submit"], button.btn-primary',
+        waitCondition: () => ((globalThis as any).document.querySelectorAll('a[href*=".mp4"], a[href*=".jpg"], a[download], .download-bottom a, .output-list a').length > 0) || ((globalThis as any).document.querySelectorAll('.error-msg, .alert-danger').length > 0)
+      }
+    ];
 
-    await page.goto('https://fastdl.app/ru', { waitUntil: 'domcontentloaded', timeout: 30000 });
-    
-    // Вводим URL
-    await page.waitForSelector('input', { timeout: 10000 });
-    // Обычно поле ввода на таких сайтах самое большое или имеет type=text / name=url / id=search
-    // Для безопасности ищем input[name="url"] или первый input type text
-    const inputHandle = await page.$('input[name="url"]') || await page.$('input[type="text"]');
-    if (inputHandle) {
-        await inputHandle.type(url);
-    } else {
-        await page.type('input', url);
-    }
-    
-    // Кликаем Download
-    await page.click('button[type="submit"], button.btn-primary');
-    
-    // Ждем результатов 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore — runs in browser context where document is available
-    await page.waitForFunction(() => {
-      // @ts-ignore
-      return document.querySelectorAll('a[href*=".mp4"], a[href*=".jpg"], a[download], .download-bottom a, .output-list a').length > 0 || document.querySelectorAll('.error-msg, .alert-danger').length > 0;
-    }, { timeout: 20000 });
+    for (const scraper of scrapers) {
+      console.error(`[AIM] Пробуем скрапер: ${scraper.name}`);
+      try {
+        await page.goto(scraper.url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+        const inputHandle = await page.$(scraper.input) || await page.$('input');
+        if (inputHandle) {
+          await inputHandle.type(url);
+          await page.click(scraper.submit);
 
-    
-    const isError = await page.$('.error-msg, .alert-danger, .msg-error');
-    if (isError) {
-      console.error('[AIM] Ошибка на стороне загрузчика (приватный аккаунт или лимиты)');
-      return [];
-    }
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          await page.waitForFunction(scraper.waitCondition, { timeout: 20000 });
 
-    // Собираем ссылки на мультимедиа
-    const mediaLinks: InstagramMedia[] = await page.evaluate(() => {
-      const results: any[] = [];
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore — runs in browser context where document is available
-      const downloadButtons = document.querySelectorAll('a[href*=".mp4"], a[href*=".jpg"], a[download], a.button, .download-bottom a');
-      
-      downloadButtons.forEach((btn: any) => {
-        let href = btn.getAttribute('href');
-        const text = btn.textContent?.toLowerCase() || '';
-        if (href && !href.includes('javascript:')) {
-          if (href.startsWith('//')) href = 'https:' + href;
-          
-          if (href.startsWith('http') && (text.includes('download') || text.includes('скачать') || href.includes('force-download') || href.includes('.mp4') || href.includes('.jpg'))) {
-             const isVid = text.includes('video') || text.includes('видео') || href.includes('.mp4');
-             // Избегаем дубликатов (иногда одна и та же ссылка на разных кнопках)
-             if (!results.find(r => r.url === href)) {
-                 results.push({ url: href, isVideo: isVid });
-             }
+          const isError = await page.$('.error-msg, .alert-danger, .error, .alert');
+          if (isError) {
+            console.error(`[AIM] ${scraper.name} вернул ошибку, пробуем следующий...`);
+            continue;
+          }
+
+          const mediaLinks: InstagramMedia[] = await page.evaluate(() => {
+            const results: any[] = [];
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            const buttons = document.querySelectorAll('a[href*=".mp4"], a[href*=".jpg"], a[download], a.button, .download-bottom a, a.download-button, .output-list a');
+            
+            buttons.forEach((btn: any) => {
+              let href = btn.getAttribute('href');
+              const text = btn.textContent?.toLowerCase() || '';
+              if (href && !href.includes('javascript:') && !href.includes('#')) {
+                if (href.startsWith('//')) href = 'https:' + href;
+                if (href.startsWith('/')) href = (globalThis as any).window.location.origin + href;
+                
+                if (href.startsWith('http') && (text.includes('download') || text.includes('скачать') || href.includes('.mp4') || href.includes('.jpg') || href.includes('cdn.'))) {
+                   const isVid = text.includes('video') || text.includes('видео') || href.includes('.mp4');
+                   if (!results.find(r => r.url === href)) {
+                       results.push({ url: href, isVideo: isVid });
+                   }
+                }
+              }
+            });
+            return results as any;
+          }) as InstagramMedia[];
+
+          if (mediaLinks.length > 0) {
+             console.error(`[AIM] ${scraper.name} успешно извлек файлов: ${mediaLinks.length}`);
+             return mediaLinks;
           }
         }
-      });
-      return results as any;
-    }) as InstagramMedia[];
+      } catch (e: any) {
+         console.error(`[AIM] Ошибка в скрапере ${scraper.name}: ${e.message}`);
+      }
+    }
 
-
-    console.error(`[AIM] Puppeteer (snapinsta) успешно извлек файлов: ${mediaLinks.length}`);
-    return mediaLinks;
+    return [];
   } catch (error: any) {
     console.error('[AIM] Puppeteer scraping failed:', error.message);
     return [];
@@ -257,8 +274,8 @@ export async function scrapeInstagramMedia(url: string): Promise<InstagramMedia[
   
   if (media.length > 0) return media;
 
-  console.error('[AIM] Cobalt не справился. Пробуем Web Scraper через Puppeteer (snapinsta)...');
-  media = await fetchViaPuppeteer(url);
+  console.error('[AIM] Cobalt не справился. Пробуем Web Scraper через Puppeteer (igram/iqsaved/fastdl)...');
+  media = await fetchViaWebScraper(url);
   
   if (media.length > 0) return media;
 
