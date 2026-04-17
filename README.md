@@ -10,6 +10,40 @@
 
 ---
 
+## ⚡ Установка — один промпт
+
+Скопируйте этот промпт, вставьте в чат вашего ИИ-агента — и он всё сделает сам:
+
+> Установи MCP-сервер **AIM Instagram Suite**. Вот пошаговый план — выполни всё автоматически:
+>
+> **1. Клонируй и установи зависимости:**
+> ```
+> git clone https://github.com/fsbtactic-code/aim-instagram-suite.git ~/Desktop/aim-instagram-suite
+> cd ~/Desktop/aim-instagram-suite
+> node scripts/setup.js
+> ```
+> Скрипт `setup.js` автоматически проверит Node.js 18+, установит C++ Build Tools (Windows) / Xcode CLT (Mac), CMake, npm-пакеты, Chromium для Puppeteer и yt-dlp. Если на Windows он попросит перезапустить терминал после установки Build Tools — сделай это и запусти `node scripts/setup.js` повторно.
+>
+> **2. Подключи MCP-сервер** — определи на какой платформе ты работаешь и выполни нужное:
+> - **Claude Code CLI**: `claude mcp add aim-instagram-suite -- npx tsx "ПУТЬ/src/index.ts"` (подставь абсолютный путь к склонированной папке)
+> - **Claude Desktop**: открой конфиг (`%APPDATA%\Claude\claude_desktop_config.json` на Windows или `~/Library/Application Support/Claude/claude_desktop_config.json` на Mac) и добавь в `mcpServers`: `"aim-instagram-suite": { "command": "npx", "args": ["tsx", "АБСОЛЮТНЫЙ_ПУТЬ/src/index.ts"] }`
+> - **Cursor**: открой `~/.cursor/mcp.json` и добавь аналогичную запись в `mcpServers`
+> - **Antigravity / Gemini**: открой `~/.gemini/antigravity/mcp_config.json` и добавь запись с `"env": {}`
+> - **Windsurf**: открой `~/.codeium/windsurf/mcp_config.json` и добавь запись
+>
+> **3. Скопируй slash-команды** (если поддерживаются):
+> - Claude Code: `cp .claude/commands/aim-*.md ~/.claude/commands/` (или `Copy-Item` на Windows)
+> - Antigravity: `cp -r .gemini/commands/aim ~/.gemini/commands/` (или `Copy-Item -Recurse` на Windows)
+> - Cursor: `cat .claude/commands/aim-*.md > .cursor/rules/aim-instagram-suite.mdc`
+>
+> **4. Перезапусти** среду и подтверди что появились **14 инструментов** `aim_`. Перечисли их.
+
+**Готово!** После вставки промпта — ИИ клонирует, установит, подключит и проверит. Вам останется только перезапустить приложение.
+
+📖 [Детальная инструкция для каждой платформы](INSTALL.md)
+
+---
+
 ## 💡 Что это такое?
 
 **AIM** — это ваш личный SMM-помощник, который живёт прямо внутри нейросети Claude.
@@ -248,37 +282,6 @@ AIM скачивает видео по ссылке (Instagram, TikTok, YouTube)
 
 ---
 
-## ⚡ Установка — один промпт
-
-Скопируйте этот промпт, вставьте в чат вашего ИИ-агента — и он всё сделает сам:
-
-> Установи MCP-сервер **AIM Instagram Suite**. Вот пошаговый план — выполни всё автоматически:
->
-> **1. Клонируй и установи зависимости:**
-> ```
-> git clone https://github.com/fsbtactic-code/aim-instagram-suite.git ~/Desktop/aim-instagram-suite
-> cd ~/Desktop/aim-instagram-suite
-> node scripts/setup.js
-> ```
-> Скрипт `setup.js` автоматически проверит Node.js 18+, установит C++ Build Tools (Windows) / Xcode CLT (Mac), CMake, npm-пакеты, Chromium для Puppeteer и yt-dlp. Если на Windows он попросит перезапустить терминал после установки Build Tools — сделай это и запусти `node scripts/setup.js` повторно.
->
-> **2. Подключи MCP-сервер** — определи на какой платформе ты работаешь и выполни нужное:
-> - **Claude Code CLI**: `claude mcp add aim-instagram-suite -- npx tsx "ПУТЬ/src/index.ts"` (подставь абсолютный путь к склонированной папке)
-> - **Claude Desktop**: открой конфиг (`%APPDATA%\Claude\claude_desktop_config.json` на Windows или `~/Library/Application Support/Claude/claude_desktop_config.json` на Mac) и добавь в `mcpServers`: `"aim-instagram-suite": { "command": "npx", "args": ["tsx", "АБСОЛЮТНЫЙ_ПУТЬ/src/index.ts"] }`
-> - **Cursor**: открой `~/.cursor/mcp.json` и добавь аналогичную запись в `mcpServers`
-> - **Antigravity / Gemini**: открой `~/.gemini/antigravity/mcp_config.json` и добавь запись с `"env": {}`
-> - **Windsurf**: открой `~/.codeium/windsurf/mcp_config.json` и добавь запись
->
-> **3. Скопируй slash-команды** (если поддерживаются):
-> - Claude Code: `cp .claude/commands/aim-*.md ~/.claude/commands/` (или `Copy-Item` на Windows)
-> - Antigravity: `cp -r .gemini/commands/aim ~/.gemini/commands/` (или `Copy-Item -Recurse` на Windows)
-> - Cursor: `cat .claude/commands/aim-*.md > .cursor/rules/aim-instagram-suite.mdc`
->
-> **4. Перезапусти** среду и подтверди что появились **14 инструментов** `aim_`. Перечисли их.
-
-**Готово!** После вставки промпта — ИИ клонирует, установит, подключит и проверит. Вам останется только перезапустить приложение.
-
-📖 [Детальная инструкция для каждой платформы](INSTALL.md)
 
 ---
 
