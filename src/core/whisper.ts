@@ -37,17 +37,36 @@ export async function transcribe(
   const { nodewhisper } = require('nodejs-whisper');
 
   // nodejs-whisper возвращает массив сегментов с таймкодами
-  const result = await nodewhisper(wavPath, {
-    modelName,
-    autoDownloadModelName: modelName,   // авто-скачивание модели при первом запуске
-    removeWavFileAfterTranscription: false,
-    withCuda: false,                    // CPU-режим — работает везде
-    whisperOptions: {
-      outputInJson: true,
-      wordTimestamps: false,
-      language: 'auto',                 // автодетект языка
-    },
-  });
+  // ВАЖНО: nodejs-whisper использует console.log(), что загрязняет stdout
+  // и ломает MCP stdio транспорт. Перехватываем stdout → перенаправляем в stderr.
+  let result: unknown;
+  const origStdoutWrite = process.stdout.write.bind(process.stdout);
+  process.stdout.write = (chunk: any, ...args: any[]) => {
+    process.stderr.write('[WHISPER_STDOUT] ' + chunk);
+    return true;
+  };
+  try {
+    result = await nodewhisper(wavPath, {
+      modelName,
+      autoDownloadModelName: modelName,   // авто-скачивание модели при первом запуске
+      removeWavFileAfterTranscription: false,
+      withCuda: false,                    // CPU-режим — работает везде
+      whisperOptions: {
+        outputInJson: true,
+        wordTimestamps: false,
+        language: 'auto',                 // автодетект языка
+      },
+    });
+  } catch (whisperErr) {
+    // Тихое аудио или video-only stream — возвращаем пустой транскрипт
+    const msg = whisperErr instanceof Error ? whisperErr.message : String(whisperErr);
+    console.error('[AIM] Whisper: тихое аудио или ошибка транскрипции:', msg);
+    return { segments: [], fullText: '', language: 'auto' };
+  } finally {
+    // Восстанавливаем оригинальный stdout
+    process.stdout.write = origStdoutWrite;
+  }
+
 
   // Нормализуем вывод nodejs-whisper
   let segments: TranscriptSegment[] = [];

@@ -663,10 +663,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       extractGridImages(parsedResult.visualHook);
     } else if (parsedResult.visualContext?.gridImages) {
       extractGridImages(parsedResult.visualContext);
-    } else if (parsedResult.collage?.base64) {
-      // aim_analyze_carousel / aim_localize_carousel
-      imagesToPush.push({ base64: parsedResult.collage.base64, mimeType: parsedResult.collage.mimeType ?? 'image/jpeg' });
-      textOnly.collage = { ...parsedResult.collage, base64: '[base64 image attached]' };
     } else if (parsedResult.originalCollage?.base64) {
       imagesToPush.push({ base64: parsedResult.originalCollage.base64, mimeType: parsedResult.originalCollage.mimeType ?? 'image/jpeg' });
       textOnly.originalCollage = { ...parsedResult.originalCollage, base64: '[base64 image attached]' };
@@ -719,7 +715,7 @@ async function main() {
   await server.connect(transport);
   console.error(`[AIM] 🚀 AIM Instagram Suite v3.1.0. Инструментов: ${TOOLS.length}`);
   console.error('[AIM] 🎬 Video:     aim_evaluate_video · aim_analyze_viral_reels · aim_generate_script · aim_analyze_hook · aim_extract_pacing');
-  console.error('[AIM] 🎨 Carousel:  aim_draft_carousel_structure · aim_render_premium_carousel · aim_auto_brand_colors');
+  console.error('[AIM] 🎨 Carousel:  aim_draft_carousel_structure · aim_render_premium_carousel · aim_auto_brand_colors · aim_create_style');
   console.error('[AIM] 🔥 Intel:     aim_score_virality · aim_score_carousel_virality · aim_analyze_carousel · aim_localize_carousel · aim_viral_structure');
 }
 

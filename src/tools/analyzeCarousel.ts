@@ -7,8 +7,8 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
 import { randomUUID } from 'crypto';
-import { downloadVideo, detectPlatform } from '../core/ytdlp.js';
-import { buildGrid, gridToBase64 } from '../core/imageGrid.js';
+import { detectPlatform } from '../core/ytdlp.js';
+import { buildGrid } from '../core/imageGrid.js';
 
 export interface AnalyzeCarouselInput {
   url: string;
@@ -18,16 +18,11 @@ export interface AnalyzeCarouselInput {
 export async function analyzeCarousel(input: AnalyzeCarouselInput): Promise<string> {
   const { url, outputMdPath } = input;
 
-  if (!url.startsWith('http')) {
-    return JSON.stringify({ error: 'Укажите корректный URL поста-карусели' });
-  }
-
   const platform = detectPlatform(url);
   const tmpBase = path.join(os.tmpdir(), `aim_carousel_${randomUUID()}`);
   fs.mkdirSync(tmpBase, { recursive: true });
 
   // ── Шаг 1: Скачиваем все медиа из поста ─────────────────────────────────
-  // yt-dlp скачивает карусель как отдельные файлы с суффиксом _1, _2, ...
   const { execFile } = await import('child_process');
   const { promisify } = await import('util');
   const execFileAsync = promisify(execFile);
@@ -48,29 +43,28 @@ export async function analyzeCarousel(input: AnalyzeCarouselInput): Promise<stri
     try {
       const { scrapeInstagramMedia, downloadFileFast } = await import('../core/instagramScraper.js');
       const mediaList = await scrapeInstagramMedia(url);
-      
+
       if (mediaList.length > 0) {
         let i = 1;
         for (const item of mediaList) {
-           const ext = item.isVideo ? 'mp4' : 'jpg';
-           const savedPath = await downloadFileFast(item.url, tmpBase, ext);
-           // Rename to keep strict slide order for the grid
-           const orderedPath = path.join(tmpBase, `slide_${String(i).padStart(2, '0')}.${ext}`);
-           fs.renameSync(savedPath, orderedPath);
-           downloadedFiles.push(orderedPath);
-           i++;
+          const ext = item.isVideo ? 'mp4' : 'jpg';
+          const savedPath = await downloadFileFast(item.url, tmpBase, ext);
+          // Rename to keep strict slide order for the grid
+          const orderedPath = path.join(tmpBase, `slide_${String(i).padStart(2, '0')}.${ext}`);
+          fs.renameSync(savedPath, orderedPath);
+          downloadedFiles.push(orderedPath);
+          i++;
         }
         console.error(`[AIM] External API скачал файлов: ${downloadedFiles.length}`);
       }
     } catch (e: any) {
-      console.warn('[AIM] External API failed, falling back to local yt-dlp:', e.message);
+      console.error('[AIM] External API failed, falling back to local yt-dlp:', e.message);
     }
   }
 
-  // Fallback to yt-dlp if it's not instagram or external scraper failed
+  // Fallback to yt-dlp if not instagram or external scraper failed
   if (downloadedFiles.length === 0) {
     try {
-      // Скачиваем все слайды карусели
       await execFileAsync(ytdlpBin, [
         url,
         '-o', path.join(tmpBase, 'slide_%(playlist_index)s.%(ext)s'),
@@ -80,7 +74,6 @@ export async function analyzeCarousel(input: AnalyzeCarouselInput): Promise<stri
         '--quiet',
       ], { maxBuffer: 20 * 1024 * 1024 });
 
-      // Собираем все скачанные файлы (изображения и видео)
       downloadedFiles = fs.readdirSync(tmpBase)
         .filter(f => /\.(jpg|jpeg|png|webp|mp4|webm)$/i.test(f))
         .sort()
@@ -90,24 +83,23 @@ export async function analyzeCarousel(input: AnalyzeCarouselInput): Promise<stri
     } catch (e: any) {
       console.error('[AIM] Ошибка скачивания (yt-dlp):', e.message);
 
-    // Fallback: пробуем просто скачать как видео/фото
-    try {
-      await execFileAsync(ytdlpBin, [
-        url,
-        '-o', path.join(tmpBase, 'media.%(ext)s'),
-        '--quiet',
-      ], { maxBuffer: 20 * 1024 * 1024 });
+      try {
+        await execFileAsync(ytdlpBin, [
+          url,
+          '-o', path.join(tmpBase, 'media.%(ext)s'),
+          '--quiet',
+        ], { maxBuffer: 20 * 1024 * 1024 });
 
-      downloadedFiles = fs.readdirSync(tmpBase)
-        .filter(f => /\.(jpg|jpeg|png|webp|mp4|webm)$/i.test(f))
-        .map(f => path.join(tmpBase, f));
-    } catch {
-      return JSON.stringify({
-        error: 'Не удалось скачать карусель. Возможные причины: приватный аккаунт, требуется авторизация или yt-dlp не поддерживает этот тип поста.',
-        hint: 'Попробуйте скопировать ссылку на конкретный слайд или использовать публичный аккаунт.',
-        url,
-      });
-    }
+        downloadedFiles = fs.readdirSync(tmpBase)
+          .filter(f => /\.(jpg|jpeg|png|webp|mp4|webm)$/i.test(f))
+          .map(f => path.join(tmpBase, f));
+      } catch {
+        return JSON.stringify({
+          error: 'Не удалось скачать карусель. Возможные причины: приватный аккаунт, требуется авторизация или yt-dlp не поддерживает этот тип поста.',
+          hint: 'Попробуйте скопировать ссылку на конкретный слайд или использовать публичный аккаунт.',
+          url,
+        });
+      }
     }
   }
 
@@ -119,7 +111,6 @@ export async function analyzeCarousel(input: AnalyzeCarouselInput): Promise<stri
   }
 
   // ── Шаг 2: Фильтруем только изображения для коллажа ────────────────────
-  // Для видео-слайдов берём первый кадр через FFmpeg (если есть)
   const imageFiles: string[] = downloadedFiles.filter(f =>
     /\.(jpg|jpeg|png|webp)$/i.test(f)
   );
@@ -144,48 +135,46 @@ export async function analyzeCarousel(input: AnalyzeCarouselInput): Promise<stri
   const sortedImages = imageFiles.sort();
   console.error(`[AIM] Изображений для коллажа: ${sortedImages.length}`);
 
-  // ── Шаг 3: Склейка в горизонтальную ленту (все слайды в одной картинке) ─
-  // Используем cols=slideCount чтобы все слайды были в одну строку (полоса)
-  const cols = Math.min(sortedImages.length, 10); // максимум 10 в ряд
+  // ── Шаг 3: Склейка в горизонтальную ленту ───────────────────────────────
+  const cols = Math.min(sortedImages.length, 10);
   const timecodes = sortedImages.map((_, i) => `#${i + 1}`);
 
   const gridBuffer = await buildGrid(sortedImages, timecodes, {
     cols,
-    cellWidth: Math.min(400, Math.floor(3840 / cols)), // адаптивная ширина ячейки
+    cellWidth: Math.min(400, Math.floor(3840 / cols)),
     outputQuality: 75,
-    maxWidth: 2400, // широкий коллаж для каруселей
+    maxWidth: 2400,
   });
-  const gridBase64 = gridToBase64(gridBuffer);
 
-  console.error(`[AIM] Коллаж создан: ${Math.round(gridBase64.length / 1024)}KB`);
+  const collageSuffix = randomUUID().slice(0, 5);
+  const collagePath = outputMdPath
+    ? path.join(path.dirname(outputMdPath), `collage_${collageSuffix}.jpg`)
+    : path.join(os.tmpdir(), `aim_collage_${collageSuffix}.jpg`);
+  fs.writeFileSync(collagePath, gridBuffer);
 
-  // ── Шаг 4: Формируем запрос к Claude ────────────────────────────────────
-  const result = {
+  console.error(`[AIM] Коллаж сохранен: ${collagePath}`);
+
+  // ── Шаг 4: Формируем ответ ───────────────────────────────────────────────
+  const analysisResult = {
     tool: 'aim_analyze_carousel',
     url,
     platform,
     slidesDownloaded: sortedImages.length,
     outputMdPath: outputMdPath ?? null,
-
-    collage: {
-      mimeType: 'image/jpeg',
-      base64: gridBase64,
-      description: `Коллаж всех ${sortedImages.length} слайдов карусели из ${platform}`,
-    },
-
-    analysisRequest: buildCarouselAnalysisPrompt(url, platform, sortedImages.length, outputMdPath),
+    analysisRequest: buildCarouselAnalysisPrompt(url, platform, sortedImages.length, collagePath, outputMdPath),
   };
 
-  // Cleanup
+  // Cleanup временных файлов, оставляем только коллаж
   try { fs.rmSync(tmpBase, { recursive: true, force: true }); } catch { /* ignore */ }
 
-  return JSON.stringify(result, null, 2);
+  return JSON.stringify(analysisResult, null, 2);
 }
 
 function buildCarouselAnalysisPrompt(
   url: string,
   platform: string,
   slideCount: number,
+  collagePath: string,
   outputMdPath?: string,
 ): string {
   return `
@@ -196,7 +185,8 @@ function buildCarouselAnalysisPrompt(
 - Ссылка: ${url}
 - Слайдов: ${slideCount}
 
-[Смотри прикреплённый коллаж — все ${slideCount} слайдов в одном изображении, слева направо]
+[ВНИМАНИЕ: Коллаж всех слайдов сохранен локально по пути: ${collagePath}]
+Используй инструмент \`view_file\` чтобы прочитать файл \`${collagePath}\`, затем приступай к анализу.
 
 ---
 
@@ -242,92 +232,46 @@ function buildCarouselAnalysisPrompt(
 
 ## 🧠 ОБНАРУЖЕННЫЕ ПСИХОЛОГИЧЕСКИЕ ТРИГГЕРЫ
 
-Для каждого триггера укажи на каком слайде он используется:
-
 ### ✅ Активные триггеры:
-- **[Триггер 1]** — Слайд #X: "[точная цитата или описание]" → [как работает]
+- **[Триггер 1]** — Слайд #X: "[точная цитата]" → [как работает]
 - **[Триггер 2]** — Слайд #X: [описание] → [механика]
-[...]
 
 ### ❌ Недостающие триггеры (потерянный потенциал):
-- **[Триггер который мог бы быть]** — куда вставить и как это усилило бы карусель
+- **[Триггер]** — куда вставить и как усилит карусель
 
 ---
 
 ## 💰 АНАЛИЗ ВОРОНКИ ПРОДАЖ/ПОДПИСКИ
 
-Как карусель ведёт пользователя:
-
 **Этап 1 — Внимание (Слайды 1-X):**
-[Как контент захватывает внимание и удерживает на первых слайдах]
+[Как захватывает внимание]
 
 **Этап 2 — Интерес (Слайды X-X):**
-[Как формируется доверие и интерес]
+[Как формируется доверие]
 
 **Этап 3 — Желание (Слайды X-X):**
-[Как создаётся желание получить результат]
+[Как создаётся желание]
 
 **Этап 4 — Действие (Слайд ${slideCount}):**
-[Анализ финального CTA — что просят сделать и насколько это конвертирует]
+[Анализ финального CTA]
 
-**Конверсионный потенциал воронки: X/10**
-
----
-
-## 🎨 ДИЗАЙН И ВИЗУАЛЬНЫЙ СТИЛЬ
-
-### Единый стиль:
-- Цветовая палитра: [основные цвета]
-- Шрифты: [название/стиль]
-- Компоновка текста: [как расположен текст]
-- Брендинг: [есть ли логотип/фирменный стиль]
-
-### Читаемость и UX:
-- Размер шрифта: [достаточный / слишком мелкий / слишком крупный]
-- Контраст: [хороший / нужно улучшить]
-- Перегруженность: [есть ли слайды с избытком элементов]
-
-### Оценка дизайна: X/10
+**Конверсионный потенциал: X/10**
 
 ---
 
 ## 📐 СТРУКТУРНЫЙ АРХЕТИП
 
-Эта карусель соответствует архетипу:
-☐ Открытая петля (Open Loop)
-☐ Список-гид (Listicle)
-☐ До/После (Before/After)
-☐ Развенчание мифов (Myth Busting)
-☐ Пошаговый гайд (Tutorial)
-☐ Кейс/История (Case Study)
-☐ Воронка продаж (Sales Funnel)
-☐ Другой: [описание]
-
-**Почему этот архетип работает для данной ниши:** [объяснение]
+☐ Открытая петля  ☐ Список-гид  ☐ До/После  ☐ Мифы vs Реальность  ☐ Пошаговый гайд  ☐ Кейс
 
 ---
 
 ## ⚡ ТОП-5 СЕКРЕТОВ УСПЕХА
 
-(Что конкретно делает эту карусель эффективной)
-
-1. **[Секрет 1]:** [детальное объяснение]
-2. **[Секрет 2]:** [детальное объяснение]
-3. **[Секрет 3]:** [детальное объяснение]
-4. **[Секрет 4]:** [детальное объяснение]
-5. **[Секрет 5]:** [детальное объяснение]
-
----
-
-## 🎯 ШАБЛОН ДЛЯ КРАЖИ СТРУКТУРЫ
-
-Универсальная формула этой карусели, применимая к ЛЮБОЙ нише:
-
-| Слайд | Формула | Психологический механизм |
-|-------|---------|--------------------------|
-| 1 | [формула хука] | [механизм] |
-| 2-X | [формула тела] | [механизм] |
-| ${slideCount} | [формула CTA] | [механизм] |
+1. **[Секрет 1]:** [объяснение]
+2. **[Секрет 2]:** [объяснение]
+3. **[Секрет 3]:** [объяснение]
+4. **[Секрет 4]:** [объяснение]
+5. **[Секрет 5]:** [объяснение]
 
 ---
 
@@ -341,8 +285,5 @@ function buildCarouselAnalysisPrompt(
 | Триггеры | X/10 |
 | CTA | X/10 |
 | **ИТОГО** | **XX/50** |
-
-**Вирусный потенциал: [Высокий / Средний / Низкий]**
-**Причина:** [главный фактор]
   `.trim();
 }

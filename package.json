@@ -5,9 +5,9 @@
   "main": "dist/index.js",
   "scripts": {
     "setup": "node scripts/setup.js",
-    "start": "node dist/index.js",
+    "start": "node --require ./preload.cjs dist/index.js",
     "dev": "tsx watch src/index.ts",
-    "build": "tsc",
+    "build": "tsc && node scripts/postbuild.js",
     "postinstall": "node scripts/postinstall.js",
     "typecheck": "tsc --noEmit"
   },
@@ -22,6 +22,7 @@
     "puppeteer": "^24.41.0",
     "sharp": "^0.33.5",
     "snapsave-media-downloader": "^2.4.0",
+    "socket.io-client": "^4.8.3",
     "zod": "^3.23.8"
   },
   "devDependencies": {

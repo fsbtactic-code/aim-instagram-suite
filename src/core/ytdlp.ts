@@ -52,7 +52,7 @@ export async function downloadVideo(url: string, outDir?: string): Promise<Downl
 
   // -- ИНТЕГРАЦИЯ НОВОГО SCRAPER'A ДЛЯ INSTAGRAM --
   if (platform === 'Instagram') {
-    console.log('[AIM] Instagram detected, delegating to external scraping APIs...');
+    console.error('[AIM] Instagram detected, delegating to external scraping APIs...');
     try {
       // Lazy load to avoid circular deps if any
       const { scrapeInstagramMedia, downloadFileFast } = require('./instagramScraper.js');
@@ -66,6 +66,9 @@ export async function downloadVideo(url: string, outDir?: string): Promise<Downl
            videoFile = await downloadFileFast(item.url, targetDir, ext);
            break; // Только первое (для analyzeCarousel вызывается напрямую scraper)
         }
+        // Примечание: Cobalt может вернуть video-only поток (VP9 DASH без аудио).
+        // В этом случае ffmpeg.extractAudio создаст тихий WAV, и анализ продолжится
+        // только визуально (без транскрипта). Для аудио установите AIM_IG_API_KEY.
         return {
           filePath: videoFile,
           title: 'Instagram Reel',
@@ -74,7 +77,7 @@ export async function downloadVideo(url: string, outDir?: string): Promise<Downl
         };
       }
     } catch (e: any) {
-      console.warn('[AIM] External API failed, falling back to local yt-dlp:', e.message);
+      console.error('[AIM] External API failed, falling back to local yt-dlp:', e.message);
     }
   }
 

@@ -28,9 +28,49 @@ function formatTimecode(seconds: number): string {
 }
 
 /**
+ * Проверяет, есть ли в видео аудиодорожка.
+ */
+async function hasAudioStream(videoPath: string): Promise<boolean> {
+  try {
+    const { stderr } = await execFileAsync(ffmpegPath, [
+      '-i', videoPath,
+      '-f', 'null', '-',
+    ], { maxBuffer: 5 * 1024 * 1024 }).catch((e: any) => ({ stderr: e.stderr ?? '' }));
+    return /Stream.*Audio:/i.test(stderr as string);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Создаёт тихий WAV файл (1 секунда, 16kHz, моно).
+ * Используется как fallback когда у видео нет аудиодорожки.
+ */
+async function createSilentWav(outWavPath: string): Promise<void> {
+  await execFileAsync(ffmpegPath, [
+    '-y',
+    '-f', 'lavfi',
+    '-i', 'anullsrc=r=16000:cl=mono',
+    '-t', '1',
+    '-acodec', 'pcm_s16le',
+    '-ar', '16000',
+    '-ac', '1',
+    outWavPath,
+  ]);
+}
+
+/**
  * Извлекает аудиодорожку из видео в WAV формат для Whisper.
+ * Если видео без аудио (video-only DASH stream) — создаёт тихий WAV-файл,
+ * чтобы Whisper вернул пустой транскрипт вместо аварийного завершения.
  */
 export async function extractAudio(videoPath: string, outWavPath: string): Promise<void> {
+  const audioExists = await hasAudioStream(videoPath);
+  if (!audioExists) {
+    console.error('[AIM] Аудиодорожка не найдена (video-only stream). Создаём тихий WAV для Whisper...');
+    await createSilentWav(outWavPath);
+    return;
+  }
   await execFileAsync(ffmpegPath, [
     '-y',
     '-i', videoPath,
