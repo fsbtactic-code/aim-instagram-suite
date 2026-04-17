@@ -82,7 +82,7 @@ export async function processVideo(
   console.error('[AIM] Транскрибируем аудио через Whisper...');
   const wavPath = path.join(tmpBase, 'audio.wav');
   await extractAudio(processPath, wavPath);
-  const transcript = await transcribe(wavPath);
+  const transcript = await transcribe(wavPath, 'tiny');
   const transcriptText = formatTranscriptForLLM(transcript);
   console.error(`[AIM] Транскрипт: ${transcript.segments.length} сегментов, язык: ${transcript.language}`);
 
@@ -166,7 +166,7 @@ export async function extractPacingData(
   // Для pacing нужна транскрипция тоже (text-first подход)
   const wavPath = path.join(tmpBase, 'audio.wav');
   await extractAudio(localVideoPath, wavPath);
-  const transcript = await transcribe(wavPath);
+  const transcript = await transcribe(wavPath, 'tiny');
   const transcriptText = formatTranscriptForLLM(transcript);
 
   cleanup(wavPath);

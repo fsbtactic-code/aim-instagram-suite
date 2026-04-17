@@ -252,32 +252,54 @@ async function fetchViaWebScraper(url: string): Promise<InstagramMedia[]> {
 }
 
 /**
- * Главный фасад для парсинга инстаграма через сторонние сервисы
+ * Главный фасад для парсинга инстаграма через сторонние сервисы с жестким анти-провалом
  */
 export async function scrapeInstagramMedia(url: string): Promise<InstagramMedia[]> {
   const rapidApiKey = process.env.AIM_IG_API_KEY;
+  let media: InstagramMedia[] = [];
 
+  // [ШАГ 0] Premium Method (Если есть ключ)
   if (rapidApiKey) {
-    console.error('[AIM] Использование RapidAPI для загрузки (Premium Method)...');
-    const media = await fetchViaRapidAPI(url, rapidApiKey);
-    if (media.length > 0) return media;
-    console.error('[AIM] RapidAPI не смог скачать, откат к Cobalt...');
+    try {
+      console.error('[AIM] Использование RapidAPI для загрузки (Premium Method)...');
+      media = await fetchViaRapidAPI(url, rapidApiKey);
+      if (media && media.length > 0) return media;
+      console.error('[AIM] RapidAPI вернул пустой массив, откат к IQSaved API...');
+    } catch (e: any) {
+      console.error('[AIM] RapidAPI упал:', e.message);
+    }
   }
 
-  console.error('[AIM] Использование IQSaved API для загрузки карусели...');
-  let media = await fetchViaIqsaved(url);
-  
-  if (media.length > 0) return media;
+  // [ШАГ 1] ПРИОРИТЕТ 1: Запуск IQSaved API (Самый надежный для каруселей)
+  try {
+    console.error('[AIM] ПРИОРИТЕТ 1: Использование внутреннего IQSaved API...');
+    media = await fetchViaIqsaved(url);
+    if (media && media.length > 0) return media;
+    console.error('[AIM] IQSaved API не вернул медиа, переходим к резервным вариантам...');
+  } catch (e: any) {
+    console.error('[AIM] Ошибка IQSaved API:', e.message);
+  }
 
-  console.error('[AIM] IQSaved не справился. Пробуем открытые сервисы (Cobalt)...');
-  media = await fetchViaCobalt(url);
-  
-  if (media.length > 0) return media;
+  // [ШАГ 2] ПРИОРИТЕТ 2: Cobalt (Быстрый fallback для видео)
+  try {
+    console.error('[AIM] ПРИОРИТЕТ 2: Пробуем открытые сервисы (Cobalt)...');
+    media = await fetchViaCobalt(url);
+    if (media && media.length > 0) return media;
+    console.error('[AIM] Cobalt не вернул медиа, переходим к Puppeteer...');
+  } catch (e: any) {
+    console.error('[AIM] Ошибка Cobalt API:', e.message);
+  }
 
-  console.error('[AIM] Cobalt не справился. Пробуем Web Scraper через Puppeteer (igram/iqsaved/fastdl)...');
-  media = await fetchViaWebScraper(url);
-  
-  if (media.length > 0) return media;
+  // [ШАГ 3] ПРИОРИТЕТ 3: Web Scraper (Puppeteer проходит через iqsaved/igram/fastdl)
+  try {
+    console.error('[AIM] ПРИОРИТЕТ 3: Запуск Web Scraper (эмуляция браузера)...');
+    media = await fetchViaWebScraper(url);
+    if (media && media.length > 0) return media;
+    console.error('[AIM] Web Scraper не смог подобрать медиа.');
+  } catch (e: any) {
+    console.error('[AIM] Ошибка Web Scraper:', e.message);
+  }
 
-  throw new Error('Все сторонние сервисы загрузки недоступны или ссылка не поддерживается. Попробуйте обновить ссылку или добавить AIM_IG_API_KEY.');
+  // [ФИНАЛ] Анти-провал: если всё выше не дало результатов
+  throw new Error('КРИТИЧЕСКАЯ ОШИБКА: Все сторонние сервисы и резервные варианты (IQSaved, Cobalt, Puppeteer) недоступны. Попробуйте другую ссылку.');
 }

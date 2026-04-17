@@ -24,11 +24,11 @@ function dbgLog(label, str) {
   }
 }
 
-// 1. Override console methods -> stderr
-console.log   = function() { var s = [].slice.call(arguments).join(' '); process.stderr.write('[LOG] '   + s + '\n'); dbgLog('CONSOLE.LOG', s); };
-console.warn  = function() { var s = [].slice.call(arguments).join(' '); process.stderr.write('[WARN] '  + s + '\n'); dbgLog('CONSOLE.WARN', s); };
-console.info  = function() { var s = [].slice.call(arguments).join(' '); process.stderr.write('[INFO] '  + s + '\n'); dbgLog('CONSOLE.INFO', s); };
-console.debug = function() { var s = [].slice.call(arguments).join(' '); process.stderr.write('[DBG] '   + s + '\n'); dbgLog('CONSOLE.DEBUG', s); };
+// 1. Override console methods -> write to debug log but drop from console to avoid MCP errors
+console.log   = function() { var s = [].slice.call(arguments).join(' '); dbgLog('CONSOLE.LOG', s); };
+console.warn  = function() { var s = [].slice.call(arguments).join(' '); dbgLog('CONSOLE.WARN', s); };
+console.info  = function() { var s = [].slice.call(arguments).join(' '); dbgLog('CONSOLE.INFO', s); };
+console.debug = function() { var s = [].slice.call(arguments).join(' '); dbgLog('CONSOLE.DEBUG', s); };
 
 // 2. Intercept process.stdout.write - log everything passing through
 var _ow = process.stdout.write.bind(process.stdout);
@@ -39,14 +39,16 @@ process.stdout.write = function(chunk, enc, cb) {
   // Log ALL stdout writes (including that which passes through)
   dbgLog('STDOUT_WRITE', JSON.stringify(str.substring(0, 200)));
 
-  // Pass through: empty or valid JSON
-  if (t === '' || t[0] === '{' || t[0] === '[') {
-    return _ow(chunk, enc, cb);
+  // Pass through: empty or valid JSON-RPC
+  if (t === '') return _ow(chunk, enc, cb);
+  if (t[0] === '{' || t[0] === '[') {
+    if (t.includes('"jsonrpc"')) {
+      return _ow(chunk, enc, cb);
+    }
   }
 
-  // Non-JSON -> redirect to stderr
-  process.stderr.write('[STDOUT_REDIRECT] ' + str);
-  dbgLog('STDOUT_REDIRECT', str);
+  // Non-JSON -> drop it (do not pollute stderr which Claude sees as error)
+  dbgLog('STDOUT_DROPPED', str);
   if (typeof enc === 'function') enc();
   else if (typeof cb === 'function') cb();
   return true;
