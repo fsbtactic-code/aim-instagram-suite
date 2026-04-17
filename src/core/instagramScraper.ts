@@ -20,7 +20,7 @@ export async function downloadFileFast(url: string, destDir: string, extension: 
   return new Promise((resolve, reject) => {
     const fileStream = fs.createWriteStream(filePath);
     res.body.pipe(fileStream);
-    res.body.on('error', (err) => reject(err));
+    res.body.on('error', (err: any) => reject(err));
     fileStream.on('finish', () => resolve(filePath));
   });
 }

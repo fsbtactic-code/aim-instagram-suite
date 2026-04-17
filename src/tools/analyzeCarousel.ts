@@ -62,7 +62,7 @@ export async function analyzeCarousel(input: AnalyzeCarouselInput): Promise<stri
         }
         console.error(`[AIM] External API скачал файлов: ${downloadedFiles.length}`);
       }
-    } catch (e) {
+    } catch (e: any) {
       console.warn('[AIM] External API failed, falling back to local yt-dlp:', e.message);
     }
   }
@@ -87,7 +87,7 @@ export async function analyzeCarousel(input: AnalyzeCarouselInput): Promise<stri
         .map(f => path.join(tmpBase, f));
 
       console.error(`[AIM] Скачано файлов (yt-dlp): ${downloadedFiles.length}`);
-    } catch (e) {
+    } catch (e: any) {
       console.error('[AIM] Ошибка скачивания (yt-dlp):', e.message);
 
     // Fallback: пробуем просто скачать как видео/фото

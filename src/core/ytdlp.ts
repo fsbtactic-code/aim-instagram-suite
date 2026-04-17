@@ -73,7 +73,7 @@ export async function downloadVideo(url: string, outDir?: string): Promise<Downl
           platform
         };
       }
-    } catch (e) {
+    } catch (e: any) {
       console.warn('[AIM] External API failed, falling back to local yt-dlp:', e.message);
     }
   }
