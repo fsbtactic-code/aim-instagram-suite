@@ -17,8 +17,19 @@ const FETCH_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
     Accept: "application/json, text/plain, */*",
 };
-function normalizeInstagramPostUrl(shortcode) {
-    return `https://www.instagram.com/p/${shortcode}/`;
+function normalizeInstagramPostUrl(input) {
+    // If it's already a full URL, clean it up and return as-is
+    if (input.startsWith('http')) {
+        try {
+            const u = new URL(input);
+            return `https://www.instagram.com${u.pathname.replace(/\/$/, '')}/`;
+        }
+        catch {
+            return input;
+        }
+    }
+    // Shortcode only — default to /p/ (caller should pass full URL when possible)
+    return `https://www.instagram.com/p/${input}/`;
 }
 async function fetchIqsavedConnectToken() {
     const res = await (0, node_fetch_1.default)(`${IQSAVED_ORIGIN}/connect/`, {
@@ -129,6 +140,10 @@ function canonicalInstagramUrlFromInput(input) {
     const shortcode = extractInstagramShortcode(input);
     if (!shortcode)
         return null;
-    return { shortcode, postUrl: normalizeInstagramPostUrl(shortcode) };
+    // Pass original URL to preserve /reel/ vs /p/ distinction
+    const postUrl = input.trim().startsWith('http')
+        ? normalizeInstagramPostUrl(input.trim())
+        : normalizeInstagramPostUrl(shortcode);
+    return { shortcode, postUrl };
 }
 //# sourceMappingURL=iqsaved.js.map

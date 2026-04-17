@@ -16,8 +16,18 @@ export interface IqsavedCarouselItem {
   downloadLink?: { value: string; filename?: string | null; name?: string | null }[];
 }
 
-function normalizeInstagramPostUrl(shortcode: string): string {
-  return `https://www.instagram.com/p/${shortcode}/`;
+function normalizeInstagramPostUrl(input: string): string {
+  // If it's already a full URL, clean it up and return as-is
+  if (input.startsWith('http')) {
+    try {
+      const u = new URL(input);
+      return `https://www.instagram.com${u.pathname.replace(/\/$/, '')}/`;
+    } catch {
+      return input;
+    }
+  }
+  // Shortcode only — default to /p/ (caller should pass full URL when possible)
+  return `https://www.instagram.com/p/${input}/`;
 }
 
 export async function fetchIqsavedConnectToken(): Promise<string> {
@@ -141,5 +151,9 @@ export function extractInstagramShortcode(input: string): string | null {
 export function canonicalInstagramUrlFromInput(input: string): { shortcode: string; postUrl: string } | null {
   const shortcode = extractInstagramShortcode(input);
   if (!shortcode) return null;
-  return { shortcode, postUrl: normalizeInstagramPostUrl(shortcode) };
+  // Pass original URL to preserve /reel/ vs /p/ distinction
+  const postUrl = input.trim().startsWith('http')
+    ? normalizeInstagramPostUrl(input.trim())
+    : normalizeInstagramPostUrl(shortcode);
+  return { shortcode, postUrl };
 }
