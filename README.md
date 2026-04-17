@@ -3,7 +3,7 @@
   
   [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
   [![Privacy](https://img.shields.io/badge/Приватность-100%25_Локально-007808?logo=shield&logoColor=white)]()
-  [![Themes](https://img.shields.io/badge/Дизайнов-7_Премиум-a855f7?logo=palette&logoColor=white)]()
+  [![Themes](https://img.shields.io/badge/Дизайнов-12_Премиум-a855f7?logo=palette&logoColor=white)]()
   [![Layouts](https://img.shields.io/badge/Шаблонов-10_типов-3b82f6?logo=grid&logoColor=white)]()
   [![Tools](https://img.shields.io/badge/Инструментов-14-ec4899?logo=hammer&logoColor=white)]()
 </div>
@@ -22,7 +22,7 @@
 > cd ~/Desktop/aim-instagram-suite
 > node scripts/setup.js
 > ```
-> Скрипт `setup.js` автоматически проверит Node.js 18+, установит C++ Build Tools (Windows) / Xcode CLT (Mac), CMake, npm-пакеты, Chromium для Puppeteer и yt-dlp. Если на Windows он попросит перезапустить терминал после установки Build Tools — сделай это и запусти `node scripts/setup.js` повторно.
+> Скрипт `setup.js` автоматически проверит Node.js 18+, установит C++ Build Tools (Windows) / Xcode CLT (Mac), CMake, npm-пакеты и yt-dlp. Если на Windows он попросит перезапустить терминал после установки Build Tools — сделай это и запусти `node scripts/setup.js` повторно.
 >
 > **2. Подключи MCP-сервер** — определи на какой платформе ты работаешь и выполни нужное:
 > - **Claude Code CLI**: `claude mcp add aim-instagram-suite -- node "ПУТЬ/dist/index.js"` (подставь абсолютный путь к склонированной папке)
@@ -281,7 +281,7 @@ AIM скачивает видео по ссылке (Instagram, TikTok, YouTube)
 | Инструмент | Что делает |
 |------------|-----------|
 | `aim_draft_carousel_structure` | Генерация текстовой структуры карусели (3-15 слайдов) |
-| `aim_render_premium_carousel` | Рендер готовых PNG через Puppeteer в 7 дизайнах |
+| `aim_render_premium_carousel` | Рендер готовых PNG в 12 дизайнах |
 | `aim_auto_brand_colors` | Настройка фирменных цветов с проверкой контраста |
 | `aim_create_style` | Интерактивный мастер создания кастомного стиля |
 </details>

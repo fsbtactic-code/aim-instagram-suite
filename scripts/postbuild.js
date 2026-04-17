@@ -44,6 +44,6 @@ if (content.includes('MCP STDIO GUARD')) {
   }
 }
 
-// Prepend guard
-fs.writeFileSync(distIndex, GUARD + content, 'utf8');
-process.stderr.write('[postbuild] MCP stdio guard injected into dist/index.js\n');
+// DO NOT Prepend legacy guard anymore - handled by integrated guard in src/index.ts
+fs.writeFileSync(distIndex, content, 'utf8');
+process.stderr.write('[postbuild] Legacy guard removed, using integrated guard instead\n');

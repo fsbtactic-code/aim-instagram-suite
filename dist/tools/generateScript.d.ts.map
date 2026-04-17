@@ -1,0 +1,1 @@
+{"version":3,"file":"generateScript.d.ts","sourceRoot":"","sources":["../../src/tools/generateScript.ts"],"names":[],"mappings":"AAAA;;;;GAIG;AAIH,MAAM,WAAW,mBAAmB;IAClC,eAAe,EAAE,MAAM,CAAC;IACxB,WAAW,EAAE,MAAM,CAAC;CACrB;AAED,wBAAsB,cAAc,CAAC,KAAK,EAAE,mBAAmB,GAAG,OAAO,CAAC,MAAM,CAAC,CA+DhF"}

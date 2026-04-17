@@ -32,14 +32,22 @@ export async function transcribe(
     throw new Error(`Whisper: WAV файл не найден: ${wavPath}`);
   }
 
+  const isWindows = process.platform === 'win32';
+  const whisperBin = isWindows
+    ? path.join(process.cwd(), 'node_modules', 'nodejs-whisper', 'build', 'bin', 'Release', 'whisper-cli.exe')
+    : path.join(process.cwd(), 'node_modules', 'nodejs-whisper', 'build', 'bin', 'whisper-cli');
+
+  if (!fs.existsSync(whisperBin)) {
+    throw new Error(
+      `Whisper: Бинарный файл whisper-cli не найден. Убедитесь, что вы запустили \`npm run setup\` для компиляции whisper.cpp.\n` +
+      `Ожидаемый путь: ${whisperBin}`
+    );
+  }
+
   // nodejs-whisper — динамический импорт
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { nodewhisper } = require('nodejs-whisper');
 
-  // nodejs-whisper возвращает массив сегментов с таймкодами.
-  // ВАЖНО: nodejs-whisper использует console.log() и shelljs с silent:false,
-  // что загрязняет stdout и ломает MCP stdio транспорт.
-  // Решение: передаём кастомный logger который пишет только в stderr.
   const stderrLogger = {
     log:   (...a: unknown[]) => process.stderr.write('[WHISPER] '  + a.join(' ') + '\n'),
     warn:  (...a: unknown[]) => process.stderr.write('[WHISPER] '  + a.join(' ') + '\n'),

@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "setup": "node scripts/setup.js",
-    "start": "node --require ./preload.cjs dist/index.js",
+    "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
     "build": "tsc && node scripts/postbuild.js",
     "postinstall": "node scripts/postinstall.js",
@@ -13,15 +13,11 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.10.2",
-    "@mrnima/instagram-downloader": "^1.0.0",
-    "btch-downloader": "^6.0.26",
     "ffmpeg-static": "^5.2.0",
     "handlebars": "^4.7.9",
-    "instagram-url-direct": "^2.0.7",
+    "node-fetch": "^2.7.0",
     "nodejs-whisper": "^0.2.2",
-    "puppeteer": "^24.41.0",
     "sharp": "^0.33.5",
-    "snapsave-media-downloader": "^2.4.0",
     "socket.io-client": "^4.8.3",
     "zod": "^3.23.8"
   },

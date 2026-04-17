@@ -83,8 +83,8 @@ async function runNpmInstall() {
       }
 
       try {
-        execSync(isWindows ? 'cmake .. -G "NMake Makefiles"' : 'cmake ..', { stdio: 'inherit', cwd: buildDir, shell: isWindows });
-        execSync(isWindows ? 'nmake' : 'make', { stdio: 'inherit', cwd: buildDir, shell: isWindows });
+        execSync('cmake ..', { stdio: 'inherit', cwd: buildDir, shell: isWindows });
+        execSync('cmake --build . --config Release', { stdio: 'inherit', cwd: buildDir, shell: isWindows });
         console.log('Rebuild success');
       } catch (e) {
         console.error('Rebuild failed');
@@ -92,16 +92,28 @@ async function runNpmInstall() {
     }
   }
 
-  // Windows Release fix
-  if (isWindows) {
-    const binDir = path.join(whisperDir, 'build', 'bin');
-    const wrong = path.join(binDir, 'whisper-cli.exe');
-    const right = path.join(binDir, 'Release', 'whisper-cli.exe');
-    if (fs.existsSync(wrong) && !fs.existsSync(right)) {
-      if (!fs.existsSync(path.dirname(right))) fs.mkdirSync(path.dirname(right), { recursive: true });
-      fs.copyFileSync(wrong, right);
+    // Windows Release fix
+    if (isWindows) {
+      const binDir = path.join(whisperDir, 'build', 'bin');
+      const wrong = path.join(binDir, 'whisper-cli.exe');
+      const right = path.join(binDir, 'Release', 'whisper-cli.exe');
+      if (fs.existsSync(wrong) && !fs.existsSync(right)) {
+        if (!fs.existsSync(path.dirname(right))) fs.mkdirSync(path.dirname(right), { recursive: true });
+        fs.copyFileSync(wrong, right);
+      }
     }
-  }
+    
+    // Windows Auto-Download Patch for shelljs in nodejs-whisper
+    const downloadScriptPath = path.join(whisperDir, 'dist', 'autoDownloadModel.js');
+    if (fs.existsSync(downloadScriptPath)) {
+      let content = fs.readFileSync(downloadScriptPath, 'utf8');
+      if (content.includes("scriptPath = 'download-ggml-model.cmd';") && !content.includes("scriptPath = '.\\\\download-ggml-model.cmd';")) {
+          content = content.replace("scriptPath = 'download-ggml-model.cmd';", "scriptPath = '.\\\\download-ggml-model.cmd';");
+          fs.writeFileSync(downloadScriptPath, content, 'utf8');
+          console.log('Patched nodejs-whisper for Windows .cmd execution');
+      }
+    }
+
 }
 
 async function main() {

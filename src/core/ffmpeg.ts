@@ -114,16 +114,23 @@ export async function extractSceneFrames(
     .map(f => path.join(outDir, f));
 
   // Get actual scene change timestamps for ALL scenes
-  const { stdout } = await execFileAsync(ffmpegPath, [
-    '-i', videoPath,
-    '-vf', `select='gt(scene,${threshold})',showinfo`,
-    '-vsync', 'vfr',
-    '-f', 'null',
-    '-',
-  ], { maxBuffer: 10 * 1024 * 1024 }).catch(() => ({ stdout: '' }));
+  // NOTE: ffmpeg showinfo outputs to stderr, not stdout
+  let showInfoOutput = '';
+  try {
+    await execFileAsync(ffmpegPath, [
+      '-i', videoPath,
+      '-vf', `select='gt(scene,${threshold})',showinfo`,
+      '-vsync', 'vfr',
+      '-f', 'null',
+      '-',
+    ], { maxBuffer: 10 * 1024 * 1024 });
+  } catch (e: any) {
+    // ffmpeg always "fails" when writing to null — stderr has the data we need
+    showInfoOutput = e.stderr ?? '';
+  }
 
-  // Parse pts_time from showinfo output (comes to stderr actually)
-  const timeMatches = stdout.matchAll(/pts_time:([\d.]+)/g);
+  // Parse pts_time from showinfo output (comes in stderr)
+  const timeMatches = showInfoOutput.matchAll(/pts_time:([\d.]+)/g);
   const allTimes = Array.from(timeMatches).map(m => parseFloat(m[1]));
 
   // Re-build full timecodes

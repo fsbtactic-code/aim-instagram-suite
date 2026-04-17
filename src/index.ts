@@ -4,6 +4,76 @@
  * Транспорт: stdio (совместим с `claude mcp add`)
  */
 
+/**
+ * AIM MCP - Integrated Communication Guard
+ * Pre-emptively protects stdout from pollution and handles multi-chunk JSON-RPC.
+ */
+(function bootstrap() {
+  let isInRpc = false;
+
+  // 1. Silence shelljs (used by nodejs-whisper)
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const shelljs = require('shelljs');
+    if (shelljs && shelljs.exec) {
+      const _exec = shelljs.exec;
+      shelljs.exec = function(cmd: string, opts: any, cb: any) {
+        if (typeof opts === 'function') { cb = opts; opts = { silent: true }; }
+        else { opts = { ...(opts || {}), silent: true }; }
+        return _exec.call(this, cmd, opts, cb);
+      };
+    }
+  } catch (e) { /* ignore */ }
+
+  // 2. Silence child_process (for native binaries)
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const cp = require('child_process');
+    const _spawn = cp.spawn;
+    cp.spawn = function(cmd: string, args: any, opts: any) {
+      if (!opts) opts = {};
+      if (opts.stdio === 'inherit') opts.stdio = ['ignore', 'ignore', 'pipe'];
+      return _spawn.call(this, cmd, args, opts);
+    };
+  } catch(e) {}
+
+  // 4. Override process.stdout.write with Stack-Trace Guard
+  const _ow = process.stdout.write.bind(process.stdout);
+  process.stdout.write = function() {
+    const args = Array.prototype.slice.call(arguments);
+    const chunk = args[0];
+    const enc = typeof args[1] === 'string' ? args[1] : undefined;
+    const stack = new Error().stack || '';
+    
+    // Only allow writes originating from MCP SDK or our bootstrap
+    const isMcpMsg = stack.includes('StdioServerTransport') || 
+                     stack.includes('server.js') || 
+                     stack.includes('JSONRPC') ||
+                     stack.includes('bootstrap');
+
+    if (isMcpMsg) {
+      return _ow.apply(process.stdout, args as any);
+    }
+
+    // Otherwise it's garbage (Whisper logs, scrapers, etc) -> redirect to stderr
+    const str = typeof chunk === 'string' ? chunk : Buffer.isBuffer(chunk) ? chunk.toString('utf8') : String(chunk);
+    if (str.trim() === '') return true;
+
+    process.stderr.write(`STDOUT_LOG: ${str}\n`);
+    const cbIndex = typeof args[args.length - 1] === 'function' ? args.length - 1 : -1;
+    if (cbIndex >= 0) {
+        (args[cbIndex] as Function)();
+    }
+    return true;
+  } as any;
+
+  // 5. Override console to force stderr
+  console.log   = (...args) => process.stderr.write(`[LOG] ${args.join(' ')}\n`);
+  console.warn  = (...args) => process.stderr.write(`[WARN] ${args.join(' ')}\n`);
+  console.info  = (...args) => process.stderr.write(`[INFO] ${args.join(' ')}\n`);
+  console.debug = (...args) => process.stderr.write(`[DBG] ${args.join(' ')}\n`);
+})();
+
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
@@ -641,7 +711,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     // Извлекаем массивы base64 изображений (из видео-инструментов)
     let imagesToPush: Array<{ base64: string; mimeType: string }> = [];
 
-    // Читаем массив gridImages (evaluateVideo, analyzeHook, etc)
+    // Читаем массив gridImages
     const extractGridImages = (obj: any): boolean => {
       if (obj?.gridImages && Array.isArray(obj.gridImages)) {
         obj.gridImages.forEach((img: any) => {
@@ -657,7 +727,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
     if (parsedResult.visualAnalysis?.gridImages) {
       extractGridImages(parsedResult.visualAnalysis);
-    } else if (parsedResult.visualAnalysis?.visualContext?.gridImages) { // analyzeViralReels
+    } else if (parsedResult.visualAnalysis?.visualContext?.gridImages) {
       extractGridImages(parsedResult.visualAnalysis.visualContext);
     } else if (parsedResult.visualHook?.gridImages) {
       extractGridImages(parsedResult.visualHook);
@@ -667,14 +737,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       imagesToPush.push({ base64: parsedResult.originalCollage.base64, mimeType: parsedResult.originalCollage.mimeType ?? 'image/jpeg' });
       textOnly.originalCollage = { ...parsedResult.originalCollage, base64: '[base64 image attached]' };
     } else if (parsedResult.stylePreview?.base64) {
-      // aim_create_style
       imagesToPush.push({ base64: parsedResult.stylePreview.base64, mimeType: parsedResult.stylePreview.mimeType ?? 'image/jpeg' });
       textOnly.stylePreview = { ...parsedResult.stylePreview, base64: '[base64 image attached]' };
-    } else if (parsedResult.scoringWeights && parsedResult.visualAnalysis?.gridImages) {
-      // aim_score_virality (одноуровневая вложенность, уже поймается первым if, но на всякий)
-      extractGridImages(parsedResult.visualAnalysis);
     }
 
+    imagesToPush = [];
     content.push({ type: 'text', text: JSON.stringify(textOnly, null, 2) });
 
     if (imagesToPush.length > 0) {
@@ -684,8 +751,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
 
     return { content };
-
-  } catch (error: unknown) {
+} catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
     console.error(`[AIM] Ошибка в ${name}:`, message);
     return {

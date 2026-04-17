@@ -54,7 +54,7 @@ cp .claude/commands/aim-*.md ~/.claude/commands/
 >   "args": ["АБСОЛЮТНЫЙ_ПУТЬ_ДО_ПАПКИ/aimvideo/dist/index.js"]
 > }
 > ```
-> Подставь реальный абсолютный путь к папке. Полностью перезапусти Claude Desktop (закрой через трей). Подтверди что сервер подключён — должны появиться 13 инструментов `aim_`.
+> Подставь реальный абсолютный путь к папке. Полностью перезапусти Claude Desktop (закрой через трей). Подтверди что сервер подключён — должны появиться 14 инструментов `aim_`.
 
 ### 2. Конфиг вручную
 
@@ -66,8 +66,8 @@ cp .claude/commands/aim-*.md ~/.claude/commands/
 {
   "mcpServers": {
     "aim-instagram-suite": {
-      "command": "npx",
-      "args": ["tsx", "C:\\Users\\ИМЯ\\Desktop\\aim-instagram-suite\\src\\index.ts"]
+      "command": "node",
+      "args": ["C:\\Users\\ИМЯ\\Desktop\\aim-instagram-suite\\dist\\index.js"]
     }
   }
 }
@@ -77,7 +77,7 @@ cp .claude/commands/aim-*.md ~/.claude/commands/
 
 ### 3. Перезапуск
 
-Полностью закрой Claude Desktop (не сверни — именно закрой через трей), подожди 3 секунды, открой снова. В панели инструментов (🔧) должны появиться 13 MCP-инструментов `aim_`.
+Полностью закрой Claude Desktop (не сверни — именно закрой через трей), подожди 3 секунды, открой снова. В панели инструментов (🔧) должны появиться 14 MCP-инструментов `aim_`.
 
 ---
 
@@ -166,7 +166,7 @@ claude mcp add aim-instagram-suite -- node "$(pwd)/dist/index.js"
 git clone https://github.com/fsbtactic-code/aim-instagram-suite.git
 cd aim-instagram-suite
 npm install
-claude mcp add aim-instagram-suite -- npx tsx "$PWD\src\index.ts"
+claude mcp add aim-instagram-suite -- node "$PWD\dist\index.js"
 ```
 
 Slash-команды `/project:aim-*` подхватятся автоматически из `.claude/commands/` — перезапуск не нужен.
@@ -222,8 +222,8 @@ Get-Content .claude\commands\aim-*.md | Set-Content .github\copilot-instructions
 Перечисли все доступные aim_ инструменты
 ```
 
-Должно появиться 13 инструментов:
-`aim_evaluate_video` · `aim_analyze_viral_reels` · `aim_generate_script` · `aim_analyze_hook` · `aim_extract_pacing` · `aim_score_virality` · `aim_score_carousel_virality` · `aim_analyze_carousel` · `aim_localize_carousel` · `aim_viral_structure` · `aim_draft_carousel_structure` · `aim_render_premium_carousel` · `aim_auto_brand_colors`
+Должно появиться 14 инструментов:
+`aim_evaluate_video` · `aim_analyze_viral_reels` · `aim_generate_script` · `aim_analyze_hook` · `aim_extract_pacing` · `aim_score_virality` · `aim_score_carousel_virality` · `aim_analyze_carousel` · `aim_localize_carousel` · `aim_viral_structure` · `aim_draft_carousel_structure` · `aim_render_premium_carousel` · `aim_auto_brand_colors` · `aim_create_style`
 
 ---
 

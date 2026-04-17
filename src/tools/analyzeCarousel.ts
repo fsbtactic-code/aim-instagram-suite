@@ -138,10 +138,11 @@ export async function analyzeCarousel(input: AnalyzeCarouselInput): Promise<stri
   // ── Шаг 3: Склейка в горизонтальную ленту ───────────────────────────────
   const cols = Math.min(sortedImages.length, 10);
   const timecodes = sortedImages.map((_, i) => `#${i + 1}`);
+  const cellWidth = Math.min(400, Math.floor(3840 / cols));
 
   const gridBuffer = await buildGrid(sortedImages, timecodes, {
     cols,
-    cellWidth: Math.min(400, Math.floor(3840 / cols)),
+    cellWidth,
     outputQuality: 75,
     maxWidth: 2400,
   });

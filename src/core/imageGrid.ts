@@ -46,7 +46,8 @@ export async function buildGrid(
 
   const actualCols = Math.min(cols, imagePaths.length);
   const rows = Math.ceil(imagePaths.length / actualCols);
-  const cellHeight = cellWidth; // Квадратные ячейки (видео 9:16 будет letterboxed)
+  const finalCellWidth = Math.floor(cellWidth);
+  const finalCellHeight = finalCellWidth;
 
   // Обрабатываем каждый кадр: resize + добавить таймкод overlay
   const processedCells: Buffer[] = [];
@@ -58,16 +59,20 @@ export async function buildGrid(
     if (!fs.existsSync(imgPath)) continue;
 
     try {
-      // Resize кадр до размера ячейки
-      const cell = await sharp(imgPath)
-        .resize(cellWidth, cellHeight, { fit: 'contain', background: { r: 20, g: 20, b: 20 } })
-        .jpeg({ quality: 85 })
-        .toBuffer();
+      // Подготавливаем оверлей
+      const overlayWidth = Math.max(50, Math.floor(finalCellWidth * 0.8));
+      const overlayBuffer = Buffer.from(buildTimecodeOverlay(timecode, overlayWidth));
 
-      // Добавляем SVG-оверлей с таймкодом
-      const cellWithTimecode = await sharp(cell)
+      // Цепочка обработки: rotate -> resize -> composite (timecode) -> buffer
+      // Форсируем точные целочисленные размеры ячейки
+      const cellWithTimecode = await sharp(imgPath)
+        .rotate()
+        .resize(finalCellWidth, finalCellHeight, { 
+          fit: 'contain', 
+          background: { r: 20, g: 20, b: 20 } 
+        })
         .composite([{
-          input: Buffer.from(buildTimecodeOverlay(timecode, cellWidth)),
+          input: overlayBuffer,
           gravity: 'southwest',
         }])
         .jpeg({ quality: 85 })
@@ -77,7 +82,7 @@ export async function buildGrid(
     } catch {
       // Если кадр битый — добавляем серый placeholder
       const placeholder = await sharp({
-        create: { width: cellWidth, height: cellHeight, channels: 3, background: { r: 40, g: 40, b: 40 } },
+        create: { width: finalCellWidth, height: finalCellHeight, channels: 3, background: { r: 40, g: 40, b: 40 } },
       })
         .jpeg({ quality: 85 })
         .toBuffer();
@@ -86,30 +91,49 @@ export async function buildGrid(
   }
 
   // Склеиваем в сетку: создаём итоговый canvas
-  const gridWidth = actualCols * cellWidth;
-  const gridHeight = rows * cellHeight;
+  const gridWidthReal = actualCols * finalCellWidth;
+  const gridHeightReal = rows * finalCellHeight;
 
-  // Создаём пустой тёмный фон
-  const composites: sharp.OverlayOptions[] = processedCells.map((cellBuf, i) => {
+  const composites: sharp.OverlayOptions[] = [];
+  for (let i = 0; i < processedCells.length; i++) {
+    const cellBuf = processedCells[i];
     const col = i % actualCols;
     const row = Math.floor(i / actualCols);
-    return {
-      input: cellBuf,
-      left: col * cellWidth,
-      top: row * cellHeight,
-    };
-  });
+    
+    // Получаем RAW данные для исключения любых ошибок с размерами при склейке
+    const { data, info } = await sharp(cellBuf)
+      .raw()
+      .toBuffer({ resolveWithObject: true });
 
-  const grid = await sharp({
+    composites.push({
+      input: data,
+      raw: {
+        width: info.width,
+        height: info.height,
+        channels: info.channels as 3 | 4,
+      },
+      left: col * finalCellWidth,
+      top: row * finalCellHeight,
+    });
+  }
+
+  // Склеиваем в сетку: сначала создаём большой холст (без ресайза в той же цепочке)
+  // Это решает проблему VIPS "Image to composite must have same dimensions or smaller" на Windows
+  const gridBuffer = await sharp({
     create: {
-      width: gridWidth,
-      height: gridHeight,
+      width: gridWidthReal,
+      height: gridHeightReal,
       channels: 3,
       background: { r: 15, g: 15, b: 15 },
     },
   })
     .composite(composites)
-    .resize(Math.min(gridWidth, maxWidth), null, { withoutEnlargement: true })
+    .jpeg({ quality: 90 })
+    .toBuffer();
+
+  // Итоговый ресайз под лимиты Claude (max maxWidth)
+  const grid = await sharp(gridBuffer)
+    .resize(Math.min(gridWidthReal, maxWidth), null, { withoutEnlargement: true })
     .jpeg({ quality: outputQuality })
     .toBuffer();
 
@@ -133,7 +157,7 @@ function buildTimecodeOverlay(timecode: string, width: number): string {
   const bgWidth = textWidth + padding * 2;
   const bgHeight = fontSize + padding * 2;
 
-  return `<svg width="${width}" height="${bgHeight + padding}" xmlns="http://www.w3.org/2000/svg">
+  return `<svg width="${Math.ceil(bgWidth + padding)}" height="${Math.ceil(bgHeight + padding)}" xmlns="http://www.w3.org/2000/svg">
     <rect x="${padding}" y="${padding}" width="${bgWidth}" height="${bgHeight}" 
           rx="3" fill="rgba(0,0,0,0.75)"/>
     <text x="${padding * 2}" y="${padding + fontSize}" 

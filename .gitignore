@@ -1,5 +1,33 @@
 node_modules/
-dist/
 .env
 .DS_Store
 *.log
+
+# Test and scratch files
+test_*.ts
+test_*.mjs
+test_*.js
+run_viral.mts
+wrapper.cjs
+gen_previews.ts
+update_readme.js
+scratch/
+output/
+raw_err.log
+mcp_debug.log
+mcp_init.log
+reel_analysis_*.md
+fastdl_*.png
+test_carousel.json
+test_dl.ts
+test_html.ts
+test_igram.ts
+test_iqsaved_pup.ts
+test_reels_pipeline.ts
+test_render.ts
+test_scraping.ts
+test_shelljs.js
+dist/index.js.mock
+C:\Temp\
+
+# Keep dist/ tracked — MCP server needs it

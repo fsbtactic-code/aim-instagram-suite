@@ -20,7 +20,26 @@ const YTDLP_BINARY = path.join(BIN_DIR, isWindows ? 'yt-dlp.exe' : 'yt-dlp');
 // Fallback: yt-dlp из PATH если нет в bin/
 function getYtDlpBin(): string {
   if (fs.existsSync(YTDLP_BINARY)) return YTDLP_BINARY;
-  return isWindows ? 'yt-dlp.exe' : 'yt-dlp';
+  
+  if (isWindows) {
+    const { execSync } = require('child_process');
+    try {
+      // Trying to find in PATH using 'where'
+      const found = execSync('where yt-dlp', { stdio: 'pipe' }).toString().split('\n')[0].trim();
+      if (found) return found;
+    } catch {
+      // Fallback to searching common extensions
+      const common = ['yt-dlp.exe', 'yt-dlp.cmd', 'yt-dlp'];
+      for (const cmd of common) {
+        try {
+          execSync(`where ${cmd}`, { stdio: 'pipe' });
+          return cmd;
+        } catch {}
+      }
+    }
+    return 'yt-dlp.exe';
+  }
+  return 'yt-dlp';
 }
 
 export interface DownloadResult {
