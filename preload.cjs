@@ -42,8 +42,27 @@ process.stdout.write = function(chunk, enc, cb) {
   // Pass through: empty or valid JSON-RPC
   if (t === '') return _ow(chunk, enc, cb);
   if (t[0] === '{' || t[0] === '[') {
-    if (t.includes('"jsonrpc"')) {
-      return _ow(chunk, enc, cb);
+    try {
+      var obj = JSON.parse(t);
+      if (obj.jsonrpc || (Array.isArray(obj) && obj.length > 0 && obj[0].jsonrpc)) {
+        return _ow(chunk, enc, cb);
+      }
+    } catch(e) {
+      // Not a pure JSON string. If it contains jsonrpc, it might be concatenated with logs!
+      // In this case, we MUST drop the garbage and ONLY emit the valid JSON part.
+      var rpcIdx = t.indexOf('{"jsonrpc"');
+      if (rpcIdx === -1) rpcIdx = t.indexOf('[{"jsonrpc"');
+      
+      if (rpcIdx !== -1) {
+        var cleanStr = t.substring(rpcIdx);
+        // recursively or cleanly try to parse
+        try {
+          JSON.parse(cleanStr);
+          return _ow(cleanStr, enc, cb);
+        } catch(e2) {
+          // Still bad JSON (maybe truncated), let it fall through to drop
+        }
+      }
     }
   }
 

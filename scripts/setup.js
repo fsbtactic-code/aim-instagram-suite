@@ -1,529 +1,114 @@
 #!/usr/bin/env node
-/**
- * AIM Instagram Suite — Full Setup Script v2.0
- * Проверяет и устанавливает все системные зависимости:
- *   Node.js 18+, Visual Studio Build Tools (C++), CMake, yt-dlp, npm packages
- *
- * Запуск: node scripts/setup.js
- */
-
 const { execSync } = require('child_process');
-const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-
 const isWindows = os.platform() === 'win32';
-const isMac     = os.platform() === 'darwin';
-const isLinux   = os.platform() === 'linux';
-
-const GREEN  = '\x1b[32m';
-const YELLOW = '\x1b[33m';
-const RED    = '\x1b[31m';
-const CYAN   = '\x1b[36m';
-const BOLD   = '\x1b[1m';
-const RESET  = '\x1b[0m';
-
-const ok   = (msg) => console.log(`${GREEN}  ✅ ${msg}${RESET}`);
-const warn = (msg) => console.log(`${YELLOW}  ⚠️  ${msg}${RESET}`);
-const fail = (msg) => console.log(`${RED}  ❌ ${msg}${RESET}`);
-const info = (msg) => console.log(`${CYAN}  ℹ️  ${msg}${RESET}`);
-const step = (msg) => console.log(`\n${BOLD}${CYAN}▶ ${msg}${RESET}`);
-const box  = (lines) => {
-  const width = 52;
-  console.log(`\n${CYAN}╔${'═'.repeat(width)}╗`);
-  lines.forEach(l => console.log(`║  ${l.padEnd(width - 2)}║`));
-  console.log(`╚${'═'.repeat(width)}╝${RESET}\n`);
-};
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Helpers
-// ─────────────────────────────────────────────────────────────────────────────
 
 function run(cmd) {
-  try { return execSync(cmd, { stdio: 'pipe', timeout: 10000 }).toString().trim(); }
+  try { return execSync(cmd, { stdio: 'pipe', timeout: 15000, shell: isWindows }).toString().trim(); }
   catch { return null; }
 }
 
-function fileExists(...parts) {
-  return fs.existsSync(path.join(...parts));
-}
-
-function downloadFile(url, dest, redirectCount = 0) {
-  return new Promise((resolve, reject) => {
-    if (redirectCount > 10) return reject(new Error('Too many redirects'));
-    https.get(url, { headers: { 'User-Agent': 'AIM-Suite-Installer/2.0' } }, (res) => {
-      if (res.statusCode === 301 || res.statusCode === 302)
-        return resolve(downloadFile(res.headers.location, dest, redirectCount + 1));
-      if (res.statusCode !== 200)
-        return reject(new Error(`HTTP ${res.statusCode}`));
-      const file = fs.createWriteStream(dest);
-      res.pipe(file);
-      file.on('finish', () => file.close(resolve));
-      file.on('error', reject);
-    }).on('error', reject);
-  });
-}
-
-/**
- * Ищет nmake.exe и cmake.exe в папках Visual Studio
- * и добавляет их в process.env.PATH автоматически.
- * Возвращает { nmake, cmake } — пути к директориям.
- */
 function findAndPatchPath() {
-  const found = { nmake: null, cmake: null };
+  const found = { nmake: null, cmake: null, git: null, ffmpeg: null };
   if (!isWindows) return found;
 
-  // Корневые папки поиска (все возможные установки VS)
   const vsRoots = [
     'C:\\Program Files (x86)\\Microsoft Visual Studio',
     'C:\\Program Files\\Microsoft Visual Studio',
   ];
+  const years = ['2022', '2019'];
+  const editions = ['BuildTools', 'Community', 'Professional'];
 
-  const years   = ['2022', '2019', '2017'];
-  const editions = ['BuildTools', 'Community', 'Professional', 'Enterprise', 'Preview'];
-
-  // 1. Ищем nmake.exe — лежит в MSVC/{version}/bin/Hostx64/x64/
   for (const root of vsRoots) {
     for (const year of years) {
       for (const ed of editions) {
         const msvcBase = path.join(root, year, ed, 'VC', 'Tools', 'MSVC');
         if (!fs.existsSync(msvcBase)) continue;
-
-        // Берём последнюю (наибольшую) версию MSVC
-        const versions = fs.readdirSync(msvcBase)
-          .filter(v => /^\d+\.\d+/.test(v))
-          .sort()
-          .reverse();
-
-        for (const ver of versions) {
-          const binDir = path.join(msvcBase, ver, 'bin', 'Hostx64', 'x64');
-          if (fs.existsSync(path.join(binDir, 'nmake.exe'))) {
-            found.nmake = binDir;
-            info(`nmake.exe найден: ${binDir}`);
-            break;
+        try {
+          const versions = fs.readdirSync(msvcBase).filter(v => /^\d+\.\d+/.test(v)).sort().reverse();
+          for (const ver of versions) {
+            const binDir = path.join(msvcBase, ver, 'bin', 'Hostx64', 'x64');
+            if (fs.existsSync(path.join(binDir, 'nmake.exe'))) { found.nmake = binDir; break; }
           }
-          // Fallback: x86
-          const binDir86 = path.join(msvcBase, ver, 'bin', 'Hostx86', 'x86');
-          if (fs.existsSync(path.join(binDir86, 'nmake.exe'))) {
-            found.nmake = binDir86;
-            info(`nmake.exe найден (x86): ${binDir86}`);
-            break;
-          }
-        }
+        } catch(e) {}
         if (found.nmake) break;
       }
       if (found.nmake) break;
-
-      // 2. Ищем cmake из VS CMake component
-      for (const ed of editions) {
-        const cmakeDir = path.join(
-          vsRoots[0], year, ed,
-          'Common7', 'IDE', 'CommonExtensions', 'Microsoft', 'CMake', 'CMake', 'bin'
-        );
-        if (fs.existsSync(path.join(cmakeDir, 'cmake.exe'))) {
-          found.cmake = cmakeDir;
-          info(`cmake.exe найден (VS component): ${cmakeDir}`);
-          break;
-        }
-      }
-    }
-    if (found.nmake) break;
-  }
-
-  // 3. Ищем cmake через Program Files напрямую
-  if (!found.cmake) {
-    const cmakeDirect = [
-      'C:\\Program Files\\CMake\\bin',
-      'C:\\Program Files (x86)\\CMake\\bin',
-    ];
-    for (const p of cmakeDirect) {
-      if (fs.existsSync(path.join(p, 'cmake.exe'))) {
-        found.cmake = p;
-        info(`cmake.exe найден: ${p}`);
-        break;
-      }
     }
   }
+  
+  const common = [
+    { key: 'cmake', name: 'cmake.exe', dirs: ['C:\\Program Files\\CMake\\bin'] },
+    { key: 'git', name: 'git.exe', dirs: ['C:\\Program Files\\Git\\bin'] }
+  ];
+  for (const tool of common) {
+    for (const d of tool.dirs) { if (fs.existsSync(path.join(d, tool.name))) { found[tool.key] = d; break; } }
+  }
 
-  // 4. Патчим PATH в текущем процессе
-  const additions = [found.nmake, found.cmake].filter(Boolean);
+  const additions = Object.values(found).filter(Boolean);
   if (additions.length > 0) {
     process.env.PATH = additions.join(path.delimiter) + path.delimiter + (process.env.PATH || '');
-    ok(`PATH обновлён: добавлено ${additions.length} директорий`);
-    additions.forEach(p => info(`  + ${p}`));
+    console.log('PATH updated with: ' + additions.join(', '));
   }
-
   return found;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 1. Node.js
-// ─────────────────────────────────────────────────────────────────────────────
-
-function checkNode() {
-  step('Шаг 1/5 — Проверка Node.js...');
-  const major = parseInt(process.version.slice(1));
-  if (major >= 18) { ok(`Node.js ${process.version}`); return true; }
-  fail(`Node.js ${process.version} — нужна версия 18+`);
-  info('Скачай: https://nodejs.org');
-  return false;
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 2. Visual Studio Build Tools + CMake (Windows) / Xcode (Mac) / GCC (Linux)
-// ─────────────────────────────────────────────────────────────────────────────
-
-function detectWindowsBuildTools() {
-  // 1. Проверяем nmake напрямую
-  if (run('where nmake')) return 'nmake in PATH';
-
-  // 2. Ищем через vswhere
-  const vsWherePaths = [
-    'C:\\Program Files (x86)\\Microsoft Visual Studio\\Installer\\vswhere.exe',
-    'C:\\Program Files\\Microsoft Visual Studio\\Installer\\vswhere.exe',
-  ];
-  for (const p of vsWherePaths) {
-    if (fileExists(p)) {
-      const result = run(`"${p}" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`);
-      if (result) return `VS at ${result}`;
-    }
-  }
-
-  // 3. Ищем nmake в стандартных путях VS Build Tools
-  const nmakePaths = [
-    'C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC',
-    'C:\\Program Files\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC',
-    'C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Tools\\MSVC',
-  ];
-  for (const p of nmakePaths) {
-    if (fileExists(p)) return `Found at ${p}`;
-  }
-
-  return null;
-}
-
-function detectCMake() {
-  if (run('cmake --version')) return true;
-  // Check common install paths on Windows
-  const paths = [
-    'C:\\Program Files\\CMake\\bin\\cmake.exe',
-    'C:\\Program Files (x86)\\CMake\\bin\\cmake.exe',
-  ];
-  return paths.some(p => fileExists(p));
-}
-
-function checkBuildDeps() {
-  step('Шаг 2/5 — Проверка и настройка C++ Build Tools (нужны для nodejs-whisper)...');
-
-  if (isWindows) {
-    // Сначала пробуем найти и пропатчить PATH автоматически
-    const found = findAndPatchPath();
-
-    // Проверяем nmake уже в PATH (или только что добавленный)
-    const nmakeOk = run('nmake /?' ) !== null || found.nmake !== null;
-    const cmakeOk = run('cmake --version') !== null || found.cmake !== null;
-
-    if (nmakeOk && cmakeOk) {
-      ok('nmake + cmake — доступны (PATH настроен)');
-      return true;
-    }
-
-    if (nmakeOk && !cmakeOk) {
-      warn('nmake найден, cmake не найден — установлю через winget...');
-      try {
-        execSync('winget install Kitware.CMake --accept-package-agreements --accept-source-agreements', { stdio: 'inherit', timeout: 120000 });
-        ok('CMake установлен');
-      } catch {
-        warn('Не удалось установить CMake. Установи вручную: https://cmake.org/download/');
-      }
-      return true; // nmake есть — npm install пройдёт
-    }
-
-    // nmake не найден — Build Tools не установлены
-    fail('nmake не найден — Visual Studio Build Tools (C++) не установлены');
-
-    console.log(`
-${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  📦 НУЖНА УСТАНОВКА: Visual Studio Build Tools (C++)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}
-
-  Запусти в ${BOLD}PowerShell от Администратора${RESET}:
-
-  ${CYAN}winget install Microsoft.VisualStudio.2022.BuildTools \\
-    --override "--quiet \\
-      --add Microsoft.VisualStudio.Workload.VCTools \\
-      --add Microsoft.VisualStudio.Component.VC.CMake.Project \\
-      --includeRecommended" \\
-    --accept-package-agreements --accept-source-agreements${RESET}
-
-  После установки — ${BOLD}перезапусти PowerShell${RESET} и запусти:
-  ${CYAN}node scripts/setup.js${RESET}
-
-  ${YELLOW}Или скачай GUI-установщик:${RESET}
-  https://aka.ms/vs/17/release/vs_BuildTools.exe
-  → Выбери: "Разработка классических приложений C++"
-${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}
-`);
-
-    // Пробуем авто-установку через winget
-    const winget = run('winget --version');
-    if (winget) {
-      info('Запускаю автоустановку через winget (5-15 минут)...');
-      try {
-        execSync(
-          'winget install Microsoft.VisualStudio.2022.BuildTools ' +
-          '--override "--quiet --add Microsoft.VisualStudio.Workload.VCTools ' +
-          '--add Microsoft.VisualStudio.Component.VC.CMake.Project --includeRecommended" ' +
-          '--accept-package-agreements --accept-source-agreements',
-          { stdio: 'inherit', timeout: 900000 }
-        );
-        warn('✅ Build Tools установлены. Перезапусти PowerShell и запусти setup снова!');
-      } catch (e) {
-        fail(`Автоустановка не завершилась: ${e.message}`);
-      }
-    }
-
-    return false;
-  }
-
-  if (isMac) {
-    const hasXcode = run('xcode-select -p');
-    const hasCmake = run('cmake --version');
-    if (hasXcode && hasCmake) { ok('Xcode CLT + CMake — OK'); return true; }
-    if (!hasXcode) { info('Установка Xcode CLT...'); try { execSync('xcode-select --install', { stdio: 'inherit' }); } catch {} }
-    if (!hasCmake) { info('Установка CMake...'); try { execSync('brew install cmake', { stdio: 'inherit' }); } catch { warn('brew install cmake — запусти вручную'); } }
-    ok('macOS build tools настроены');
-    return true;
-  }
-
-  if (isLinux) {
-    const ok2 = run('which gcc') && run('which make') && run('which cmake');
-    if (ok2) { ok('GCC + Make + CMake — OK'); return true; }
-    info('Установка build-essential + cmake...');
-    try { execSync('sudo apt-get update -qq && sudo apt-get install -y build-essential cmake', { stdio: 'inherit' }); ok('Готово'); }
-    catch { warn('sudo apt-get install -y build-essential cmake — запусти вручную'); }
-    return true;
-  }
-
-  return true;
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 3. npm install
-// ─────────────────────────────────────────────────────────────────────────────
-
 async function runNpmInstall() {
-  step('Шаг 3/6 — Установка npm-зависимостей...');
   const projectRoot = path.join(__dirname, '..');
+  console.log('Running npm install...');
   try {
-    execSync('npm install', { stdio: 'inherit', cwd: projectRoot });
-    ok('npm install завершён');
-    execSync('npm run build', { stdio: 'inherit', cwd: projectRoot });
-    ok('TypeScript код скомпилирован');
+    execSync('npm install', { stdio: 'inherit', cwd: projectRoot, shell: isWindows });
+    execSync('npm run build', { stdio: 'inherit', cwd: projectRoot, shell: isWindows });
   } catch (err) {
-    fail(`npm install завершился с ошибкой`);
-
-    if (isWindows && err.message?.includes('nmake')) {
-      console.log(`\n${RED}  ❌ ПРИЧИНА: nmake не найден — нужны Visual Studio Build Tools (C++)${RESET}`);
-      console.log(`${YELLOW}  → Установи Build Tools (инструкция выше в шаге 2) и запусти setup снова.${RESET}\n`);
-    }
+    console.error('npm install error: ' + err.message);
   }
 
-  // 1. Пост-фикс для nodejs-whisper (на Windows собирается не в ту папку)
-  if (isWindows) {
-    const whisperBuildDir = path.join(projectRoot, 'node_modules', 'nodejs-whisper', 'build', 'bin');
-    const wrongExe = path.join(whisperBuildDir, 'whisper-cli.exe');
-    const rightDir = path.join(whisperBuildDir, 'Release');
-    const rightExe = path.join(rightDir, 'whisper-cli.exe');
+  const whisperDir = path.join(projectRoot, 'node_modules', 'nodejs-whisper');
+  if (fs.existsSync(whisperDir)) {
+    const whisperBin = isWindows
+      ? path.join(whisperDir, 'build', 'bin', 'Release', 'whisper-cli.exe')
+      : path.join(whisperDir, 'build', 'bin', 'whisper-cli');
 
-    if (fs.existsSync(wrongExe) && !fs.existsSync(rightExe)) {
-      if (!fs.existsSync(rightDir)) fs.mkdirSync(rightDir, { recursive: true });
-      fs.copyFileSync(wrongExe, rightExe);
-      ok('nodejs-whisper бинарник скопирован в Release/');
-    }
-  } else {
-    // На Mac проверяем наличие бинарника
-    const whisperMac = path.join(projectRoot, 'node_modules', 'nodejs-whisper', 'build', 'bin', 'whisper-cli');
-    if (!fs.existsSync(whisperMac)) {
-      warn('whisper-cli не собран. Возможно потребуется выполнить xcode-select --install и npm rebuild nodejs-whisper');
-    }
-  }
+    if (!fs.existsSync(whisperBin)) {
+      console.warn('whisper-cli missing. Rebuilding...');
+      const buildDir = path.join(whisperDir, 'build');
+      if (!fs.existsSync(buildDir)) fs.mkdirSync(buildDir);
+      
+      // Fix missing whisper.cpp submodule in nodejs-whisper
+      if (!fs.existsSync(path.join(whisperDir, 'CMakeLists.txt'))) {
+          console.log("Downloading whisper.cpp source...");
+          execSync('git clone https://github.com/ggerganov/whisper.cpp.git .', { stdio: 'inherit', cwd: whisperDir, shell: isWindows });
+      }
 
-  // 2. Пост-фикс для sharp (нуждается в ребилде если окружение поменялось)
-  try {
-    require('sharp');
-    ok('sharp загрузился успешно');
-  } catch (e) {
-    warn('sharp модуль не работает, пробую пересобрать (rebuild)...');
-    try {
-      execSync('npm rebuild sharp', { stdio: 'inherit', cwd: projectRoot });
-      ok('sharp успешно пересобран');
-    } catch {
-      if (isWindows) {
-         warn('Пробую установить бинарники sharp для Windows...');
-         try {
-           execSync('npm install --platform=win32 --arch=x64 sharp', { stdio: 'inherit', cwd: projectRoot });
-         } catch(e2) {
-           fail('sharp все равно не работает. Для каруселей это ок, но для склейки сетки будет ошибка.');
-         }
-      } else if (isMac && process.arch === 'arm64') {
-         warn('На M1/M2/M3 возможно нужен `brew install vips`. Попробуй установить вручную.');
+      try {
+        execSync(isWindows ? 'cmake .. -G "NMake Makefiles"' : 'cmake ..', { stdio: 'inherit', cwd: buildDir, shell: isWindows });
+        execSync(isWindows ? 'nmake' : 'make', { stdio: 'inherit', cwd: buildDir, shell: isWindows });
+        console.log('Rebuild success');
+      } catch (e) {
+        console.error('Rebuild failed');
       }
     }
   }
 
-  return true;
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 3.5. Puppeteer Chromium
-// ─────────────────────────────────────────────────────────────────────────────
-
-async function installPuppeteerChrome() {
-  step('Шаг 4/6 — Установка Chromium для Puppeteer (рендер каруселей)...');
-  const projectRoot = path.join(__dirname, '..');
-
-  // Проверяем наличие уже скачанного Chromium
-  const cacheDir = path.join(os.homedir(), '.cache', 'puppeteer');
-  const localDir = path.join(projectRoot, '.local-chromium');
-  const localDir2 = path.join(projectRoot, 'node_modules', 'puppeteer', '.local-chromium');
-  const localDir3 = path.join(projectRoot, 'node_modules', 'puppeteer-core', '.local-chromium');
-
-  const chromiumExists = [
-    cacheDir, localDir, localDir2, localDir3,
-    path.join(os.homedir(), '.cache', 'puppeteer', 'chrome'),
-  ].some(d => fs.existsSync(d) && fs.readdirSync(d).length > 0);
-
-  if (chromiumExists) {
-    ok('Chromium (Puppeteer) уже установлен');
-    return true;
-  }
-
-  info('Скачиваю Chromium (~170MB) — нужен для рендера каруселей...');
-  try {
-    execSync('npx puppeteer browsers install chrome', {
-      stdio: 'inherit',
-      cwd: projectRoot,
-      timeout: 300000, // 5 минут
-    });
-    ok('Chromium установлен успешно');
-    return true;
-  } catch (err) {
-    // Пробуем альтернативный способ
-    try {
-      execSync('node -e "const p = require(\'puppeteer\'); console.log(\'ok\');"', {
-        stdio: 'pipe', cwd: projectRoot,
-      });
-      ok('Chromium доступен через puppeteer');
-      return true;
-    } catch {}
-
-    warn(`Не удалось установить Chromium автоматически: ${err.message}`);
-    warn('Запусти вручную: npx puppeteer browsers install chrome');
-    warn('Или установи Chrome/Chromium системно и пропиши путь в PUPPETEER_EXECUTABLE_PATH');
-    return false; // Не блокируем — остальные инструменты работают
+  // Windows Release fix
+  if (isWindows) {
+    const binDir = path.join(whisperDir, 'build', 'bin');
+    const wrong = path.join(binDir, 'whisper-cli.exe');
+    const right = path.join(binDir, 'Release', 'whisper-cli.exe');
+    if (fs.existsSync(wrong) && !fs.existsSync(right)) {
+      if (!fs.existsSync(path.dirname(right))) fs.mkdirSync(path.dirname(right), { recursive: true });
+      fs.copyFileSync(wrong, right);
+    }
   }
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 5. yt-dlp
-// ─────────────────────────────────────────────────────────────────────────────
-
-async function checkYtDlp() {
-  step('Шаг 5/6 — Проверка yt-dlp...');
-  const binDir = path.join(__dirname, '..', 'bin');
-  const binaryName = isWindows ? 'yt-dlp.exe' : 'yt-dlp';
-  const binaryPath = path.join(binDir, binaryName);
-
-  if (fileExists(binaryPath)) { ok(`yt-dlp: ${binaryPath}`); return; }
-  if (run('yt-dlp --version')) { ok('yt-dlp найден в PATH'); return; }
-
-  info('Скачиваю yt-dlp...');
-  const url = isWindows
-    ? 'https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe'
-    : isMac
-      ? 'https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_macos'
-      : 'https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp';
-
-  if (!fs.existsSync(binDir)) fs.mkdirSync(binDir, { recursive: true });
-  try {
-    await downloadFile(url, binaryPath);
-    if (!isWindows) fs.chmodSync(binaryPath, 0o755);
-    ok(`yt-dlp скачан: ${binaryPath}`);
-  } catch (e) {
-    warn(`Не удалось скачать yt-dlp: ${e.message}`);
-    info('Скачай вручную: https://github.com/yt-dlp/yt-dlp/releases');
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 5. Whisper model check
-// ─────────────────────────────────────────────────────────────────────────────
-
-function checkWhisper() {
-  step('Шаг 6/6 — Проверка Whisper...');
-  const modelsDir = path.join(__dirname, '..', 'node_modules', 'nodejs-whisper', 'models');
-  const cacheDir  = path.join(os.homedir(), '.cache', 'whisper');
-
-  const hasModel =
-    (fs.existsSync(modelsDir) && fs.readdirSync(modelsDir).some(f => f.endsWith('.bin'))) ||
-    (fs.existsSync(cacheDir)  && fs.readdirSync(cacheDir).some(f  => f.endsWith('.bin')));
-
-  if (hasModel) ok('Whisper модель уже скачана');
-  else info('Модель Whisper (~150MB) скачается автоматически при первом вызове aim_evaluate_video');
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Main
-// ─────────────────────────────────────────────────────────────────────────────
 
 async function main() {
-  box([
-    '🎯 AIM Instagram Suite — Setup v2.0',
-    'Проверка и установка всех зависимостей',
-  ]);
-
-  // 1. Node.js
-  if (!checkNode()) process.exit(1);
-
-  // 2. Build Tools + CMake
-  const buildOk = checkBuildDeps();
-  if (!buildOk) {
-    console.log(`${YELLOW}\n  ⚠️  Перезапусти терминал после установки Build Tools`);
-    console.log(`      и запусти: node scripts/setup.js снова.${RESET}\n`);
-    process.exit(1);
-  }
-
-  // 3. npm install
-  const npmOk = await runNpmInstall();
-  if (!npmOk) process.exit(1);
-
-  // 4. Puppeteer Chromium (для рендера каруселей)
-  await installPuppeteerChrome();
-
-  // 5. yt-dlp
-  await checkYtDlp();
-
-  // 6. Whisper
-  checkWhisper();
-
-  // Done!
-  const cwd = process.cwd().replace(/\\/g, '/');
-  box([
-    '✅ Установка завершена успешно!',
-    '',
-    'Следующий шаг — зарегистрировать MCP:',
-    '',
-    'Claude Code CLI:',
-    `claude mcp add aim-instagram-suite --`,
-    `  node "${cwd}/dist/index.js"`,
-    '',
-    'Claude Desktop — см. INSTALL.md',
-  ]);
+  console.log('AIM Suite Setup v2.1 (Patcher Edition)');
+  findAndPatchPath();
+  await runNpmInstall();
+  console.log('Setup finished.');
 }
 
-main().catch((err) => {
-  fail(`Критическая ошибка: ${err.message}`);
-  process.exit(1);
-});
+main().catch(console.error);
