@@ -456,8 +456,7 @@ export const LAYOUTS_CSS = `
 }
 /* Hero number — dark themes: gradient glow */
 [data-theme="glassmorphism"] .hero-num,
-[data-theme="neo-brutalism"] .hero-num,
-[data-theme="dark-cyberpunk"] .hero-num,
+[data-theme="cyberpunk"] .hero-num,
 [data-theme="apple-premium"] .hero-num,
 [data-theme="y2k-acid"] .hero-num,
 [data-theme="deep-space"] .hero-num,
@@ -469,12 +468,14 @@ export const LAYOUTS_CSS = `
   filter: drop-shadow(0 0 60px rgba(255,255,255,0.15));
 }
 /* Hero number — light themes: solid dark */
+[data-theme="neo-brutalism"] .hero-num,
 [data-theme="warm-editorial"] .hero-num,
 [data-theme="soft-gradient"] .hero-num,
 [data-theme="ink-paper"] .hero-num,
 [data-theme="concrete-swiss"] .hero-num,
 [data-theme="edtech-trust"] .hero-num {
   color: #1a1a1a;
+  background: none;
   opacity: 1;
   -webkit-text-fill-color: #1a1a1a;
   filter: none;
