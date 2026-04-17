@@ -108,6 +108,7 @@ export async function analyzeCarousel(input: AnalyzeCarouselInput): Promise<stri
         url,
       });
     }
+    }
   }
 
   if (downloadedFiles.length === 0) {
