@@ -77,70 +77,150 @@ AIM скачивает видео по ссылке (Instagram, TikTok, YouTube)
 
 ## 🖼️ Примеры дизайнов
 
-Один и тот же контент — 8 абсолютно разных стилей. Выбирайте под свой бренд:
+Один и тот же контент — 12 абсолютно разных стилей. Выбирайте под свой бренд:
 
 <details>
-<summary><b>✨ Glassmorphism — Матовое стекло (тренд 2024)</b></summary>
+<summary><b>✨ 1. Aurora Glassmorphism — Матовое стекло</b></summary>
 <br/>
-<img src="assets/previews/preview_theme_1_glassmorphism.png" width="100%">
+<div align="center">
+  <img src="assets/presentation/themes/theme_1_glassmorphism/slide_01.png" width="32%">
+  <img src="assets/presentation/themes/theme_1_glassmorphism/slide_02.png" width="32%">
+  <img src="assets/presentation/themes/theme_1_glassmorphism/slide_03.png" width="32%">
+</div>
 <br/><br/>
 Полупрозрачные карточки с размытием на глубоком фиолетовом фоне. Идеально для: tech-блогов, стартапов, IT-услуг.
 </details>
 
 <details>
-<summary><b>💥 Neo-Brutalism — Яркий и дерзкий</b></summary>
+<summary><b>💥 2. Neo-Brutalism — Яркий и дерзкий</b></summary>
 <br/>
-<img src="assets/previews/preview_theme_2_neo_brutalism.png" width="100%">
+<div align="center">
+  <img src="assets/presentation/themes/theme_2_neo-brutalism/slide_01.png" width="32%">
+  <img src="assets/presentation/themes/theme_2_neo-brutalism/slide_02.png" width="32%">
+  <img src="assets/presentation/themes/theme_2_neo-brutalism/slide_03.png" width="32%">
+</div>
 <br/><br/>
 Кислотный жёлтый + жирные тени + крупный шрифт. Идеально для: молодёжных брендов, образовательных проектов, smm-агентств.
 </details>
 
 <details>
-<summary><b>🤍 Minimalist Elegance — Журнальная эстетика</b></summary>
+<summary><b>🤍 3. Warm Editorial — Журнальная эстетика</b></summary>
 <br/>
-<img src="assets/previews/preview_theme_3_minimalist_elegance.png" width="100%">
+<div align="center">
+  <img src="assets/presentation/themes/theme_3_warm-editorial/slide_01.png" width="32%">
+  <img src="assets/presentation/themes/theme_3_warm-editorial/slide_02.png" width="32%">
+  <img src="assets/presentation/themes/theme_3_warm-editorial/slide_03.png" width="32%">
+</div>
 <br/><br/>
 Тёплые бежевые тона, элегантная типографика. Идеально для: beauty-блогов, психологов, коучей, премиум-услуг.
 </details>
 
 <details>
-<summary><b>🟩 Dark Cyberpunk — Неон и код</b></summary>
+<summary><b>🟩 4. Matrix Cyberpunk — Неон и код</b></summary>
 <br/>
-<img src="assets/previews/preview_theme_4_dark_cyberpunk.png" width="100%">
+<div align="center">
+  <img src="assets/presentation/themes/theme_4_cyberpunk/slide_01.png" width="32%">
+  <img src="assets/presentation/themes/theme_4_cyberpunk/slide_02.png" width="32%">
+  <img src="assets/presentation/themes/theme_4_cyberpunk/slide_03.png" width="32%">
+</div>
 <br/><br/>
 Чёрный фон, зелёный неон, моношрифт. Идеально для: разработчиков, крипто, геймеров, tech-стартапов.
 </details>
 
 <details>
-<summary><b>🍏 Apple Premium — Тёмная роскошь</b></summary>
+<summary><b>🍏 5. Obsidian Premium — Тёмная роскошь</b></summary>
 <br/>
-<img src="assets/previews/preview_theme_5_apple_premium.png" width="100%">
+<div align="center">
+  <img src="assets/presentation/themes/theme_5_apple-premium/slide_01.png" width="32%">
+  <img src="assets/presentation/themes/theme_5_apple-premium/slide_02.png" width="32%">
+  <img src="assets/presentation/themes/theme_5_apple-premium/slide_03.png" width="32%">
+</div>
 <br/><br/>
-Стиль презентаций Apple: глубокий чёрный, градиентный текст, свечения. Идеально для: продуктовых презентаций, инвесторских питчей, премиум-брендов.
+Стиль презентаций: глубокий чёрный, градиентный текст, свечения. Идеально для: продуктовых презентаций, инвесторских питчей, премиум-брендов.
 </details>
 
 <details>
-<summary><b>💿 Y2K / Acid — Ретро-интернет</b></summary>
+<summary><b>💿 6. Chrome Y2K — Ретро-интернет</b></summary>
 <br/>
-<img src="assets/previews/preview_theme_6_y2k_acid.png" width="100%">
+<div align="center">
+  <img src="assets/presentation/themes/theme_6_y2k-acid/slide_01.png" width="32%">
+  <img src="assets/presentation/themes/theme_6_y2k-acid/slide_02.png" width="32%">
+  <img src="assets/presentation/themes/theme_6_y2k-acid/slide_03.png" width="32%">
+</div>
 <br/><br/>
 Радужные градиенты, ретро-шрифт, стеклянные карточки. Идеально для: креативных агентств, модных брендов, lifestyle-блогов.
 </details>
 
 <details>
-<summary><b>📘 EdTech Trust — Экспертный и спокойный</b></summary>
+<summary><b>📘 7. Soft Gradient — Спокойный и экспертный</b></summary>
 <br/>
-<img src="assets/previews/preview_theme_7_edtech_trust.png" width="100%">
+<div align="center">
+  <img src="assets/presentation/themes/theme_7_soft-gradient/slide_01.png" width="32%">
+  <img src="assets/presentation/themes/theme_7_soft-gradient/slide_02.png" width="32%">
+  <img src="assets/presentation/themes/theme_7_soft-gradient/slide_03.png" width="32%">
+</div>
 <br/><br/>
-Светлый фон, синие акценты, чистая типографика. Идеально для: онлайн-школ, экспертов, B2B-контента.
+Светлый фон, мягкие акценты, чистая типографика. Идеально для: онлайн-школ, экспертов, B2B-контента.
 </details>
 
 <details>
-<summary><b>🎯 Custom Brand — Цвета вашего бизнеса</b></summary>
+<summary><b>🎯 8. Custom Brand — Цвета вашего бизнеса</b></summary>
 <br/>
-<img src="assets/previews/preview_theme_8_custom_brand.png" width="100%">
+<div align="center">
+  <img src="assets/presentation/themes/theme_8_custom-brand/slide_01.png" width="32%">
+  <img src="assets/presentation/themes/theme_8_custom-brand/slide_02.png" width="32%">
+  <img src="assets/presentation/themes/theme_8_custom-brand/slide_03.png" width="32%">
+</div>
 <br/><br/>
 Умная подстройка под цвета вашего бренда (WCAG AA). Сгенерируется автоматически, если вы используете aim_auto_brand_colors.
+</details>
+
+<details>
+<summary><b>🖋️ 9. Ink & Paper — Классическая верстка</b></summary>
+<br/>
+<div align="center">
+  <img src="assets/presentation/themes/theme_9_ink-paper/slide_01.png" width="32%">
+  <img src="assets/presentation/themes/theme_9_ink-paper/slide_02.png" width="32%">
+  <img src="assets/presentation/themes/theme_9_ink-paper/slide_03.png" width="32%">
+</div>
+<br/><br/>
+Классическая книжная верстка с засечками и современным налетом. Отлично для лонгридов и мыслителей.
+</details>
+
+<details>
+<summary><b>🌌 10. Deep Space — Тенденции 2025</b></summary>
+<br/>
+<div align="center">
+  <img src="assets/presentation/themes/theme_10_deep-space/slide_01.png" width="32%">
+  <img src="assets/presentation/themes/theme_10_deep-space/slide_02.png" width="32%">
+  <img src="assets/presentation/themes/theme_10_deep-space/slide_03.png" width="32%">
+</div>
+<br/><br/>
+Глубокий космос, градиенты и звездная пыль. Идеально для нейросетей и футуристичных проектов.
+</details>
+
+<details>
+<summary><b>🇨🇭 11. Concrete Swiss — Архитектура контента</b></summary>
+<br/>
+<div align="center">
+  <img src="assets/presentation/themes/theme_11_concrete-swiss/slide_01.png" width="32%">
+  <img src="assets/presentation/themes/theme_11_concrete-swiss/slide_02.png" width="32%">
+  <img src="assets/presentation/themes/theme_11_concrete-swiss/slide_03.png" width="32%">
+</div>
+<br/><br/>
+Строгий структурированный дизайн. Крупные рубленые шрифты, красный акцент и сетки.
+</details>
+
+<details>
+<summary><b>🌸 12. Sakura Neon — Азиатский киберпанк</b></summary>
+<br/>
+<div align="center">
+  <img src="assets/presentation/themes/theme_12_sakura-neon/slide_01.png" width="32%">
+  <img src="assets/presentation/themes/theme_12_sakura-neon/slide_02.png" width="32%">
+  <img src="assets/presentation/themes/theme_12_sakura-neon/slide_03.png" width="32%">
+</div>
+<br/><br/>
+Неоновые свечения на глубоком сакурово-розовом фоне. Дерзкий современный стиль для прорывных проектов.
 </details>
 
 ---
@@ -150,7 +230,20 @@ AIM скачивает видео по ссылке (Instagram, TikTok, YouTube)
 Для каждой карточки ИИ сам подбирает правильный формат подачи — чтобы зрителю было удобно читать списки, чек-листы или сравнения:
 
 <div align="center">
-  <img src="assets/previews/preview_layouts.png" width="100%">
+  <img src="assets/presentation/layouts/layout_01_standard_glassmorphism.png" width="49%">
+  <img src="assets/presentation/layouts/layout_02_hero-number_neo-brutalism.png" width="49%">
+  <br/><br/>
+  <img src="assets/presentation/layouts/layout_03_steps-3_warm-editorial.png" width="49%">
+  <img src="assets/presentation/layouts/layout_04_good-bad_cyberpunk.png" width="49%">
+  <br/><br/>
+  <img src="assets/presentation/layouts/layout_05_before-after_apple-premium.png" width="49%">
+  <img src="assets/presentation/layouts/layout_06_quote_y2k-acid.png" width="49%">
+  <br/><br/>
+  <img src="assets/presentation/layouts/layout_07_checklist_soft-gradient.png" width="49%">
+  <img src="assets/presentation/layouts/layout_08_grid-2x2_custom-brand.png" width="49%">
+  <br/><br/>
+  <img src="assets/presentation/layouts/layout_09_cmp-table_ink-paper.png" width="49%">
+  <img src="assets/presentation/layouts/layout_10_cta-final_deep-space.png" width="49%">
 </div>
 
 ---
