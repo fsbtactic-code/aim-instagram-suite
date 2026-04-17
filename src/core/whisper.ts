@@ -36,35 +36,36 @@ export async function transcribe(
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { nodewhisper } = require('nodejs-whisper');
 
-  // nodejs-whisper возвращает массив сегментов с таймкодами
-  // ВАЖНО: nodejs-whisper использует console.log(), что загрязняет stdout
-  // и ломает MCP stdio транспорт. Перехватываем stdout → перенаправляем в stderr.
-  let result: unknown;
-  const origStdoutWrite = process.stdout.write.bind(process.stdout);
-  process.stdout.write = (chunk: any, ...args: any[]) => {
-    process.stderr.write('[WHISPER_STDOUT] ' + chunk);
-    return true;
+  // nodejs-whisper возвращает массив сегментов с таймкодами.
+  // ВАЖНО: nodejs-whisper использует console.log() и shelljs с silent:false,
+  // что загрязняет stdout и ломает MCP stdio транспорт.
+  // Решение: передаём кастомный logger который пишет только в stderr.
+  const stderrLogger = {
+    log:   (...a: unknown[]) => process.stderr.write('[WHISPER] '  + a.join(' ') + '\n'),
+    warn:  (...a: unknown[]) => process.stderr.write('[WHISPER] '  + a.join(' ') + '\n'),
+    info:  (...a: unknown[]) => process.stderr.write('[WHISPER] '  + a.join(' ') + '\n'),
+    error: (...a: unknown[]) => process.stderr.write('[WHISPER] '  + a.join(' ') + '\n'),
+    debug: (...a: unknown[]) => {},  // подавляем verbose debug логи
   };
+
+  let result: unknown;
   try {
     result = await nodewhisper(wavPath, {
       modelName,
-      autoDownloadModelName: modelName,   // авто-скачивание модели при первом запуске
+      autoDownloadModelName: modelName,
       removeWavFileAfterTranscription: false,
-      withCuda: false,                    // CPU-режим — работает везде
+      withCuda: false,
+      logger: stderrLogger,            // ← кастомный logger вместо console
       whisperOptions: {
         outputInJson: true,
         wordTimestamps: false,
-        language: 'auto',                 // автодетект языка
+        language: 'auto',
       },
     });
   } catch (whisperErr) {
-    // Тихое аудио или video-only stream — возвращаем пустой транскрипт
     const msg = whisperErr instanceof Error ? whisperErr.message : String(whisperErr);
-    console.error('[AIM] Whisper: тихое аудио или ошибка транскрипции:', msg);
+    process.stderr.write('[AIM] Whisper: тихое аудио или ошибка транскрипции: ' + msg + '\n');
     return { segments: [], fullText: '', language: 'auto' };
-  } finally {
-    // Восстанавливаем оригинальный stdout
-    process.stdout.write = origStdoutWrite;
   }
 
 
