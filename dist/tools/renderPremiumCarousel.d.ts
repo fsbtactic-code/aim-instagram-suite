@@ -124,7 +124,7 @@ export declare const RenderPremiumCarouselSchema: z.ZodObject<{
     brandColorOverlay: z.ZodOptional<z.ZodString>;
     customCssOverlay: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
-    theme: 1 | 2 | 4 | 5 | 10 | 3 | 6 | 9 | 7 | 8 | 11 | 12;
+    theme: 1 | 2 | 4 | 5 | 10 | 3 | 6 | 7 | 8 | 9 | 11 | 12;
     outputDir: string;
     format: "square" | "portrait";
     slidesData: string | {
@@ -161,7 +161,7 @@ export declare const RenderPremiumCarouselSchema: z.ZodObject<{
     customCssOverlay?: string | undefined;
     globalCta?: string | undefined;
 }, {
-    theme: 1 | 2 | 4 | 5 | 10 | 3 | 6 | 9 | 7 | 8 | 11 | 12;
+    theme: 1 | 2 | 4 | 5 | 10 | 3 | 6 | 7 | 8 | 9 | 11 | 12;
     outputDir: string;
     slidesData: string | {
         title: string;

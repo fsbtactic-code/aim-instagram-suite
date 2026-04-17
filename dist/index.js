@@ -10,6 +10,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Pre-emptively protects stdout from pollution and handles multi-chunk JSON-RPC.
  */
 (function bootstrap() {
+    // Fix CWD: MCP hosts (Claude, Cursor) launch servers without specifying cwd,
+    // defaulting to system32 on Windows. All relative paths break.
+    // We fix this by setting cwd to the project root (parent of dist/).
+    try {
+        const path = require('path');
+        const projectRoot = path.resolve(__dirname, '..');
+        process.chdir(projectRoot);
+    }
+    catch { }
     let isInRpc = false;
     // 1. Silence shelljs (used by nodejs-whisper)
     try {

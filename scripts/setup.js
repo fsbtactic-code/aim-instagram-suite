@@ -114,6 +114,32 @@ async function runNpmInstall() {
       }
     }
 
+    // Download whisper model if missing
+    const modelsDir = path.join(whisperDir, 'models');
+    const modelFile = path.join(modelsDir, 'ggml-base.bin');
+    if (!fs.existsSync(modelFile)) {
+      console.log('Downloading whisper model (ggml-base.bin, ~142 MB)...');
+      if (!fs.existsSync(modelsDir)) fs.mkdirSync(modelsDir, { recursive: true });
+      const modelUrl = 'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin';
+      try {
+        if (isWindows) {
+          execSync(`powershell -Command "Invoke-WebRequest -Uri '${modelUrl}' -OutFile '${modelFile}'"`, { 
+            stdio: 'inherit', shell: true, timeout: 300000 
+          });
+        } else {
+          execSync(`curl -L -o "${modelFile}" "${modelUrl}"`, { 
+            stdio: 'inherit', shell: true, timeout: 300000 
+          });
+        }
+        console.log('Model downloaded successfully: ' + modelFile);
+      } catch (e) {
+        console.error('Model download failed. You can download manually from: ' + modelUrl);
+        console.error('Place the file at: ' + modelFile);
+      }
+    } else {
+      console.log('Whisper model already exists: ' + modelFile);
+    }
+
 }
 
 async function main() {

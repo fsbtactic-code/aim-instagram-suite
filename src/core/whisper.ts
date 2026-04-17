@@ -33,15 +33,26 @@ export async function transcribe(
   }
 
   const isWindows = process.platform === 'win32';
-  const whisperBin = isWindows
-    ? path.join(process.cwd(), 'node_modules', 'nodejs-whisper', 'build', 'bin', 'Release', 'whisper-cli.exe')
-    : path.join(process.cwd(), 'node_modules', 'nodejs-whisper', 'build', 'bin', 'whisper-cli');
+  
+  // Search for whisper-cli in multiple locations
+  const searchPaths = [
+    // Relative to compiled dist/ (production)
+    path.join(__dirname, '..', '..', 'node_modules', 'nodejs-whisper', 'build', 'bin', isWindows ? 'Release' : '', isWindows ? 'whisper-cli.exe' : 'whisper-cli'),
+    // Relative to cwd (development)  
+    path.join(process.cwd(), 'node_modules', 'nodejs-whisper', 'build', 'bin', isWindows ? 'Release' : '', isWindows ? 'whisper-cli.exe' : 'whisper-cli'),
+    // Without Release subfolder (some cmake configs)
+    path.join(process.cwd(), 'node_modules', 'nodejs-whisper', 'build', 'bin', isWindows ? 'whisper-cli.exe' : 'whisper-cli'),
+  ];
 
-  if (!fs.existsSync(whisperBin)) {
-    throw new Error(
-      `Whisper: Бинарный файл whisper-cli не найден. Убедитесь, что вы запустили \`npm run setup\` для компиляции whisper.cpp.\n` +
-      `Ожидаемый путь: ${whisperBin}`
+  const whisperBin = searchPaths.find(p => fs.existsSync(p));
+
+  if (!whisperBin) {
+    process.stderr.write(
+      `[AIM] ⚠️ Whisper: whisper-cli не найден. Транскрипция пропущена.\n` +
+      `[AIM] Для установки выполните: npm run setup (в папке проекта)\n` +
+      `[AIM] Проверяемые пути:\n${searchPaths.map(p => `  - ${p}`).join('\n')}\n`
     );
+    return { segments: [], fullText: '', language: 'auto' };
   }
 
   // nodejs-whisper — динамический импорт
