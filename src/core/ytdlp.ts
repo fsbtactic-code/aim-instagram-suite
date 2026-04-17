@@ -49,6 +49,35 @@ export async function downloadVideo(url: string, outDir?: string): Promise<Downl
   // Получаем метаданные (JSON)
   let title = 'video';
   let duration = 0;
+
+  // -- ИНТЕГРАЦИЯ НОВОГО SCRAPER'A ДЛЯ INSTAGRAM --
+  if (platform === 'Instagram') {
+    console.log('[AIM] Instagram detected, delegating to external scraping APIs...');
+    try {
+      // Lazy load to avoid circular deps if any
+      const { scrapeInstagramMedia, downloadFileFast } = require('./instagramScraper.js');
+      const mediaList = await scrapeInstagramMedia(url);
+      
+      if (mediaList.length > 0) {
+        let videoFile = '';
+        // Для обычного скачивания Reels берем первое видео
+        for (const item of mediaList) {
+           const ext = item.isVideo ? 'mp4' : 'jpg';
+           videoFile = await downloadFileFast(item.url, targetDir, ext);
+           break; // Только первое (для analyzeCarousel вызывается напрямую scraper)
+        }
+        return {
+          filePath: videoFile,
+          title: 'Instagram Reel',
+          duration: 0,
+          platform
+        };
+      }
+    } catch (e) {
+      console.warn('[AIM] External API failed, falling back to local yt-dlp:', e.message);
+    }
+  }
+
   try {
     const { stdout } = await execFileAsync(bin, [
       '--dump-json',

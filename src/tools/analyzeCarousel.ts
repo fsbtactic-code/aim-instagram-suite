@@ -41,26 +41,54 @@ export async function analyzeCarousel(input: AnalyzeCarouselInput): Promise<stri
   console.error('[AIM] Скачиваем карусель:', url);
 
   let downloadedFiles: string[] = [];
-  try {
-    // Скачиваем все слайды карусели
-    await execFileAsync(ytdlpBin, [
-      url,
-      '-o', path.join(tmpBase, 'slide_%(playlist_index)s.%(ext)s'),
-      '--no-playlist',
-      '--write-thumbnail',
-      '--convert-thumbnails', 'jpg',
-      '--quiet',
-    ], { maxBuffer: 20 * 1024 * 1024 });
 
-    // Собираем все скачанные файлы (изображения и видео)
-    downloadedFiles = fs.readdirSync(tmpBase)
-      .filter(f => /\.(jpg|jpeg|png|webp|mp4|webm)$/i.test(f))
-      .sort()
-      .map(f => path.join(tmpBase, f));
+  // -- ИНТЕГРАЦИЯ НОВОГО SCRAPER'A ДЛЯ INSTAGRAM --
+  if (platform === 'Instagram') {
+    console.error('[AIM] Instagram detected, delegating to external scraping APIs...');
+    try {
+      const { scrapeInstagramMedia, downloadFileFast } = await import('../core/instagramScraper.js');
+      const mediaList = await scrapeInstagramMedia(url);
+      
+      if (mediaList.length > 0) {
+        let i = 1;
+        for (const item of mediaList) {
+           const ext = item.isVideo ? 'mp4' : 'jpg';
+           const savedPath = await downloadFileFast(item.url, tmpBase, ext);
+           // Rename to keep strict slide order for the grid
+           const orderedPath = path.join(tmpBase, `slide_${String(i).padStart(2, '0')}.${ext}`);
+           fs.renameSync(savedPath, orderedPath);
+           downloadedFiles.push(orderedPath);
+           i++;
+        }
+        console.error(`[AIM] External API скачал файлов: ${downloadedFiles.length}`);
+      }
+    } catch (e) {
+      console.warn('[AIM] External API failed, falling back to local yt-dlp:', e.message);
+    }
+  }
 
-    console.error(`[AIM] Скачано файлов: ${downloadedFiles.length}`);
-  } catch (e) {
-    console.error('[AIM] Ошибка скачивания:', e);
+  // Fallback to yt-dlp if it's not instagram or external scraper failed
+  if (downloadedFiles.length === 0) {
+    try {
+      // Скачиваем все слайды карусели
+      await execFileAsync(ytdlpBin, [
+        url,
+        '-o', path.join(tmpBase, 'slide_%(playlist_index)s.%(ext)s'),
+        '--no-playlist',
+        '--write-thumbnail',
+        '--convert-thumbnails', 'jpg',
+        '--quiet',
+      ], { maxBuffer: 20 * 1024 * 1024 });
+
+      // Собираем все скачанные файлы (изображения и видео)
+      downloadedFiles = fs.readdirSync(tmpBase)
+        .filter(f => /\.(jpg|jpeg|png|webp|mp4|webm)$/i.test(f))
+        .sort()
+        .map(f => path.join(tmpBase, f));
+
+      console.error(`[AIM] Скачано файлов (yt-dlp): ${downloadedFiles.length}`);
+    } catch (e) {
+      console.error('[AIM] Ошибка скачивания (yt-dlp):', e.message);
 
     // Fallback: пробуем просто скачать как видео/фото
     try {
