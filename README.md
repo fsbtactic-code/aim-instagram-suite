@@ -239,22 +239,105 @@ AIM скачивает видео по ссылке (Instagram, TikTok, YouTube)
 
 Для каждой карточки ИИ сам подбирает правильный формат подачи — чтобы зрителю было удобно читать списки, чек-листы или сравнения:
 
+<details>
+<summary><b>📝 1. Standard — Универсальная карточка</b></summary>
+<br/>
 <div align="center">
-  <img src="assets/presentation/layouts/layout_01_standard_glassmorphism.png" width="49%">
-  <img src="assets/presentation/layouts/layout_02_hero-number_neo-brutalism.png" width="49%">
-  <br/><br/>
-  <img src="assets/presentation/layouts/layout_03_steps-3_warm-editorial.png" width="49%">
-  <img src="assets/presentation/layouts/layout_04_good-bad_cyberpunk.png" width="49%">
-  <br/><br/>
-  <img src="assets/presentation/layouts/layout_05_before-after_apple-premium.png" width="49%">
-  <img src="assets/presentation/layouts/layout_06_quote_y2k-acid.png" width="49%">
-  <br/><br/>
-  <img src="assets/presentation/layouts/layout_07_checklist_soft-gradient.png" width="49%">
-  <img src="assets/presentation/layouts/layout_08_grid-2x2_custom-brand.png" width="49%">
-  <br/><br/>
-  <img src="assets/presentation/layouts/layout_09_cmp-table_ink-paper.png" width="49%">
-  <img src="assets/presentation/layouts/layout_10_cta-final_deep-space.png" width="49%">
+  <img src="assets/presentation/layouts/layout_01_standard_glassmorphism.png" width="80%">
 </div>
+<br/><br/>
+Заголовок + подзаголовок + основной текст. Подходит для любого типа контента. Базовый формат, который работает всегда.
+</details>
+
+<details>
+<summary><b>🔢 2. Hero Number — Акцент на цифре</b></summary>
+<br/>
+<div align="center">
+  <img src="assets/presentation/layouts/layout_02_hero-number_neo-brutalism.png" width="80%">
+</div>
+<br/><br/>
+Крупная цифра в центре + пояснение. Идеально для статистики, результатов, прогресса и ключевых метрик.
+</details>
+
+<details>
+<summary><b>📋 3. Steps (3 колонки) — Пошаговый процесс</b></summary>
+<br/>
+<div align="center">
+  <img src="assets/presentation/layouts/layout_03_steps-3_warm-editorial.png" width="80%">
+</div>
+<br/><br/>
+Три колонки с иконками и описаниями шагов. Отлично для инструкций, рецептов, процессов.
+</details>
+
+<details>
+<summary><b>✅❌ 4. Good vs Bad — Правильно / Неправильно</b></summary>
+<br/>
+<div align="center">
+  <img src="assets/presentation/layouts/layout_04_good-bad_cyberpunk.png" width="80%">
+</div>
+<br/><br/>
+Две колонки сравнения с зелёными/красными акцентами. Для разрушения мифов и демонстрации ошибок.
+</details>
+
+<details>
+<summary><b>🔄 5. Before → After — Трансформация</b></summary>
+<br/>
+<div align="center">
+  <img src="assets/presentation/layouts/layout_05_before-after_apple-premium.png" width="80%">
+</div>
+<br/><br/>
+Два состояния: «до» и «после». Максимальная убедительность для кейсов, результатов, преображений.
+</details>
+
+<details>
+<summary><b>💬 6. Quote — Цитата / Инсайт</b></summary>
+<br/>
+<div align="center">
+  <img src="assets/presentation/layouts/layout_06_quote_y2k-acid.png" width="80%">
+</div>
+<br/><br/>
+Крупная цитата с автором. Для мотивационных карточек, экспертных мнений и ключевых тезисов.
+</details>
+
+<details>
+<summary><b>☑️ 7. Checklist — Чек-лист</b></summary>
+<br/>
+<div align="center">
+  <img src="assets/presentation/layouts/layout_07_checklist_soft-gradient.png" width="80%">
+</div>
+<br/><br/>
+Список с чекбоксами. Максимум сохранений — аудитория возвращается к таким карточкам снова и снова.
+</details>
+
+<details>
+<summary><b>🔲 8. Grid 2×2 — Сетка из 4 блоков</b></summary>
+<br/>
+<div align="center">
+  <img src="assets/presentation/layouts/layout_08_grid-2x2_custom-brand.png" width="80%">
+</div>
+<br/><br/>
+Четыре равных блока для категорий, типов, вариантов. Компактная подача большого объёма информации.
+</details>
+
+<details>
+<summary><b>📊 9. Compare Table — Таблица сравнения</b></summary>
+<br/>
+<div align="center">
+  <img src="assets/presentation/layouts/layout_09_cmp-table_ink-paper.png" width="80%">
+</div>
+<br/><br/>
+Таблица с колонками для A vs B сравнений. Для обзоров инструментов, тарифов, конкурентов.
+</details>
+
+<details>
+<summary><b>🚀 10. CTA Final — Финальный призыв</b></summary>
+<br/>
+<div align="center">
+  <img src="assets/presentation/layouts/layout_10_cta-final_deep-space.png" width="80%">
+</div>
+<br/><br/>
+Мощный финальный слайд с призывом к действию. Кнопка, стрелки, акцентный текст — всё для конверсии.
+</details>
 
 ---
 
